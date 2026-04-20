@@ -1,62 +1,19 @@
 ﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bases Químicas da Vida - Quasar</title>
-    
-    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-    <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        display: ['Outfit', 'sans-serif'],
-                        mono: ['Space Mono', 'monospace']
-                    }
-                }
-            }
-        }
-    </script>
-
-    <style>
-        :root {
-            --bg-deep: #0A0A0F;
-            --bg-panel: rgba(20, 20, 30, 0.7);
-            --neon-cyan: #00F0FF;
-            --neon-purple: #7000FF;
-        }
-        body { 
-            background-color: var(--bg-deep); 
-            color: white; 
-            scroll-behavior: smooth;
-        }
-        .glass-panel {
-            background: var(--bg-panel);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .btn-neon {
-            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
-            transition: opacity 0.3s ease;
-        }
-        .btn-neon:hover { opacity: 0.8; }
-        
-        /* Lógica das Abas */
-        .tab-content { display: none; animation: fadeIn 0.3s ease-in-out; }
-        .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        
-        /* Lógica da Sanfona */
-        details > summary { list-style: none; cursor: pointer; }
-        details > summary::-webkit-details-marker { display: none; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Título da Página — Plataforma Quasar</title>
+ 
+  <!-- 1. Tailwind (síncrono, necessário para classes do header injetado) -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+ 
+  <!-- 2. Lucide Icons (DEVE vir antes do app.js) -->
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+ 
+  <!-- 3. Fonte Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body class="min-h-screen flex flex-col pt-0 bg-[var(--bg-deep)] text-white">
 
