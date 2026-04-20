@@ -180,7 +180,7 @@ function setupQuiz(questoes, idAtividade, professorEmail) {
         const respostas = JSON.parse(localStorage.getItem('respostas_' + idAtividade) || '{}');
         const nota = parseFloat(localStorage.getItem('nota_' + idAtividade) || '0');
         if (statusEl) renderStatusConcluido(statusEl, nota);
-        renderGabarito(form, selecionadas, respostas);
+        renderQuestoesComGabarito(form, selecionadas, respostas);
         return;
     }
 
@@ -233,7 +233,7 @@ function setupQuiz(questoes, idAtividade, professorEmail) {
         // Substitui form pelo gabarito
         form.innerHTML = '';
         if (statusEl) renderStatusConcluido(statusEl, nota);
-        renderGabarito(form, selecionadas, respostas);
+        renderQuestoesComGabarito(form, selecionadas, respostas);
     };
 }
 
@@ -275,59 +275,64 @@ function renderStatusConcluido(el, nota) {
     if (window.lucide) lucide.createIcons();
 }
 
-function renderGabarito(container, questoes, respostas) {
+function renderQuestoesComGabarito(container, questoes, respostas) {
     questoes.forEach((q, i) => {
-        const div = document.createElement('div');
-        const respostaAluno = respostas[q.id];
+        const wrapper = document.createElement('div');
+        wrapper.className = 'mb-6';
 
         if (q.tipo === 'objetiva') {
-            const acertou = respostaAluno === q.gabarito;
-            div.className = `mb-4 p-5 rounded-2xl border ${acertou ? 'bg-green-500/5 border-green-500/20' : 'bg-orange-500/5 border-orange-500/20'}`;
+            const acertou = respostas[q.id] === q.gabarito;
+            const borderClass = acertou ? 'bg-green-500/5 border-green-500/20' : 'bg-orange-500/5 border-orange-500/20';
+            const labelClass = acertou ? 'text-green-400' : 'text-orange-400';
 
-            let altsHtml = '';
-            q.alternativas.forEach(alt => {
+            const altsHtml = q.alternativas.map(alt => {
                 const isGabarito = alt.letra === q.gabarito;
-                const isAluno = alt.letra === respostaAluno;
-                let style = 'text-gray-500'; // não marcada
+                const isAluno = alt.letra === respostas[q.id];
+                let bg = 'border-white/5';
+                let texto = 'text-gray-500';
                 let badge = '';
 
                 if (isGabarito) {
-                    style = 'text-green-300 font-bold';
+                    bg = 'bg-green-500/10 border-green-500/30';
+                    texto = 'text-green-300 font-bold';
                     badge = '<span class="ml-2 text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">✓ correta</span>';
                 }
                 if (isAluno && !acertou) {
-                    style = 'text-orange-300 font-bold';
+                    bg = 'bg-orange-500/10 border-orange-500/30';
+                    texto = 'text-orange-300 font-bold';
                     badge += '<span class="ml-2 text-xs bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded-full">sua resposta</span>';
                 }
                 if (isAluno && acertou) {
                     badge = '<span class="ml-2 text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">✓ sua resposta</span>';
                 }
 
-                altsHtml += `<div class="flex items-center gap-2 py-1 ${style}"><b>${alt.letra})</b> ${alt.texto}${badge}</div>`;
-            });
+                return `<div class="flex items-center gap-2 p-3 rounded-xl border ${bg} ${texto}">
+                    <b>${alt.letra})</b> <span>${alt.texto}</span>${badge}
+                </div>`;
+            }).join('');
 
-            div.innerHTML = `
-                <p class="text-sm font-bold mb-1 ${acertou ? 'text-green-400' : 'text-orange-400'}">
-                    ${acertou ? '✓' : '✗'} Questão #${i + 1}
-                </p>
-                <p class="text-white mb-3">${q.enunciado}</p>
-                <div class="space-y-1">${altsHtml}</div>`;
+            wrapper.innerHTML = `
+                <div class="p-5 rounded-2xl border ${borderClass}">
+                    <p class="text-sm font-bold mb-1 ${labelClass}">${acertou ? '✓' : '✗'} Questão #${i + 1}</p>
+                    <p class="text-white mb-4">${q.enunciado}</p>
+                    <div class="space-y-2">${altsHtml}</div>
+                </div>`;
         } else {
-            // Discursiva
-            div.className = 'mb-4 p-5 rounded-2xl border border-purple-500/20 bg-purple-500/5';
-            div.innerHTML = `
-                <p class="text-sm font-bold text-purple-400 mb-1">Questão #${i + 1} — Dissertativa</p>
-                <p class="text-white mb-3">${q.enunciado}</p>
-                <div class="bg-black/20 rounded-xl p-3 mb-3">
-                    <p class="text-xs text-gray-500 mb-1 uppercase tracking-wider">Sua resposta</p>
-                    <p class="text-gray-300 text-sm">${respostaAluno || '<em class="opacity-40">Não respondida</em>'}</p>
-                </div>
-                <div class="bg-purple-500/10 rounded-xl p-3">
-                    <p class="text-xs text-purple-400 mb-1 uppercase tracking-wider">⏳ Aguardando validação do professor</p>
+            wrapper.innerHTML = `
+                <div class="p-5 rounded-2xl border border-purple-500/20 bg-purple-500/5">
+                    <p class="text-sm font-bold text-purple-400 mb-1">Questão #${i + 1} — Dissertativa</p>
+                    <p class="text-white mb-4">${q.enunciado}</p>
+                    <div class="bg-black/20 rounded-xl p-3 mb-3">
+                        <p class="text-xs text-gray-500 mb-1 uppercase tracking-wider">Sua resposta</p>
+                        <p class="text-gray-300 text-sm">${respostas[q.id] || '<em class="opacity-40">Não respondida</em>'}</p>
+                    </div>
+                    <div class="bg-purple-500/10 rounded-xl p-3">
+                        <p class="text-xs text-purple-400 uppercase tracking-wider">⏳ Aguardando validação do professor</p>
+                    </div>
                 </div>`;
         }
 
-        container.appendChild(div);
+        container.appendChild(wrapper);
     });
 
     if (window.lucide) lucide.createIcons();
