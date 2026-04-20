@@ -2,72 +2,84 @@
 const fs = require('fs');
 const path = require('path');
 
-// 1. Defina aqui as escolas que o robô deve mapear
-const escolas = ['eespa']; 
+// Escolas mapeadas pelo robô
+const escolas = ['eespa'];
 
-// 2. Estrutura base do catálogo
+// Estrutura base — adicione disciplinas aqui conforme expandir
 let catalogo = {
     "biologia": { icone: "🧬", nome: "Biologia", turmas: {} },
-    "quimica": { icone: "🧪", nome: "Química", turmas: {} },
-    "fisica": { icone: "⚛️", nome: "Física", turmas: {} }
+    "quimica":  { icone: "🧪", nome: "Química",  turmas: {} },
+    "fisica":   { icone: "⚛️", nome: "Física",   turmas: {} }
 };
 
 function processarAulas() {
     escolas.forEach(escola => {
         const escolaPath = path.join(__dirname, escola);
-        if (!fs.existsSync(escolaPath)) return;
+        if (!fs.existsSync(escolaPath)) {
+            console.warn(`⚠️  Pasta não encontrada: ${escolaPath}`);
+            return;
+        }
 
-        const anos = fs.readdirSync(escolaPath);
-        anos.forEach(ano => {
+        fs.readdirSync(escolaPath).forEach(ano => {
             const anoPath = path.join(escolaPath, ano);
             if (!fs.statSync(anoPath).isDirectory()) return;
 
-            const disciplinas = fs.readdirSync(anoPath);
-            disciplinas.forEach(disciplina => {
+            fs.readdirSync(anoPath).forEach(disciplina => {
                 const disciplinaPath = path.join(anoPath, disciplina);
                 if (!fs.statSync(disciplinaPath).isDirectory()) return;
 
-                // Garante que a disciplina existe no catálogo
+                // Cria entrada da disciplina se não existir
                 if (!catalogo[disciplina]) {
                     catalogo[disciplina] = { icone: "📚", nome: disciplina.toUpperCase(), turmas: {} };
                 }
 
-                const turmaKey = ano;
-                if (!catalogo[disciplina].turmas[turmaKey]) {
-                    // Formata "1-ano" para "1 ano (EESPA)"
-                    catalogo[disciplina].turmas[turmaKey] = {
-                        nome: `${ano.replace('-', ' ')} (${escola.toUpperCase()})`,
+                // Cria entrada da turma se não existir
+                if (!catalogo[disciplina].turmas[ano]) {
+                    catalogo[disciplina].turmas[ano] = {
+                        nome: `${ano.replace(/-/g, ' ')} (${escola.toUpperCase()})`,
                         aulas: []
                     };
                 }
 
-                const aulas = fs.readdirSync(disciplinaPath);
-                aulas.forEach(aula => {
-                    const aulaPath = path.join(disciplinaPath, aula);
+                fs.readdirSync(disciplinaPath).forEach(aulaDir => {
+                    const aulaPath = path.join(disciplinaPath, aulaDir);
                     if (!fs.statSync(aulaPath).isDirectory()) return;
 
-                    const indexPath = path.join(aulaPath, 'index.html');
-                    if (fs.existsSync(indexPath)) {
-                        // MÁGICA: Lê o HTML e extrai o título da aba do navegador para usar como nome da aula
-                        const htmlContent = fs.readFileSync(indexPath, 'utf-8');
-                        const titleMatch = htmlContent.match(/<title>(.*?)<\/title>/i);
-                        // Pega o título antes do hífen (ex: "Bases Químicas - Quasar" vira "Bases Químicas")
-                        const tituloAula = titleMatch ? titleMatch[1].split('-')[0].trim() : aula;
-
-                        catalogo[disciplina].turmas[turmaKey].aulas.push({
-                            titulo: tituloAula,
-                            escola: escola.toUpperCase(),
-                            link: `./${escola}/${ano}/${disciplina}/${aula}/index.html`,
-                            ativo: true
-                        });
+                    // NOVA LÓGICA: lê aula.json como fonte de verdade
+                    const jsonPath = path.join(aulaPath, 'aula.json');
+                    if (!fs.existsSync(jsonPath)) {
+                        console.warn(`⚠️  Sem aula.json em: ${aulaPath} — pulando.`);
+                        return;
                     }
+
+                    let aulaData;
+                    try {
+                        aulaData = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
+                    } catch (e) {
+                        console.error(`❌ JSON inválido em ${jsonPath}:`, e.message);
+                        return;
+                    }
+
+                    // Caminho relativo para o shell único (sem ./ para evitar ambiguidade)
+                    const jsonRelativo = `${escola}/${ano}/${disciplina}/${aulaDir}/aula.json`;
+
+                    catalogo[disciplina].turmas[ano].aulas.push({
+                        id:     aulaData.id_atividade,
+                        titulo: aulaData.titulo,
+                        serie:  aulaData.serie  || ano.replace(/-/g, ' '),
+                        escola: escola.toUpperCase(),
+                        link:   `/aula.html?json=${jsonRelativo}`,
+                        ativo:  true
+                    });
                 });
             });
         });
     });
 
-    // Salva o resultado no arquivo catalogo.json
-    fs.writeFileSync(path.join(__dirname, 'catalogo.json'), JSON.stringify(catalogo, null, 2));
+    fs.writeFileSync(
+        path.join(__dirname, 'catalogo.json'),
+        JSON.stringify(catalogo, null, 2)
+    );
     console.log('✅ [Quasar] catalogo.json gerado com sucesso!');
 }
 

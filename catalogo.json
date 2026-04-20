@@ -5,22 +5,17 @@
     "turmas": {
       "1-ano": {
         "nome": "1 ano (EESPA)",
-        "aulas": [
-          {
-            "titulo": "Título da Página — Plataforma Quasar",
-            "escola": "EESPA",
-            "link": "./eespa/1-ano/biologia/aula-bioquimica/index.html",
-            "ativo": true
-          }
-        ]
+        "aulas": []
       },
       "2-ano": {
         "nome": "2 ano (EESPA)",
         "aulas": [
           {
-            "titulo": "Aula — Plataforma Quasar",
+            "id": "quasar_bio_cap9_2ano_v1",
+            "titulo": "Classificação, Vírus e Bactérias",
+            "serie": "2ª Série — Ensino Médio",
             "escola": "EESPA",
-            "link": "./eespa/2-ano/biologia/Classificação Biologica, Vírus e Bactérias/index.html",
+            "link": "/aula.html?json=eespa/2-ano/biologia/classificacao-biologica-virus-e-bacterias/aula.json",
             "ativo": true
           }
         ]
