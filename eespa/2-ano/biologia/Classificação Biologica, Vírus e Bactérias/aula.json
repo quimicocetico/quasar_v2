@@ -1,0 +1,207 @@
+{
+  "id_atividade": "quasar_bio_cap9_2ano_v1",
+  "titulo": "Classificação, Vírus e Bactérias",
+  "materia": "Biologia",
+  "serie": "2ª Série — Ensino Médio",
+  "professor_email": "robson.1347110@educar.rn.gov.br",
+  "descricao": "Capítulo 9: Como a vida é organizada, a estratégia hacker dos vírus e o mundo procarionte das bactérias. Conteúdo alinhado ao ENEM.",
+
+  "tabs": [
+    {
+      "id": "taxonomia",
+      "label": "🌳 Árvore da Vida",
+      "secoes": [
+        {
+          "tipo": "texto",
+          "conteudo": "Imagine que a biodiversidade da Terra é um arquivo gigante com quase <strong>2 milhões de espécies catalogadas</strong> — e talvez 30 milhões ainda por descobrir. A <strong>Taxonomia</strong> é o sistema de pastas que evita o caos. Proposta por <strong>Carolus Linnaeus (Lineu)</strong> no século XVIII, ela organiza os seres vivos de acordo com o grau de semelhança estrutural e anatômica, do táxon mais abrangente até o mais específico."
+        },
+        {
+          "tipo": "imagem",
+          "id": "img_taxonomia_hierarquia",
+          "instrucao": "Tabela ou diagrama da hierarquia taxonômica",
+          "legenda": "Táxons da classificação tradicional: Reino → Filo → Classe → Ordem → Família → Gênero → Espécie.",
+          "exemplo": "hierarquia taxonômica biologia diagrama"
+        },
+        {
+          "tipo": "curiosidade",
+          "titulo": "Regra do Re-Fi-C-O-F-A-G-E",
+          "conteudo": "Para nunca esquecer a hierarquia dos táxons: <strong>Re</strong>ino → <strong>Fi</strong>lo → <strong>C</strong>lasse → <strong>O</strong>rdem → <strong>F</strong>amília → <strong>G</strong>ênero → <strong>E</strong>spécie. Quanto mais à direita, maior o grau de parentesco entre os organismos agrupados."
+        },
+        {
+          "tipo": "texto",
+          "conteudo": "A <strong>nomenclatura binomial</strong> de Lineu estabelece que o nome científico de qualquer espécie é formado por <em>duas palavras em latim</em>: o epíteto genérico (com inicial maiúscula) e o epíteto específico (minúsculo), sempre em itálico ou sublinhado. Exemplo: <em>Homo sapiens</em>. Essa padronização resolve um problema real: o mesmo animal recebe nomes diferentes em regiões distintas do Brasil — o pássaro <em>Paroaria dominicana</em> é 'galo-da-campina' no Nordeste e 'cardeal' no Pantanal."
+        },
+        {
+          "tipo": "aprofundamento",
+          "titulo": "Sistemática e Evolucionismo",
+          "conteudo": "A Sistemática moderna vai além da classificação: ela busca organizar os táxons com base nas <strong>relações de parentesco evolutivo</strong>. Estruturas com mesma origem embrionária em espécies diferentes são chamadas de <strong>órgãos homólogos</strong> (ex: asa de morcego e braço humano) e revelam ancestralidade comum — fenômeno chamado de <strong>divergência evolutiva</strong>. Já estruturas semelhantes que surgiram de forma independente em linhagens distintas são <strong>análogas</strong> (ex: asa de inseto e asa de ave) — fenômeno chamado <strong>convergência evolutiva</strong>."
+        },
+        {
+          "tipo": "imagem",
+          "id": "img_cladograma",
+          "instrucao": "Cladograma com nós e ramificações evolutivas",
+          "legenda": "Interpretando o cladograma: cada nó representa um ancestral comum; cada ramificação, um evento de especiação (cladogênese).",
+          "exemplo": "cladograma interpretação biologia ENEM"
+        },
+        {
+          "tipo": "texto",
+          "conteudo": "A <strong>cladística</strong>, proposta por Willi Hennig nos anos 1950, representa parentescos evolutivos por meio de <strong>cladogramas</strong>. Um clado válido deve ser <strong>monofilético</strong>: conter apenas espécies que compartilham um mesmo ancestral. Cada ramificação (nó) representa um evento de especiação. Uma consequência importante: pela cladística, as <strong>aves são répteis</strong> — elas compartilham as mesmas sinapomorfias dos répteis e devem estar no mesmo táxon."
+        },
+        {
+          "tipo": "aprofundamento",
+          "titulo": "Quantos Reinos Existem?",
+          "conteudo": "Lineu usava apenas 2 reinos (Animal e Vegetal). Em 1990, Carl Woese propôs 3 grandes <strong>domínios</strong> com base em análises moleculares: <strong>Bacteria</strong>, <strong>Archaea</strong> e <strong>Eukarya</strong>. Bactérias e arqueas, apesar de ambas serem procarióticas, são tão diferentes geneticamente que ocupam domínios distintos. Este livro adota <strong>6 reinos</strong>: Bacteria, Archaea, Protoctista, Fungi, Plantae e Animalia."
+        },
+        {
+          "tipo": "video",
+          "id": "video_taxonomia",
+          "instrucao": "Vídeo explicativo: Taxonomia e Classificação Biológica",
+          "legenda": "Sugestão: vídeo de 5 a 10 min sobre taxonomia, nomenclatura binomial e cladogramas. Canais recomendados: Descomplica, Khan Academy PT, Biologia com Samuel Cunha.",
+          "dica_embed": "No YouTube, clique em Compartilhar → Incorporar e copie apenas o link do src (ex: https://www.youtube.com/embed/XXXXXXXXXXX)."
+        }
+      ]
+    },
+
+    {
+      "id": "virus",
+      "label": "🦠 Hackers Biológicos",
+      "secoes": [
+        {
+          "tipo": "texto",
+          "conteudo": "Vírus são entidades biológicas minúsculas (15 a 400 nm) e <strong>acelulares</strong> — não são formados por células, o que os distingue de todos os outros seres vivos. Sua estrutura básica é um <strong>ácido nucleico</strong> (DNA <em>ou</em> RNA, nunca os dois) protegido por um envoltório proteico chamado <strong>capsídio</strong>. Juntos, ácido nucleico + capsídio formam o <strong>nucleocapsídio</strong>. Alguns vírus possuem ainda um envelope lipídico externo derivado da membrana da célula hospedeira."
+        },
+        {
+          "tipo": "imagem",
+          "id": "img_estrutura_viral",
+          "instrucao": "Esquema da estrutura de um vírus (capsídio, ácido nucleico, envelope)",
+          "legenda": "Estrutura viral: RNA ou DNA protegido pelo capsídio proteico. Alguns vírus possuem envelope lipídico externo com espículas (ex: Sars-CoV-2).",
+          "exemplo": "estrutura do vírus esquema capsídio biologia"
+        },
+        {
+          "tipo": "curiosidade",
+          "titulo": "O Vírus é Vivo?",
+          "conteudo": "Fora de uma célula hospedeira, o vírus não realiza nenhuma atividade metabólica e não se reproduz — é como um pendrive esperando um computador. Ao invadir uma célula adequada, ele '<em>sequestra</em>' a maquinaria celular e força a célula a produzir cópias suas. Por isso os vírus são chamados de <strong>parasitas intracelulares obrigatórios</strong>. A invasão de uma célula por vírus é chamada de <strong>infecção viral</strong>."
+        },
+        {
+          "tipo": "imagem",
+          "id": "img_ciclo_viral",
+          "instrucao": "Esquema comparando o ciclo lítico e o ciclo lisogênico dos vírus",
+          "legenda": "Ciclo lítico: vírus se replica rapidamente e destrói a célula. Ciclo lisogênico: DNA viral se integra ao genoma do hospedeiro, ficando latente por tempo indeterminado.",
+          "exemplo": "ciclo lítico lisogênico vírus esquema"
+        },
+        {
+          "tipo": "texto",
+          "conteudo": "As <strong>doenças virais (viroses)</strong> humanas mais conhecidas incluem: AIDS, gripe, sarampo, catapora, dengue, poliomielite e covid-19. Cada espécie viral só consegue invadir certos tipos de célula de uma ou poucas espécies hospedeiras — isso é chamado de <strong>especificidade dos alvos virais</strong>. Vírus transmitidos por artrópodes (mosquitos, carrapatos) são chamados de <strong>arbovírus</strong>. O <em>Aedes aegypti</em> transmite dengue, febre amarela urbana, chikungunya e Zika."
+        },
+        {
+          "tipo": "aprofundamento",
+          "titulo": "Epidemia, Endemia e Pandemia",
+          "conteudo": "<strong>Epidemia:</strong> aumento rápido no número de casos de uma doença em uma população. <strong>Endemia:</strong> manutenção de uma doença em frequência constante em determinada região. <strong>Pandemia:</strong> doença que atinge mais de um continente em onda epidêmica prolongada. A covid-19 (causada pelo Sars-CoV-2) e a AIDS (causada pelo HIV) são exemplos de pandemias virais recentes."
+        },
+        {
+          "tipo": "aprofundamento",
+          "titulo": "Foco ENEM: Vacina vs. Soro",
+          "conteudo": "Não confunda! A <strong>Vacina</strong> é <em>preventiva</em>: contém antígenos (vírus mortos, atenuados ou fragmentos proteicos) que estimulam o sistema imune a criar memória. O <strong>Soro</strong> é <em>curativo</em>: contém anticorpos prontos para neutralizar uma ameaça imediata (ex: soro antiofídico, antitetânico). A erradicação global da varíola em 1980 é o maior exemplo de sucesso de vacinação em massa da história."
+        },
+        {
+          "tipo": "texto",
+          "conteudo": "<strong>Antibióticos são ineficazes contra vírus</strong> — eles atuam em estruturas exclusivas das bactérias (como a parede celular). Para alguns vírus, existem drogas antivirais que inibem a multiplicação do ácido nucleico viral (ex: antiretrovirais usados no tratamento da AIDS). O combate mais efetivo é a <strong>prevenção</strong>: vacinação, saneamento básico e cuidados pessoais de higiene."
+        },
+        {
+          "tipo": "video",
+          "id": "video_virus",
+          "instrucao": "Vídeo explicativo: Vírus — estrutura, ciclo de replicação e doenças virais",
+          "legenda": "Sugestão: vídeo sobre estrutura viral, ciclos lítico e lisogênico, principais viroses (dengue, AIDS, covid-19) e diferença entre vacina e soro.",
+          "dica_embed": "No YouTube, clique em Compartilhar → Incorporar e copie apenas o link do src (ex: https://www.youtube.com/embed/XXXXXXXXXXX)."
+        }
+      ]
+    },
+
+    {
+      "id": "monera",
+      "label": "🔬 Reino Monera",
+      "secoes": [
+        {
+          "tipo": "texto",
+          "conteudo": "As bactérias são as formas de vida mais abundantes na Terra nos últimos 2,5 bilhões de anos. São seres <strong>unicelulares procarióticos</strong>: não possuem núcleo organizado nem organelas membranosas. O DNA bacteriano fica em uma região do citoplasma chamada <strong>nucleoide</strong>, formado por uma longa molécula circular de DNA. Além do cromossomo principal, as bactérias podem ter pequenas moléculas circulares de DNA chamadas <strong>plasmídios</strong>, que frequentemente carregam genes de resistência a antibióticos."
+        },
+        {
+          "tipo": "imagem",
+          "id": "img_celula_bacteriana",
+          "instrucao": "Esquema da estrutura da célula bacteriana com legendas",
+          "legenda": "Célula bacteriana: parede celular, membrana plasmática, ribossomos, nucleoide (DNA circular), plasmídios e flagelos. Sem núcleo delimitado por membrana.",
+          "exemplo": "estrutura célula bacteriana esquema legendado biologia"
+        },
+        {
+          "tipo": "curiosidade",
+          "titulo": "Você é mais bactéria do que pensa",
+          "conteudo": "Estudos recentes indicam que o corpo humano contém pelo menos o mesmo número de bactérias que células humanas. A maioria dessas bactérias compõe a <strong>microbiota</strong> (flora intestinal, da pele etc.) e é essencial para a nossa saúde: auxilia na digestão, produz vitaminas e protege contra patógenos."
+        },
+        {
+          "tipo": "texto",
+          "conteudo": "Quanto à nutrição, as bactérias se dividem em <strong>autotróficas</strong> (fotossintetizantes ou quimiossintetizantes) e <strong>heterotróficas</strong> (saprofágicas ou parasitas). Quanto ao uso de oxigênio: <strong>aeróbicas obrigatórias</strong> (precisam de O₂), <strong>anaeróbicas facultativas</strong> (usam O₂ quando disponível, mas sobrevivem sem ele) e <strong>anaeróbicas obrigatórias</strong> (morrem na presença de O₂). As bactérias se reproduzem assexuadamente por <strong>divisão binária</strong> — uma célula se divide em duas geneticamente idênticas. Em condições ideais, algumas espécies se duplicam a cada 20 minutos."
+        },
+        {
+          "tipo": "imagem",
+          "id": "img_divisao_binaria",
+          "instrucao": "Esquema da divisão binária bacteriana",
+          "legenda": "Divisão binária: a bactéria duplica seu DNA circular e se divide ao meio, gerando duas células-filhas geneticamente idênticas. Em 20 min uma bactéria pode se tornar milhões em poucas horas.",
+          "exemplo": "divisão binária bactéria esquema reprodução assexuada"
+        },
+        {
+          "tipo": "aprofundamento",
+          "titulo": "Resistência a Antibióticos — Seleção Natural em Ação",
+          "conteudo": "Quando o paciente interrompe o antibiótico antes do prazo, as bactérias mais resistentes sobrevivem, reproduzem-se e passam sua resistência à prole. Isso é <strong>seleção natural acontecendo em tempo real</strong>. Os plasmídios bacterianos podem ainda transferir genes de resistência entre bactérias de espécies diferentes — tornando a resistência antimicrobiana um problema global de saúde pública."
+        },
+        {
+          "tipo": "texto",
+          "conteudo": "As <strong>arqueas</strong> são procarióticas como as bactérias, mas geneticamente mais próximas dos eucariontes. Vivem em ambientes extremos: <strong>halófilas</strong> (alta salinidade), <strong>termoacidófilas</strong> (altas temperatura e acidez) e <strong>metanogênicas</strong> (produzem metano em pântanos e no trato digestivo de herbívoros). A árvore filogenética molecular mostra que bactérias e arqueas, apesar da aparência similar, são grupos evolutivamente muito distintos."
+        },
+        {
+          "tipo": "aprofundamento",
+          "titulo": "Bactérias e Biotecnologia",
+          "conteudo": "Muito antes da ciência moderna, bactérias já eram usadas na produção de queijos, iogurtes, vinagre e picles. Hoje, via <strong>Engenharia Genética (DNA recombinante)</strong>, bactérias são programadas para produzir insulina humana, hormônio do crescimento, antibióticos e vitaminas. Nos ecossistemas, atuam como <strong>decompositores</strong> essenciais, reciclando matéria orgânica e devolvendo nutrientes ao solo."
+        },
+        {
+          "tipo": "video",
+          "id": "video_bacterias",
+          "instrucao": "Vídeo explicativo: Bactérias — estrutura, reprodução, importância e doenças bacterianas",
+          "legenda": "Sugestão: vídeo sobre célula procariótica, divisão binária, resistência a antibióticos, bactérias benéficas e patogênicas, e diferença entre bactérias e arqueas.",
+          "dica_embed": "No YouTube, clique em Compartilhar → Incorporar e copie apenas o link do src (ex: https://www.youtube.com/embed/XXXXXXXXXXX)."
+        }
+      ]
+    }
+  ],
+
+  "quiz": {
+    "objetivas_exibidas": 8,
+    "discursivas_exibidas": 2,
+    "questoes": [
+      { "id": "obj_01", "tipo": "objetiva", "enunciado": "Um grupo de cientistas descobriu um novo agente infeccioso que possui apenas RNA envolto por uma cápsula proteica, sem qualquer organela membranosa. Esse agente deve ser classificado como:", "alternativas": [{ "letra": "A", "texto": "Bactéria procarionte." }, { "letra": "B", "texto": "Fungo unicelular." }, { "letra": "C", "texto": "Vírus." }, { "letra": "D", "texto": "Protozoário." }, { "letra": "E", "texto": "Alga microscópica." }], "gabarito": "C" },
+      { "id": "obj_02", "tipo": "objetiva", "enunciado": "Qual das alternativas traz grafado CORRETAMENTE o nome científico de uma espécie?", "alternativas": [{ "letra": "A", "texto": "Canis Familiaris" }, { "letra": "B", "texto": "homo sapiens" }, { "letra": "C", "texto": "PANTHERA LEO" }, { "letra": "D", "texto": "Zea mays" }, { "letra": "E", "texto": "Felis Catus" }], "gabarito": "D" },
+      { "id": "obj_03", "tipo": "objetiva", "enunciado": "Dois organismos pertencem à mesma família. Em quais outros táxons eles obrigatoriamente também coincidem?", "alternativas": [{ "letra": "A", "texto": "Gênero e espécie." }, { "letra": "B", "texto": "Filo, classe e ordem." }, { "letra": "C", "texto": "Apenas espécie." }, { "letra": "D", "texto": "Gênero, ordem e espécie." }, { "letra": "E", "texto": "Apenas ordem." }], "gabarito": "B" },
+      { "id": "obj_04", "tipo": "objetiva", "enunciado": "Os vírus distinguem-se de TODOS os seres vivos porque:", "alternativas": [{ "letra": "A", "texto": "São parasitas intracelulares." }, { "letra": "B", "texto": "Possuem apenas RNA em sua composição." }, { "letra": "C", "texto": "Não possuem estrutura celular (são acelulares)." }, { "letra": "D", "texto": "Não contêm proteínas em sua constituição." }, { "letra": "E", "texto": "São incapazes de causar doenças em animais." }], "gabarito": "C" },
+      { "id": "obj_05", "tipo": "objetiva", "enunciado": "Um paciente com infecção bacteriana grave interrompeu o antibiótico após 4 dias, sentindo-se melhor. Semanas depois, a infecção voltou e o mesmo antibiótico não funcionou. O fenômeno biológico que explica essa situação é:", "alternativas": [{ "letra": "A", "texto": "Convergência evolutiva das bactérias." }, { "letra": "B", "texto": "Seleção natural favorecendo bactérias resistentes." }, { "letra": "C", "texto": "Mutação induzida pelo antibiótico nas bactérias sobreviventes." }, { "letra": "D", "texto": "Ciclo lisogênico das bactérias mais resistentes." }, { "letra": "E", "texto": "Divisão binária acelerada por ausência de O₂." }], "gabarito": "B" },
+      { "id": "obj_06", "tipo": "objetiva", "enunciado": "A dengue, a febre amarela e o Zika são transmitidos pelo mosquito Aedes aegypti. O termo correto para classificar os vírus causadores dessas doenças é:", "alternativas": [{ "letra": "A", "texto": "Zoonose viral." }, { "letra": "B", "texto": "Endemia." }, { "letra": "C", "texto": "Arbovírus." }, { "letra": "D", "texto": "Retrovírus." }, { "letra": "E", "texto": "Bacteriófago." }], "gabarito": "C" },
+      { "id": "obj_07", "tipo": "objetiva", "enunciado": "Um pesquisador observou uma célula sem núcleo delimitado por membrana, sem organelas membranosas, mas com ribossomos e DNA circular. Essa célula pertence a:", "alternativas": [{ "letra": "A", "texto": "Um fungo." }, { "letra": "B", "texto": "Uma planta." }, { "letra": "C", "texto": "Uma bactéria." }, { "letra": "D", "texto": "Um vírus." }, { "letra": "E", "texto": "Um protozoário." }], "gabarito": "C" },
+      { "id": "obj_08", "tipo": "objetiva", "enunciado": "Sobre a vacinação, é CORRETO afirmar que:", "alternativas": [{ "letra": "A", "texto": "A vacina contém anticorpos prontos para neutralizar o patógeno imediatamente." }, { "letra": "B", "texto": "A vacina estimula o sistema imune a produzir memória imunológica de forma preventiva." }, { "letra": "C", "texto": "Vacinas e soros são estratégias equivalentes de prevenção." }, { "letra": "D", "texto": "A vacina é indicada apenas após o início dos sintomas da doença." }, { "letra": "E", "texto": "O soro antiofídico é um exemplo de vacina preventiva." }], "gabarito": "B" },
+      { "id": "obj_09", "tipo": "objetiva", "enunciado": "Na cladística, um grupo taxonômico válido deve ser monofilético. Isso significa que:", "alternativas": [{ "letra": "A", "texto": "Deve conter organismos com o mesmo hábitat." }, { "letra": "B", "texto": "Deve incluir apenas organismos com morfologia idêntica." }, { "letra": "C", "texto": "Deve reunir apenas espécies que compartilham um único ancestral comum." }, { "letra": "D", "texto": "Deve ser formado exclusivamente por espécies extintas." }, { "letra": "E", "texto": "Deve agrupar organismos de um mesmo continente." }], "gabarito": "C" },
+      { "id": "obj_10", "tipo": "objetiva", "enunciado": "A asa de uma borboleta e a asa de um pássaro têm funções semelhantes (voo), mas origens embrionárias completamente diferentes. Esse fenômeno é denominado:", "alternativas": [{ "letra": "A", "texto": "Homologia evolutiva." }, { "letra": "B", "texto": "Cladogênese." }, { "letra": "C", "texto": "Sinapomorfia." }, { "letra": "D", "texto": "Convergência evolutiva." }, { "letra": "E", "texto": "Especiação alopátrica." }], "gabarito": "D" },
+      { "id": "obj_11", "tipo": "objetiva", "enunciado": "Qual das afirmativas sobre o Sars-CoV-2 (causador da covid-19) é CORRETA?", "alternativas": [{ "letra": "A", "texto": "É uma bactéria gram-negativa transmitida por contato com superfícies." }, { "letra": "B", "texto": "É um vírus com genoma de RNA de cadeia simples envolto por envelope lipoproteico com espículas." }, { "letra": "C", "texto": "Pode ser tratado eficazmente com antibióticos de amplo espectro." }, { "letra": "D", "texto": "É um vírus de DNA que se replica no núcleo das células hospedeiras." }, { "letra": "E", "texto": "Pertence ao grupo dos arbovírus transmitidos pelo Aedes aegypti." }], "gabarito": "B" },
+      { "id": "obj_12", "tipo": "objetiva", "enunciado": "As categorias sistemáticas (táxons), ordenadas do mais abrangente ao mais específico, são:", "alternativas": [{ "letra": "A", "texto": "Reino, Divisão, Classe, Família, Ordem, Gênero, Espécie." }, { "letra": "B", "texto": "Reino, Classe, Divisão, Ordem, Família, Gênero, Espécie." }, { "letra": "C", "texto": "Reino, Filo, Classe, Ordem, Família, Gênero, Espécie." }, { "letra": "D", "texto": "Filo, Reino, Classe, Ordem, Família, Gênero, Espécie." }, { "letra": "E", "texto": "Reino, Filo, Ordem, Classe, Família, Gênero, Espécie." }], "gabarito": "C" },
+      { "id": "obj_13", "tipo": "objetiva", "enunciado": "Plasmídios bacterianos são importantes no contexto da resistência a antibióticos porque:", "alternativas": [{ "letra": "A", "texto": "Formam a parede celular que impede a entrada dos antibióticos." }, { "letra": "B", "texto": "São pequenas moléculas de RNA que inativam os antibióticos." }, { "letra": "C", "texto": "São moléculas circulares de DNA que podem carregar genes de resistência e ser transferidos entre bactérias." }, { "letra": "D", "texto": "Compõem o nucleoide e contêm todos os genes essenciais da bactéria." }, { "letra": "E", "texto": "São estruturas de locomoção que permitem às bactérias escapar dos antibióticos." }], "gabarito": "C" },
+      { "id": "obj_14", "tipo": "objetiva", "enunciado": "O braço humano, a nadadeira de foca e a asa de morcego possuem os mesmos ossos, mas desempenham funções diferentes. Essas estruturas são chamadas de:", "alternativas": [{ "letra": "A", "texto": "Órgãos análogos, indicando convergência evolutiva." }, { "letra": "B", "texto": "Órgãos homólogos, indicando ancestralidade comum." }, { "letra": "C", "texto": "Sinapomorfias exclusivas dos mamíferos." }, { "letra": "D", "texto": "Estruturas vestigiais sem função adaptativa." }, { "letra": "E", "texto": "Cladogramas morfológicos de origem independente." }], "gabarito": "B" },
+      { "id": "obj_15", "tipo": "objetiva", "enunciado": "Dizer que a dengue é endêmica no Brasil significa que:", "alternativas": [{ "letra": "A", "texto": "A dengue se espalhou para mais de um continente em onda epidêmica." }, { "letra": "B", "texto": "Houve aumento súbito e inesperado no número de casos de dengue." }, { "letra": "C", "texto": "A doença se mantém em frequência praticamente constante na região." }, { "letra": "D", "texto": "A dengue foi erradicada do Brasil por campanhas de vacinação." }, { "letra": "E", "texto": "A dengue só ocorre em períodos de chuva e desaparece no inverno." }], "gabarito": "C" },
+      { "id": "obj_16", "tipo": "objetiva", "enunciado": "Arqueas diferem das bactérias principalmente porque:", "alternativas": [{ "letra": "A", "texto": "Possuem núcleo celular delimitado por membrana." }, { "letra": "B", "texto": "São multicelulares e possuem organelas membranosas." }, { "letra": "C", "texto": "Apresentam organização gênica distinta e são evolutivamente mais próximas dos eucariontes." }, { "letra": "D", "texto": "São incapazes de viver em ambientes extremos, ao contrário das bactérias." }, { "letra": "E", "texto": "Possuem parede celular de peptidoglicano, enquanto as bactérias não." }], "gabarito": "C" },
+      { "id": "obj_17", "tipo": "objetiva", "enunciado": "O HIV precisa de uma célula hospedeira adequada para infectar o sistema imune humano. Isso demonstra:", "alternativas": [{ "letra": "A", "texto": "Que o HIV possui metabolismo próprio e independente." }, { "letra": "B", "texto": "A especificidade dos alvos virais — cada vírus infecta apenas certos tipos celulares." }, { "letra": "C", "texto": "Que o HIV é classificado como bactéria parasita intracelular." }, { "letra": "D", "texto": "Que vírus com RNA não conseguem se replicar em células humanas." }, { "letra": "E", "texto": "Que o HIV só pode ser transmitido por artrópodes vetores." }], "gabarito": "B" },
+      { "id": "obj_18", "tipo": "objetiva", "enunciado": "(Fuvest-SP adaptada) Um pesquisador verificou ao microscópio eletrônico a ausência de núcleo e de compartimentos membranosos em uma célula. Ela pertence a:", "alternativas": [{ "letra": "A", "texto": "Um fungo." }, { "letra": "B", "texto": "Uma planta." }, { "letra": "C", "texto": "Uma bactéria." }, { "letra": "D", "texto": "Um animal." }, { "letra": "E", "texto": "Um vírus." }], "gabarito": "C" },
+      { "id": "obj_19", "tipo": "objetiva", "enunciado": "A propriedade comum a TODOS os vírus é:", "alternativas": [{ "letra": "A", "texto": "Replicam-se de forma independente, sem necessidade de célula hospedeira." }, { "letra": "B", "texto": "São formados por DNA e carboidratos." }, { "letra": "C", "texto": "Possuem ácido nucleico (DNA ou RNA) envolto por proteínas." }, { "letra": "D", "texto": "Reproduzem-se por divisão binária como as bactérias." }, { "letra": "E", "texto": "Possuem envelope lipídico em todos os casos." }], "gabarito": "C" },
+      { "id": "obj_20", "tipo": "objetiva", "enunciado": "Bactérias e arqueas foram separadas em domínios distintos por Woese. A principal justificativa é:", "alternativas": [{ "letra": "A", "texto": "As arqueas possuem núcleo, ao contrário das bactérias." }, { "letra": "B", "texto": "As bactérias causam doenças, enquanto as arqueas são inofensivas." }, { "letra": "C", "texto": "Análises moleculares revelaram que são geneticamente tão distintas que justificam domínios separados." }, { "letra": "D", "texto": "As arqueas vivem apenas em oceanos, enquanto as bactérias são terrestres." }, { "letra": "E", "texto": "O tamanho celular das arqueas é muito maior que o das bactérias." }], "gabarito": "C" },
+      { "id": "dis_01", "tipo": "discursiva", "enunciado": "Explique a principal diferença estrutural entre uma célula bacteriana e uma célula animal, citando o termo técnico para essa distinção. Em seguida, explique por que antibióticos são eficazes contra bactérias, mas não contra vírus." },
+      { "id": "dis_02", "tipo": "discursiva", "enunciado": "O que são órgãos homólogos e órgãos análogos? Dê um exemplo de cada e explique o que cada tipo de estrutura revela sobre a história evolutiva das espécies que os possuem." },
+      { "id": "dis_03", "tipo": "discursiva", "enunciado": "Diferencie vacina de soro, explicando o mecanismo de ação de cada um e indicando em qual situação (preventiva ou curativa) cada um é indicado. Cite um exemplo real de uso de cada." },
+      { "id": "dis_04", "tipo": "discursiva", "enunciado": "Por que interromper o tratamento com antibiótico antes do prazo é considerado um problema de saúde pública? Relacione sua resposta ao conceito de seleção natural e ao papel dos plasmídios bacterianos." },
+      { "id": "dis_05", "tipo": "discursiva", "enunciado": "A nomenclatura binomial proposta por Lineu é utilizada até hoje. Explique o que é esse sistema, quais são suas regras de escrita e por que ele é preferível ao uso de nomes populares na comunicação científica." }
+    ]
+  }
+}

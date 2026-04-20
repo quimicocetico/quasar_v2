@@ -7,9 +7,20 @@
         "nome": "1 ano (EESPA)",
         "aulas": [
           {
-            "titulo": "Bases Químicas da Vida",
+            "titulo": "Título da Página — Plataforma Quasar",
             "escola": "EESPA",
             "link": "./eespa/1-ano/biologia/aula-bioquimica/index.html",
+            "ativo": true
+          }
+        ]
+      },
+      "2-ano": {
+        "nome": "2 ano (EESPA)",
+        "aulas": [
+          {
+            "titulo": "Aula — Plataforma Quasar",
+            "escola": "EESPA",
+            "link": "./eespa/2-ano/biologia/Classificação Biologica, Vírus e Bactérias/index.html",
             "ativo": true
           }
         ]
