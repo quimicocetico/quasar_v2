@@ -1,0 +1,21 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Função auxiliar para verificar domínio
+    function isEmailInstitucional() {
+      return request.auth != null && (
+        request.auth.token.email.matches('.*@estudante[.]rn[.]gov[.]br') || 
+        request.auth.token.email.matches('.*@educar[.]rn[.]gov[.]br')
+      );
+    }
+
+    // Regras da coleção de atividades
+    match /atividades_alunos/{document=**} {
+      allow read: if isEmailInstitucional(); 
+      allow create: if isEmailInstitucional() 
+                    && request.resource.data.aluno_email == request.auth.token.email;
+      allow update, delete: if false; 
+    }
+  }
+}

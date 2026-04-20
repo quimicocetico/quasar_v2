@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acesso — Plataforma Quasar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body {
+            background-color: #0A0A0F;
+            color: #ffffff;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        /* Bolhas de Fundo */
+        .blob {
+            position: absolute; border-radius: 50%; filter: blur(80px); z-index: -1; opacity: 0.6; animation: float 10s infinite alternate ease-in-out;
+        }
+        .blob-1 { width: 400px; height: 400px; background: rgba(0, 240, 255, 0.15); top: -100px; left: -100px; }
+        .blob-2 { width: 300px; height: 300px; background: rgba(112, 0, 255, 0.15); bottom: -50px; right: -50px; animation-delay: -5s; }
+        @keyframes float { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(20px) scale(1.05); } }
+
+        .login-box {
+            background: rgba(20, 20, 30, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 50px 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            font-weight: 800; font-size: 2rem; letter-spacing: 2px; text-transform: uppercase;
+            background: linear-gradient(90deg, #00F0FF, #7000FF); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        p { color: #94a3b8; font-size: 0.95rem; margin-bottom: 30px; }
+
+        .btn-google {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            width: 100%; padding: 12px; background-color: white; color: #333;
+            border: none; border-radius: 8px; font-weight: 600; font-size: 1rem;
+            cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-google:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255,255,255,0.2); }
+        .btn-google img { width: 20px; height: 20px; }
+
+        #error-msg {
+            color: #ef4444; font-size: 0.85rem; margin-top: 20px; display: none; font-weight: 600; padding: 10px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="login-box">
+        <h1>Quasar</h1>
+        <p>Acesso restrito à rede de ensino do Rio Grande do Norte.</p>
+        
+        <button id="btn-login" class="btn-google">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google Logo">
+            Entrar com Google
+        </button>
+
+        <div id="error-msg"></div>
+    </div>
+
+    <script type="module" src="/app.js"></script>
+    <script type="module">
+        import { loginComGoogle } from '/firebase-config.js';
+
+        document.getElementById('btn-login').addEventListener('click', async () => {
+            const errorBox = document.getElementById('error-msg');
+            const btn = document.getElementById('btn-login');
+            
+            try {
+                errorBox.style.display = 'none';
+                btn.innerHTML = "Autenticando...";
+                btn.disabled = true;
+                
+                await loginComGoogle();
+                // Se der certo, o app.js automaticamente redireciona para o index.html!
+            } catch (error) {
+                // Se der erro (ex: e-mail @gmail), mostra a mensagem e reseta o botão
+                errorBox.textContent = error.message;
+                errorBox.style.display = 'block';
+                btn.innerHTML = `<img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"> Tentar Novamente`;
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

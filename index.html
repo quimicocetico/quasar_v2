@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma Quasar — Portal de Missões</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="global.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #0f172a; 
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* --- BOLHAS DE LUZ NO FUNDO PARA O EFEITO VIDRO --- */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.6;
+            animation: float 10s infinite alternate ease-in-out;
+        }
+
+        .blob-1 {
+            width: 400px;
+            height: 400px;
+            background: #8b5cf6;
+            top: -10%;
+            left: -10%;
+        }
+
+        .blob-2 {
+            width: 500px;
+            height: 500px;
+            background: #06b6d4; 
+            bottom: -20%;
+            right: -10%;
+            animation-delay: -5s;
+        }
+
+        .blob-3 {
+            width: 300px;
+            height: 300px;
+            background: #10b981; 
+            top: 40%;
+            left: 40%;
+            animation-duration: 15s;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(50px, 50px) scale(1.1); }
+        }
+
+        /* --- CABEÇALHO --- */
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #a78bfa, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+
+        p.subtitle {
+            font-size: 1.2rem;
+            color: #cbd5e1;
+            font-weight: 300;
+        }
+
+        /* --- CONTAINER E CARDS GLASSMORPHISM --- */
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1100px;
+            width: 90%;
+            z-index: 1;
+        }
+
+        .quest-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            
+            border-radius: 24px;
+            padding: 40px 30px;
+            text-decoration: none;
+            color: #ffffff;
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quest-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);
+            transform: skewX(-20deg);
+            transition: 0.5s;
+        }
+
+        .quest-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .quest-card:hover::before {
+            left: 150%;
+        }
+
+        .icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 15px rgba(255,255,255,0.3));
+        }
+
+        .quest-card h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+        }
+
+        .quest-card p {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #94a3b8;
+            margin-bottom: 30px;
+            flex-grow: 1;
+        }
+
+        .btn-enter {
+            padding: 12px 28px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            color: #fff;
+            width: 100%;
+        }
+
+        .quest-card:hover .btn-enter {
+            background: #ffffff;
+            color: #0f172a;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .blob { opacity: 0.4; } 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <header>
+        <h1>PLATAFORMA QUASAR</h1>
+        <p class="subtitle">Escolha sua jornada e destrave o conhecimento</p>
+    </header>
+
+    <div class="container">
+        
+       <a href="./catalogo.html" class="quest-card">
+            <div class="icon">📚</div>
+            <h2>Catálogo de Aulas</h2>
+            <p>Explore as trilhas de aprendizagem divididas por disciplina e ano.</p>
+            <div class="btn-enter">Acessar as Aulas</div>
+        </a>
+
+        <a href="./_modules/lousa-interativa/index.html" class="quest-card">
+            <div class="icon">🖍️</div>
+            <h2>Lousa Interativa</h2>
+            <p>Crie e interaja com conteúdos dinâmicos na lousa digital.</p>
+            <div class="btn-enter">Abrir Lousa</div>
+        </a>
+
+        <a href="./_modules/primeira-guerra/index.html" class="quest-card">
+            <div class="icon">⚔️</div>
+            <h2>Timeline 1ª Guerra</h2>
+            <p>Navegue pela linha do tempo da Primeira Guerra Mundial.</p>
+            <div class="btn-enter">Explorar Timeline</div>
+        </a>
+
+        <a href="./_modules/desafio-timeline/index.html" class="quest-card">
+            <div class="icon">⏳</div>
+            <h2>Desafio Timeline</h2>
+            <p>Enfrente desafios históricos e conquiste o domínio temporal.</p>
+            <div class="btn-enter">Iniciar Desafio</div>
+        </a>
+
+    </div>
+
+</body>
+</html>

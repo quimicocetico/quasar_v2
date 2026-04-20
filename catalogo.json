@@ -1,0 +1,29 @@
+{
+  "biologia": {
+    "icone": "🧬",
+    "nome": "Biologia",
+    "turmas": {
+      "1-ano": {
+        "nome": "1 ano (EESPA)",
+        "aulas": [
+          {
+            "titulo": "Bases Químicas da Vida",
+            "escola": "EESPA",
+            "link": "./eespa/1-ano/biologia/aula-bioquimica/index.html",
+            "ativo": true
+          }
+        ]
+      }
+    }
+  },
+  "quimica": {
+    "icone": "🧪",
+    "nome": "Química",
+    "turmas": {}
+  },
+  "fisica": {
+    "icone": "⚛️",
+    "nome": "Física",
+    "turmas": {}
+  }
+}

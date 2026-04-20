@@ -1,0 +1,47 @@
+[debug] [2026-04-20T18:17:38.409Z] ----------------------------------------------------------------------
+[debug] [2026-04-20T18:17:38.411Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\robso\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js serve
+[debug] [2026-04-20T18:17:38.412Z] CLI Version:   15.14.0
+[debug] [2026-04-20T18:17:38.412Z] Platform:      win32
+[debug] [2026-04-20T18:17:38.412Z] Node Version:  v22.20.0
+[debug] [2026-04-20T18:17:38.412Z] Time:          Mon Apr 20 2026 15:17:38 GMT-0300 (Horário Padrão de Brasília)
+[debug] [2026-04-20T18:17:38.412Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-04-20T18:17:39.687Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-04-20T18:17:39.687Z] > authorizing via signed-in user (robson.1347110@educar.rn.gov.br)
+[debug] [2026-04-20T18:17:39.687Z] [iam] checking project quimico-cetico for permissions ["firebase.projects.get"]
+[debug] [2026-04-20T18:17:39.688Z] Checked if tokens are valid: true, expires at: 1776712211293
+[debug] [2026-04-20T18:17:39.688Z] Checked if tokens are valid: true, expires at: 1776712211293
+[debug] [2026-04-20T18:17:39.689Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/quimico-cetico:testIamPermissions [none]
+[debug] [2026-04-20T18:17:39.689Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/quimico-cetico:testIamPermissions  x-goog-user-project=quimico-cetico
+[debug] [2026-04-20T18:17:39.689Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/quimico-cetico:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2026-04-20T18:17:40.072Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/quimico-cetico:testIamPermissions 200
+[debug] [2026-04-20T18:17:40.072Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/quimico-cetico:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2026-04-20T18:17:40.073Z] Checked if tokens are valid: true, expires at: 1776712211293
+[debug] [2026-04-20T18:17:40.073Z] Checked if tokens are valid: true, expires at: 1776712211293
+[debug] [2026-04-20T18:17:40.073Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/quimico-cetico [none]
+[debug] [2026-04-20T18:17:40.703Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/quimico-cetico 200
+[debug] [2026-04-20T18:17:40.704Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/quimico-cetico {"projectNumber":"673165487092","projectId":"quimico-cetico","lifecycleState":"ACTIVE","name":"quimico-cetico","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2026-04-10T13:17:14.724Z","parent":{"type":"organization","id":"1078289072977"}}
+[info] 
+[info] === Serving from 'C:\Users\robso\Documents\github\quasar_v2'...
+[info] 
+[debug] [2026-04-20T18:17:40.706Z] Checked if tokens are valid: true, expires at: 1776712211293
+[debug] [2026-04-20T18:17:40.706Z] Checked if tokens are valid: true, expires at: 1776712211293
+[debug] [2026-04-20T18:17:40.706Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/quimico-cetico/sites 
+[debug] [2026-04-20T18:17:41.868Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/quimico-cetico/sites 200
+[debug] [2026-04-20T18:17:41.868Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/quimico-cetico/sites {"sites":[{"name":"projects/quimico-cetico/sites/quimico-cetico","defaultUrl":"https://quimico-cetico.web.app","appId":"1:673165487092:web:dc60ee2fcd6f5347d227a1","type":"DEFAULT_SITE"}]}
+[debug] [2026-04-20T18:17:41.868Z] Checked if tokens are valid: true, expires at: 1776712211293
+[debug] [2026-04-20T18:17:41.868Z] Checked if tokens are valid: true, expires at: 1776712211293
+[debug] [2026-04-20T18:17:41.868Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/quimico-cetico/webApps/1:673165487092:web:dc60ee2fcd6f5347d227a1/config [none]
+[debug] [2026-04-20T18:17:43.104Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/quimico-cetico/webApps/1:673165487092:web:dc60ee2fcd6f5347d227a1/config 200
+[debug] [2026-04-20T18:17:43.104Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/quimico-cetico/webApps/1:673165487092:web:dc60ee2fcd6f5347d227a1/config {"projectId":"quimico-cetico","appId":"1:673165487092:web:dc60ee2fcd6f5347d227a1","storageBucket":"quimico-cetico.firebasestorage.app","apiKey":"AIzaSyCbX7z9-j9OHgeJ6t5XZx7xc98w9S_nytk","authDomain":"quimico-cetico.firebaseapp.com","messagingSenderId":"673165487092","measurementId":"G-B1LJX5V4F5","projectNumber":"673165487092","version":"2"}
+[debug] [2026-04-20T18:17:43.109Z] Checked if tokens are valid: true, expires at: 1776712211293
+[debug] [2026-04-20T18:17:43.109Z] Checked if tokens are valid: true, expires at: 1776712211293
+[debug] [2026-04-20T18:17:43.110Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/quimico-cetico [none]
+[debug] [2026-04-20T18:17:43.498Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/quimico-cetico 200
+[debug] [2026-04-20T18:17:43.498Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/quimico-cetico {"projectId":"quimico-cetico","projectNumber":"673165487092","displayName":"quimico-cetico","name":"projects/quimico-cetico","resources":{"hostingSite":"quimico-cetico"},"state":"ACTIVE","etag":"1_759dc55e-f157-4ac1-82f4-89ebf92ea5e1"}
+[info] +  hosting[quimico-cetico]: Local server: http://localhost:5000 {"metadata":{"emulator":{"name":"hosting"},"message":"Local server: \u001b[4m\u001b[1mhttp://localhost:5000\u001b[22m\u001b[24m"}}
+[info] i  hosting: ::1 - - [20/Apr/2026:18:17:46 +0000] "GET / HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"::1 - - [20/Apr/2026:18:17:46 +0000] \"GET / HTTP/1.1\" 200 - \"-\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36\""}}
+[info] i  hosting: ::1 - - [20/Apr/2026:18:17:46 +0000] "GET /favicon.ico HTTP/1.1" 404 150 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"::1 - - [20/Apr/2026:18:17:46 +0000] \"GET /favicon.ico HTTP/1.1\" 404 150 \"http://localhost:5000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36\""}}
+[info] i  hosting: ::1 - - [20/Apr/2026:18:17:48 +0000] "GET /catalogo.html HTTP/1.1" 200 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"::1 - - [20/Apr/2026:18:17:48 +0000] \"GET /catalogo.html HTTP/1.1\" 200 - \"http://localhost:5000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36\""}}
+[info] i  hosting: ::1 - - [20/Apr/2026:18:17:48 +0000] "GET /catalogo.json HTTP/1.1" 200 544 "http://localhost:5000/catalogo.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"::1 - - [20/Apr/2026:18:17:48 +0000] \"GET /catalogo.json HTTP/1.1\" 200 544 \"http://localhost:5000/catalogo.html\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36\""}}
+[info] i  hosting: ::1 - - [20/Apr/2026:18:17:52 +0000] "GET /index.html HTTP/1.1" 200 - "http://localhost:5000/catalogo.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"::1 - - [20/Apr/2026:18:17:52 +0000] \"GET /index.html HTTP/1.1\" 200 - \"http://localhost:5000/catalogo.html\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36\""}}

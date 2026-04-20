@@ -1,0 +1,38 @@
+{
+  "name": "quimico-cetico",
+  "version": "1.0.0",
+  "description": "Plataforma educacional interativa para ensino de ciências",
+  "main": "index.html",
+  "scripts": {
+    "predev": "node gerar-catalogo.js",
+    "dev": "firebase serve",
+    "build": "echo 'No build step required for static site'",
+    "deploy": "firebase deploy",
+    "setup": "python setup_obsidian.py",
+    "lint": "echo 'Add linter configuration'",
+    "test": "echo 'Add test scripts'"
+  },
+  "keywords": [
+    "educacao",
+    "gamificacao",
+    "ciencias",
+    "firebase",
+    "web"
+  ],
+  "author": "Equipe Químico Cético",
+  "license": "MIT",
+  "devDependencies": {
+    "firebase-tools": "^12.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/username/quimico-cetico.git"
+  },
+  "bugs": {
+    "url": "https://github.com/username/quimico-cetico/issues"
+  },
+  "homepage": "https://quimico-cetico.web.app"
+}
