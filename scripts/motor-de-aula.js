@@ -2,14 +2,19 @@
 export async function iniciarAula() {
     try {
         const res = await fetch('./aula.json');
+        if (!res.ok) throw new Error("Não foi possível carregar o JSON da aula.");
         const data = await res.json();
 
-        // 1. Setup inicial
-        document.getElementById('aula-titulo').textContent = data.titulo;
-        document.getElementById('aula-subtitulo').textContent = `${data.materia} • ${data.serie}`;
+        // 1. Setup inicial (Com blindagem contra erro 'null')
+        const elTitulo = document.getElementById('aula-titulo');
+        const elSubtitulo = document.getElementById('aula-subtitulo');
+        if (elTitulo) elTitulo.textContent = data.titulo;
+        if (elSubtitulo) elSubtitulo.textContent = `${data.materia} • ${data.serie}`;
         
         const nav = document.getElementById('tabs-nav');
         const container = document.getElementById('tabs-content-container');
+        
+        if (!nav || !container) return; // Se o HTML não carregar a tempo, ele aborta sem quebrar a tela
         
         // 2. Renderizar Abas de Conteúdo
         data.tabs.forEach((tab, index) => {
@@ -60,22 +65,24 @@ function renderizarSecao(secao) {
                 <div class="text-gray-200 italic">${secao.conteudo}</div>`;
             break;
 
-        case 'aprofundamento':
-            const id = 'deep-' + Math.random().toString(36).substr(2, 9);
-            div.className = "my-8";
+        case 'aprofundamento': {
+            // Usando chaves {} no case para evitar conflitos de variáveis. Correção do Vazamento aqui!
+            const id = 'depth-' + Math.random().toString(36).substr(2, 5);
+            div.className = "my-6";
             div.innerHTML = `
-                <button onclick="document.getElementById('${id}').classList.toggle('hidden-content'); document.getElementById('${id}').classList.toggle('show-content')" 
-                        class="w-full flex items-center justify-between p-4 bg-cyan-500/10 border border-cyan-500/30 rounded-xl hover:bg-cyan-500/20 transition-all">
-                    <div class="flex items-center gap-3 text-cyan-400">
-                        <i data-lucide="book-open" class="w-5 h-5"></i>
-                        <span class="font-semibold text-left">Aprofundamento: ${secao.titulo || 'Clique para explorar'}</span>
-                    </div>
-                    <i data-lucide="chevron-down" class="w-5 h-5 text-cyan-500"></i>
+                <button onclick="const el = document.getElementById('${id}'); el.classList.toggle('hidden'); this.querySelector('.chevron-icon').classList.toggle('rotate-180')" 
+                        class="w-full flex items-center justify-between p-4 bg-cyan-500/10 border border-cyan-500/30 rounded-xl hover:bg-cyan-500/20 transition-all group outline-none">
+                    <span class="font-bold text-cyan-400 flex items-center gap-2">
+                        <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                        Aprofundamento: ${secao.titulo || 'Clique para explorar'}
+                    </span>
+                    <i data-lucide="chevron-down" class="chevron-icon w-5 h-5 text-cyan-500 transition-transform duration-300"></i>
                 </button>
-                <div id="${id}" class="deepening-content hidden-content bg-white/5 mt-1 rounded-b-xl px-6 py-4 text-gray-300 border-x border-b border-white/5">
+                <div id="${id}" class="hidden bg-white/5 p-6 rounded-b-xl border-x border-b border-white/10 text-gray-300 overflow-hidden">
                     ${secao.conteudo}
                 </div>`;
             break;
+        }
             
         case 'imagem':
             div.className = "rounded-2xl overflow-hidden border border-white/10 my-8";
@@ -93,15 +100,17 @@ function renderizarSecao(secao) {
 
 function criarBotaoAba(label, id, isActive) {
     const btn = document.createElement('button');
-    btn.className = `tab-btn whitespace-nowrap px-6 py-2.5 rounded-full text-sm font-bold transition-all border ${isActive ? 'bg-cyan-500 border-cyan-400 text-white' : 'border-white/10 text-gray-400 hover:bg-white/5'}`;
+    btn.className = `tab-btn whitespace-nowrap px-6 py-2.5 rounded-full text-sm font-bold transition-all border ${isActive ? 'bg-cyan-500 border-cyan-400 text-white shadow-[0_0_15px_rgba(0,240,255,0.2)]' : 'border-white/10 text-gray-400 hover:bg-white/5'}`;
     btn.textContent = label;
     btn.onclick = () => {
-        document.querySelectorAll('.tab-btn').forEach(b => b.className = 'tab-btn whitespace-nowrap px-6 py-2.5 rounded-full text-sm font-bold transition-all border border-white/10 text-gray-400 hover:bg-white/5');
+        document.querySelectorAll('.tab-btn').forEach(b => {
+            b.className = 'tab-btn whitespace-nowrap px-6 py-2.5 rounded-full text-sm font-bold transition-all border border-white/10 text-gray-400 hover:bg-white/5';
+        });
         btn.className = 'tab-btn whitespace-nowrap px-6 py-2.5 rounded-full text-sm font-bold transition-all border bg-cyan-500 border-cyan-400 text-white shadow-[0_0_15px_rgba(0,240,255,0.2)]';
         
         document.querySelectorAll('.tab-pane, #tab-exercicios').forEach(p => p.classList.add('hidden'));
         const target = (id === 'exercicios') ? document.getElementById('tab-exercicios') : document.getElementById(`tab-content-${id}`);
-        target.classList.remove('hidden');
+        if (target) target.classList.remove('hidden');
     };
     return btn;
 }
@@ -112,17 +121,20 @@ function setupQuiz(questoes, idAtividade) {
     const form = document.getElementById('quiz-form');
     const status = document.getElementById('quiz-status-msg');
     
-    // Verificar se já respondeu
+    // Blindagem de segurança: Se o form não existir no HTML, para a execução sem dar erro.
+    if (!form || !questoes) return;
+    
     const jaRespondeu = localStorage.getItem('respondido_' + idAtividade);
 
-    // Separar e Sortear (8 Objetivas + 2 Discursivas)
     const objetivas = questoes.filter(q => q.tipo === 'objetiva').sort(() => 0.5 - Math.random()).slice(0, 8);
     const discursivas = questoes.filter(q => q.tipo === 'discursiva').sort(() => 0.5 - Math.random()).slice(0, 2);
     const selecionadas = [...objetivas, ...discursivas];
 
+    form.innerHTML = ''; // Limpa form antes de injetar as questões
+
     selecionadas.forEach((q, i) => {
         const qDiv = document.createElement('div');
-        qDiv.className = "bg-white/5 p-6 rounded-2xl border border-white/5";
+        qDiv.className = "bg-white/5 p-6 rounded-2xl border border-white/5 mb-6";
         
         let html = `<p class="font-bold text-lg mb-4 text-white"><span class="text-cyan-500">#${i+1}</span> ${q.enunciado}</p>`;
         
@@ -143,21 +155,30 @@ function setupQuiz(questoes, idAtividade) {
     });
 
     if(!jaRespondeu) {
-        form.innerHTML += `<button type="submit" class="w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl font-bold text-white shadow-lg hover:scale-[1.02] transition-transform">Finalizar e Ver Gabarito</button>`;
+        const btn = document.createElement('button');
+        btn.type = 'submit';
+        btn.className = "w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl font-bold text-white shadow-lg hover:scale-[1.02] transition-transform mt-4";
+        btn.textContent = "Finalizar e Ver Gabarito";
+        form.appendChild(btn);
+
         form.onsubmit = (e) => {
             e.preventDefault();
             localStorage.setItem('respondido_' + idAtividade, 'true');
             mostrarGabarito(selecionadas);
-            window.location.reload(); // Recarrega para aplicar travas e mostrar gabarito limpo
+            window.location.reload(); // Recarrega para aplicar travas
         };
     } else {
-        status.innerHTML = `<div class="bg-green-500/20 text-green-400 p-4 rounded-xl border border-green-500/30 flex items-center gap-3"><i data-lucide="check-circle"></i> Você já concluiu esta atividade. Veja o gabarito abaixo.</div>`;
+        if(status) {
+            status.innerHTML = `<div class="bg-green-500/20 text-green-400 p-4 rounded-xl border border-green-500/30 flex items-center gap-3"><i data-lucide="check-circle"></i> Você já concluiu esta atividade. Veja o gabarito abaixo.</div>`;
+        }
         mostrarGabarito(selecionadas);
     }
 }
 
 function mostrarGabarito(questoes) {
     const result = document.getElementById('quiz-result');
+    if (!result) return; // Se a div não existir, não quebra a página
+    
     result.classList.remove('hidden');
     result.innerHTML = `<h3 class="text-2xl font-bold mb-6 text-cyan-400 border-b border-white/10 pb-4">Gabarito Oficial</h3>`;
     
