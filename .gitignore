@@ -1,0 +1,33 @@
+# ─── Credenciais e Configuração Sensível ─────────────────────────────────────
+.env
+.env.local
+.env.*.local
+firebase-config.local.js   # versão local com credenciais reais (se criar)
+service-account*.json       # chaves de service account do Firebase
+google-credentials*.json
+
+# ─── Firebase ─────────────────────────────────────────────────────────────────
+firebase-debug.log
+firebase-debug.*.log
+.firebase/
+firestore-debug.log
+ui-debug.log
+
+# ─── Node ─────────────────────────────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+
+# ─── Sistema Operacional ──────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── Editores ─────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.suo
+*.user
+
+# ─── Dev / Rascunhos ──────────────────────────────────────────────────────────
+_dev/rascunhos/
+_dev/*.tmp

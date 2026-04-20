@@ -1,42 +1,73 @@
-﻿Markdown
 # Criando Novas Aulas na Plataforma Quasar
 
-Graças à automação implementada via Node.js, criar e disponibilizar uma nova aula na plataforma requer zero configuração de banco de dados ou alteração manual de menus. 
+Graças à automação via Node.js, criar e disponibilizar uma aula requer zero configuração manual de menus ou banco de dados.
 
-Siga este fluxo de trabalho profissional:
+---
 
-## Passo a Passo para Novas Aulas
+## Passo a Passo
 
-**1. Preparando o Terreno:**
-Copie a pasta base de templates (`/_dev/templates/aula-modelo`) e cole dentro da estrutura correta da escola. Exemplo: `/eespa/2-ano/quimica/`. Renomeie a pasta para o tema da aula (ex: `termoquimica`).
+**1. Preparando a pasta**
 
-**2. Desenvolvendo o Conteúdo:**
-Abra o `index.html` da sua nova aula.
-- Altere a tag `<title>` (O robô lerá isso para dar nome à aula no catálogo!).
-- Preencha o conteúdo, os textos e as questões.
-- Se for usar ferramentas de terceiros (Lousa, Simulador PhET, Jogos), incorpore-os via `<iframe src="...">`.
+Copie `/_dev/templates/aula-modelo` para dentro da estrutura correta:
+```
+/eespa/2-ano/quimica/termoquimica/
+```
+Renomeie para o tema da aula. Padrão: minúsculas, sem acentos, sem espaços, hífens.
 
-**3. Configurando o Envio da Missão:**
-No momento de programar o botão final de envio, certifique-se de definir um ID único para o pacote de respostas:
+**2. Head obrigatório**
+
+Toda aula deve ter este `<head>` exato (ordem importa):
+
+```html
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nome da Aula — Plataforma Quasar</title>
+
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+</head>
+```
+
+**⚠️ O `<title>` é lido pelo robô** para nomear a aula no catálogo. Use o nome da aula antes do hífen.  
+Exemplo: `<title>Termoquímica — Plataforma Quasar</title>` → catálogo exibe "Termoquímica".
+
+**3. Gatekeeper nas aulas**
+
+No final do `<body>`, **último script**:
+```html
+<script type="module" src="/app.js"></script>
+```
+
+Nunca implemente lógica de auth dentro da aula. O `app.js` cuida disso.
+
+**4. Configurando o envio da missão**
+
 ```javascript
 const idDaMissao = "eespa_quimica_termoquimica_2ano_v1";
-// A lógica de enviarAtividade() já está disponível globalmente.
-O Robô do Catálogo (Obrigatório)
-Sua aula não aparecerá no sistema até que o robô faça a varredura das pastas. Para atualizar a plataforma e disponibilizar sua aula:
+// enviarAtividade() está disponível via firebase-config.js importado pelo app.js
+```
 
-Abra o terminal na raiz do projeto.
+Padrão de ID: `escola_materia_tema_ano_v{N}` — imutável após o primeiro uso.
 
-Execute o comando: npm run dev
+**5. Rodando o robô do catálogo**
 
-O script gerar-catalogo.js será acionado automaticamente, lerá sua nova pasta e reescreverá o catalogo.json.
+Sua aula não aparece no sistema até o robô varrer as pastas:
 
-Pronto! A aula já está disponível para os alunos via Hub.
+```bash
+npm run dev
+```
 
-Adicionando Jogos e Ferramentas
-Se você programou uma calculadora nova ou um jogo digital, não coloque os arquivos dentro da Plataforma Quasar.
+O script `gerar-catalogo.js` roda automaticamente (via `predev`), lê a pasta nova e reescreve o `catalogo.json`. Pronto.
 
-Suba o jogo no repositório quasar-ferramentas.
+---
 
-Faça o deploy do jogo.
+## Adicionando Ferramentas Externas (Lousa, Simuladores, Jogos)
 
-Pegue o link gerado e coloque dentro da sua aula usando um <iframe>.
+Ferramentas pesadas **não ficam neste repositório**.
+
+1. Suba no repositório `quasar-ferramentas`
+2. Faça o deploy
+3. Incorpore na aula via `<iframe src="URL_DO_DEPLOY">`

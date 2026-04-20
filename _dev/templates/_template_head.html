@@ -1,0 +1,30 @@
+<!--
+  ╔══════════════════════════════════════════════════════════╗
+  ║  HEAD PADRÃO — copie para toda nova página da Quasar     ║
+  ║  Ordem das tags importa. Não altere a sequência.         ║
+  ╚══════════════════════════════════════════════════════════╝
+
+  O Lucide DEVE ser carregado aqui (síncrono) antes do app.js.
+  O Tailwind também. O app.js depende de ambos no momento em
+  que renderizarHeader() é chamado.
+-->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Título da Página — Plataforma Quasar</title>
+
+  <!-- 1. Tailwind (síncrono, necessário para classes do header injetado) -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+
+  <!-- 2. Lucide Icons (DEVE vir antes do app.js) -->
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+
+  <!-- 3. Fonte Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<!--
+  No <body>, o app.js vai como ÚLTIMO script:
+  <script type="module" src="/app.js"></script>
+-->
