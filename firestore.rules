@@ -1,21 +1,86 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // Função auxiliar para verificar domínio
-    function isEmailInstitucional() {
-      return request.auth != null && (
-        request.auth.token.email.matches('.*@estudante[.]rn[.]gov[.]br') || 
-        request.auth.token.email.matches('.*@educar[.]rn[.]gov[.]br')
-      );
+
+    // ─── FUNÇÕES AUXILIARES ──────────────────────────────────────────
+
+    function isAutenticado() {
+      return request.auth != null;
     }
 
-    // Regras da coleção de atividades
-    match /atividades_alunos/{document=**} {
-      allow read: if isEmailInstitucional(); 
-      allow create: if isEmailInstitucional() 
-                    && request.resource.data.aluno_email == request.auth.token.email;
-      allow update, delete: if false; 
+    function isAluno() {
+      return isAutenticado() &&
+        request.auth.token.email.matches('.*@estudante[.]rn[.]gov[.]br');
     }
+
+    function isProfessor() {
+      return isAutenticado() &&
+        request.auth.token.email.matches('.*@educar[.]rn[.]gov[.]br');
+    }
+
+    function isInstitucional() {
+      return isAluno() || isProfessor();
+    }
+
+    function isDonoDaAula() {
+      return isProfessor() &&
+        request.auth.token.email == resource.data.professor_email;
+    }
+
+    function isDonoDaAulaEscrita() {
+      return isProfessor() &&
+        request.auth.token.email == request.resource.data.professor_email;
+    }
+
+    // ─── ATIVIDADES DOS ALUNOS ───────────────────────────────────────
+    // Regra existente — não alterada
+
+    match /atividades_alunos/{document=**} {
+      allow read:   if isInstitucional();
+      allow create: if isInstitucional() &&
+                       request.resource.data.aluno_email == request.auth.token.email;
+      allow update, delete: if false;
+    }
+
+    // ─── AULAS ───────────────────────────────────────────────────────
+
+    match /aulas/{aulaId} {
+      // Aluno lê apenas aulas publicadas
+      allow read: if isAluno() && resource.data.status == 'publicado';
+
+      // Professor lê as próprias aulas (qualquer status)
+      allow read: if isDonoDaAula();
+
+      // Professor cria — professor_email deve ser o próprio email
+      allow create: if isDonoDaAulaEscrita();
+
+      // Professor atualiza as próprias aulas
+      // professor_email é imutável após criação
+      allow update: if isDonoDaAula() &&
+                       request.resource.data.professor_email == resource.data.professor_email;
+
+      // Nunca deleta — só despublica (status: rascunho)
+      allow delete: if false;
+
+      // ─── MÍDIAS (subcoleção) ─────────────────────────────────────
+
+      match /midias/{midiaId} {
+        // Aluno lê mídias de aulas publicadas
+        allow read: if isAluno() &&
+                       get(/databases/$(database)/documents/aulas/$(aulaId)).data.status == 'publicado';
+
+        // Professor lê e escreve mídias das próprias aulas
+        allow read:   if isProfessor() &&
+                         get(/databases/$(database)/documents/aulas/$(aulaId)).data.professor_email
+                         == request.auth.token.email;
+
+        allow create, update: if isProfessor() &&
+                                  get(/databases/$(database)/documents/aulas/$(aulaId)).data.professor_email
+                                  == request.auth.token.email;
+
+        allow delete: if false;
+      }
+    }
+
   }
 }
