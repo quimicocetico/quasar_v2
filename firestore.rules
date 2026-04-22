@@ -54,10 +54,9 @@ service cloud.firestore {
       allow write: if isProfessor();
     }
 
-    // Sessões de Jogo e Ranking em Tempo Real
-    match /sessoes_timeline/{sessionId} {
-      allow read: if isAutenticado();
-      allow write: if isAutenticado();
+    // Sessões de Jogo e Ranking em Tempo Real (Recursivo para subcoleções)
+    match /sessoes_timeline/{allPaths=**} {
+      allow read, write: if isAutenticado();
     }
 
   }
