@@ -48,9 +48,14 @@
             <h2 class="text-2xl font-bold flex items-center gap-3">
               <i data-lucide="graduation-cap" class="text-[#00F0FF]"></i> Estudantes
             </h2>
-            <button onclick="abrirModalAluno()" class="px-4 py-2 bg-[#00F0FF] text-[#0A0F1C] rounded-xl font-bold hover:scale-105 transition-all text-sm">
-              + Matricular Aluno
-            </button>
+            <div class="flex gap-2">
+              <button onclick="abrirModalMassa()" class="px-4 py-2 bg-white/5 border border-white/10 rounded-xl font-bold hover:bg-white/10 transition-all text-sm text-gray-400">
+                Matrícula em Massa
+              </button>
+              <button onclick="abrirModalAluno()" class="px-4 py-2 bg-[#00F0FF] text-[#0A0F1C] rounded-xl font-bold hover:scale-105 transition-all text-sm">
+                + Matricular Aluno
+              </button>
+            </div>
           </div>
           
           <div id="lista-alunos" class="space-y-3">
@@ -136,6 +141,26 @@
         <div class="flex gap-3 pt-2">
           <button onclick="fecharModais()" class="flex-1 py-3 bg-white/5 rounded-xl">Cancelar</button>
           <button id="btn-confirmar-pontos" class="flex-1 py-3 bg-gradient-to-r from-[#FFD700] to-[#FFA500] text-black font-bold rounded-xl">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Matrícula em Massa -->
+  <div id="modal-massa" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
+    <div class="max-w-2xl w-full glass rounded-3xl p-8 shadow-2xl">
+      <h2 class="text-2xl font-bold mb-2">Matrícula em Lote</h2>
+      <p class="text-gray-400 mb-6">Cole aqui a lista de e-mails institucionais (separados por vírgula, espaço ou quebra de linha).</p>
+      
+      <div class="space-y-4">
+        <textarea id="input-massa-emails" class="w-full h-48 bg-white/5 border border-white/10 rounded-2xl p-4 focus:border-[#00F0FF] outline-none transition-all font-mono text-sm" placeholder="exemplo1@estudante.rn.gov.br&#10;exemplo2@estudante.rn.gov.br..."></textarea>
+        
+        <div class="flex justify-between items-center">
+          <span id="contagem-emails" class="text-[#00F0FF] font-bold">0 e-mails detectados</span>
+          <div class="flex gap-3">
+            <button onclick="fecharModais()" class="px-6 py-3 bg-white/5 rounded-xl">Cancelar</button>
+            <button id="btn-processar-massa" class="px-8 py-3 bg-[#00F0FF] text-[#0A0F1C] font-bold rounded-xl">Iniciar Matrícula</button>
+          </div>
         </div>
       </div>
     </div>
@@ -283,13 +308,64 @@
         alert("Pontos atribuídos!");
         fecharModais();
       };
+
+      // Matrícula em Massa
+      document.getElementById('btn-processar-massa').onclick = async () => {
+        const text = document.getElementById('input-massa-emails').value;
+        const emails = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g) || [];
+        
+        if (emails.length === 0) return alert("Nenhum e-mail válido encontrado.");
+        if (emails.length > 500) return alert("Limite de 500 e-mails por vez excedido.");
+
+        const btn = document.getElementById('btn-processar-massa');
+        btn.disabled = true;
+        btn.textContent = "Processando...";
+
+        try {
+          const batch = writeBatch(db);
+          emails.forEach(email => {
+            const ref = doc(collection(db, "matriculas"));
+            batch.set(ref, {
+              email: email.toLowerCase(),
+              escola_id: escolaId,
+              turma_id: turmaId,
+              papel: "aluno",
+              created_at: serverTimestamp()
+            });
+          });
+
+          await batch.commit();
+          alert(`${emails.length} alunos matriculados com sucesso!`);
+          document.getElementById('input-massa-emails').value = '';
+          fecharModais();
+          await carregarAlunos();
+        } catch (e) {
+          console.error(e);
+          alert("Erro ao realizar matrícula em massa.");
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "Iniciar Matrícula";
+        }
+      };
     }
 
     window.abrirModalConfig = () => document.getElementById('modal-config').classList.remove('hidden');
     window.abrirModalAluno = () => document.getElementById('modal-aluno').classList.remove('hidden');
     window.abrirModalPontos = () => document.getElementById('modal-pontos').classList.remove('hidden');
+    window.abrirModalMassa = () => {
+      document.getElementById('modal-massa').classList.remove('hidden');
+      document.getElementById('input-massa-emails').focus();
+    };
+
     window.fecharModais = () => {
-      ['modal-config', 'modal-aluno', 'modal-pontos'].forEach(id => document.getElementById(id).classList.add('hidden'));
+      ['modal-config', 'modal-aluno', 'modal-pontos', 'modal-massa'].forEach(id => document.getElementById(id).classList.add('hidden'));
+    };
+
+    // Lógica de Detecção de E-mails em Tempo Real
+    document.getElementById('input-massa-emails').oninput = (e) => {
+      const text = e.target.value;
+      const emails = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g) || [];
+      document.getElementById('contagem-emails').textContent = `${emails.length} e-mails detectados`;
     };
 
     window.removerAluno = async (matriculaId) => {
