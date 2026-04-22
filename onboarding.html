@@ -17,8 +17,16 @@
       
       <div class="space-y-4">
         <div>
-          <label class="block text-sm font-medium text-gray-300 mb-1">Nome da Escola</label>
-          <input type="text" id="escola-nome" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:border-[#00F0FF] outline-none transition-all" placeholder="Ex: Escola Estadual Quasar">
+          <label class="block text-sm font-medium text-gray-300 mb-1">Selecione sua Escola</label>
+          <select id="escola-id" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:border-[#00F0FF] outline-none transition-all appearance-none">
+            <option value="" class="bg-[#1e293b]">Escolha uma escola...</option>
+            <option value="NEW" class="bg-[#1e293b] font-bold text-[#00F0FF]">+ Cadastrar Nova Escola</option>
+          </select>
+        </div>
+
+        <div id="escola-nova-container" class="hidden animate-in fade-in slide-in-from-top-2 duration-300">
+          <label class="block text-sm font-medium text-gray-300 mb-1">Nome da Nova Escola</label>
+          <input type="text" id="escola-nome-novo" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:border-[#00F0FF] outline-none transition-all" placeholder="Ex: Escola Estadual Quasar">
         </div>
         
         <div>
@@ -52,7 +60,7 @@
 
   <script type="module">
     import { requireAuth } from "./_shared/gatekeeper.js";
-    import { db, doc, getDoc, setDoc, collection, addDoc, serverTimestamp } from "./_shared/db.js";
+    import { db, doc, getDoc, setDoc, collection, addDoc, getDocs, serverTimestamp } from "./_shared/db.js";
 
     requireAuth(async (user) => {
       const userRef = doc(db, "users", user.uid);
@@ -68,34 +76,64 @@
       }
     });
 
-    function setupProfessor(user, userRef) {
+    async function setupProfessor(user, userRef) {
       const btn = document.getElementById('btn-finalizar-professor');
+      const escolaSelect = document.getElementById('escola-id');
+      const escolaNovaDiv = document.getElementById('escola-nova-container');
+      const escolaNomeInput = document.getElementById('escola-nome-novo');
+
+      // 1. Carregar escolas existentes
+      try {
+        const schoolsSnap = await getDocs(collection(db, "escolas"));
+        schoolsSnap.forEach(doc => {
+          const opt = document.createElement('option');
+          opt.value = doc.id;
+          opt.textContent = doc.data().nome;
+          escolaSelect.appendChild(opt);
+        });
+      } catch (e) { console.error("Erro ao carregar escolas:", e); }
+
+      // Mostrar/Ocultar campo de nova escola
+      escolaSelect.onchange = () => {
+        if (escolaSelect.value === 'NEW') {
+          escolaNovaDiv.classList.remove('hidden');
+          escolaNomeInput.focus();
+        } else {
+          escolaNovaDiv.classList.add('hidden');
+        }
+      };
+
       btn.onclick = async () => {
-        const escolaNome = document.getElementById('escola-nome').value.trim();
+        let escolaId = escolaSelect.value;
+        const escolaNovoNome = escolaNomeInput.value.trim();
         const turmaNome = document.getElementById('turma-nome').value.trim();
 
-        if (!escolaNome || !turmaNome) return alert("Preencha todos os campos.");
+        if (!escolaId || !turmaNome) return alert("Selecione uma escola e informe a turma.");
+        if (escolaId === 'NEW' && !escolaNovoNome) return alert("Informe o nome da nova escola.");
 
         btn.disabled = true;
         btn.textContent = "Configurando...";
 
         try {
-          // 1. Criar Escola
-          const escolaRef = await addDoc(collection(db, "escolas"), {
-            nome: escolaNome,
-            professor_uid: user.uid,
-            created_at: serverTimestamp()
-          });
+          // 2. Criar Escola se necessário
+          if (escolaId === 'NEW') {
+            const escolaRef = await addDoc(collection(db, "escolas"), {
+              nome: escolaNovoNome,
+              professor_uid: user.uid,
+              created_at: serverTimestamp()
+            });
+            escolaId = escolaRef.id;
+          }
 
-          // 2. Criar Turma
-          await addDoc(collection(db, "escolas", escolaRef.id, "turmas"), {
+          // 3. Criar Turma
+          await addDoc(collection(db, "escolas", escolaId, "turmas"), {
             nome: turmaNome,
             professor_uid: user.uid,
             created_at: serverTimestamp()
           });
 
-          // 3. Atualizar Profile
-          await setDoc(userRef, { escola_id: escolaRef.id }, { merge: true });
+          // 4. Atualizar Profile
+          await setDoc(userRef, { escola_id: escolaId }, { merge: true });
 
           window.location.href = "/index.html";
         } catch (e) {
@@ -108,8 +146,7 @@
     }
 
     async function setupAluno(user, userRef) {
-      // TODO: Lógica de verificação de matrícula
-      // Por enquanto, apenas simula ou mostra erro se não houver
+      // ... (sem alterações por enquanto)
       setTimeout(async () => {
         document.getElementById('aluno-status-loading').classList.add('hidden');
         document.getElementById('aluno-status-erro').classList.remove('hidden');
