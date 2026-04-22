@@ -75,7 +75,45 @@
 
     requireAuth(async (user) => {
       await carregarDashboard(user);
-      lucide.createIcons();
+
+      // Configurar botão de salvar turma dentro do contexto do usuário
+      document.getElementById('btn-save-turma').onclick = async () => {
+        const nome = document.getElementById('nova-turma-nome').value.trim();
+        if (!nome) return alert("Informe o nome da turma.");
+
+        const btn = document.getElementById('btn-save-turma');
+        btn.disabled = true;
+        btn.textContent = "Criando...";
+
+        try {
+          // 1. Prevenir duplicidade na mesma escola
+          const qCheck = query(collection(db, "escolas", activeEscolaId, "turmas"), where("nome", "==", nome));
+          const snapCheck = await getDocs(qCheck);
+          
+          if (!snapCheck.empty) {
+            alert("Uma turma com este nome já existe nesta escola!");
+            btn.disabled = false;
+            btn.textContent = "Criar Turma";
+            return;
+          }
+
+          // 2. Criar Turma
+          await addDoc(collection(db, "escolas", activeEscolaId, "turmas"), {
+            nome: nome,
+            professor_uid: user.uid,
+            created_at: serverTimestamp()
+          });
+
+          fecharModal();
+          await carregarDashboard(user);
+        } catch (e) {
+          console.error(e);
+          alert("Erro ao criar turma.");
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "Criar Turma";
+        }
+      };
     });
 
     async function carregarDashboard(user) {
@@ -84,9 +122,6 @@
       const empty = document.getElementById('empty-state');
 
       try {
-        // Buscar escolas onde o professor está vinculado
-        // Regra simplificada: Escolas que ele criou ou onde ele tem turmas.
-        // Vamos buscar as escolas do professor.
         const qEscolas = query(collection(db, "escolas"), where("professor_uid", "==", user.uid));
         const snapEscolas = await getDocs(qEscolas);
 
@@ -97,15 +132,11 @@
         }
 
         dashboard.innerHTML = '';
-        
         for (const escolaDoc of snapEscolas.docs) {
           const escola = { id: escolaDoc.id, ...escolaDoc.data() };
-          
-          // Buscar turmas desta escola que pertencem ao professor
           const qTurmas = query(collection(db, "escolas", escola.id, "turmas"), where("professor_uid", "==", user.uid));
           const snapTurmas = await getDocs(qTurmas);
           const turmas = snapTurmas.docs.map(d => ({ id: d.id, ...d.data() }));
-
           dashboard.appendChild(renderizarEscola(escola, turmas));
         }
 
@@ -114,7 +145,6 @@
         lucide.createIcons();
       } catch (e) {
         console.error(e);
-        alert("Erro ao carregar dashboard.");
       }
     }
 
@@ -160,55 +190,6 @@
       document.getElementById('modal-turma').classList.add('hidden');
       document.getElementById('nova-turma-nome').value = '';
     };
-
-    document.getElementById('btn-save-turma').onclick = async () => {
-      const nome = document.getElementById('nova-turma-nome').value.trim();
-      const user = JSON.parse(localStorage.getItem('quasar_user')); // Fallback ou usar state real
-      
-      // Para o dashboard, precisamos do auth real. Vamos pegar do requireAuth.
-      // Vou ajustar a lógica para usar o user do closure do requireAuth.
-    };
-
-    // Ajuste da lógica de salvamento dentro do requireAuth para ter acesso ao 'user'
-    requireAuth((user) => {
-      document.getElementById('btn-save-turma').onclick = async () => {
-        const nome = document.getElementById('nova-turma-nome').value.trim();
-        if (!nome) return alert("Informe o nome da turma.");
-
-        const btn = document.getElementById('btn-save-turma');
-        btn.disabled = true;
-        btn.textContent = "Criando...";
-
-        try {
-          // 1. Prevenir duplicidade na mesma escola
-          const qCheck = query(collection(db, "escolas", activeEscolaId, "turmas"), where("nome", "==", nome));
-          const snapCheck = await getDocs(qCheck);
-          
-          if (!snapCheck.empty) {
-            alert("Uma turma com este nome já existe nesta escola!");
-            btn.disabled = false;
-            btn.textContent = "Criar Turma";
-            return;
-          }
-
-          // 2. Criar Turma
-          await addDoc(collection(db, "escolas", activeEscolaId, "turmas"), {
-            nome: nome,
-            professor_uid: user.uid,
-            created_at: serverTimestamp()
-          });
-
-          fecharModal();
-          await carregarDashboard(user);
-        } catch (e) {
-          console.error(e);
-          alert("Erro ao criar turma.");
-        } finally {
-          btn.disabled = false;
-          btn.textContent = "Criar Turma";
-        }
-      };
-    });
   </script>
 </body>
 </html>
