@@ -169,9 +169,9 @@
                 <div class="font-bold">${t.nome}</div>
                 <div class="text-xs text-gray-500">0 Alunos</div>
               </div>
-              <button class="p-2 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-colors">
+              <a href="/gerenciar-turma.html?escola=${escola.id}&turma=${t.id}" class="p-2 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-colors">
                 <i data-lucide="settings" class="w-4 h-4"></i>
-              </button>
+              </a>
             </div>
           `).join('') || '<p class="text-gray-500 italic col-span-full">Nenhuma turma cadastrada nesta escola.</p>'}
         </div>
