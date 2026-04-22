@@ -854,6 +854,9 @@ function renderRanking(docs) {
     const data = d.data();
     if (data.burst) bursts++;
 
+    const p1 = data.player1 || (data.nome ? data.nome.split('&')[0] : 'Jogador');
+    const p2 = data.player2 || (data.nome && data.nome.includes('&') ? data.nome.split('&')[1] : '');
+
     const item = document.createElement('div');
     item.className = 'ranking-item';
     item.style.animationDelay = `${i * 0.06}s`;
@@ -865,7 +868,7 @@ function renderRanking(docs) {
     item.innerHTML = `
       ${posHtml}
       <div class="rank-info">
-        <div class="rank-duo">${data.player1 || data.nome.split('&')[0]} & ${data.player2 || data.nome.split('&')[1] || ''}</div>
+        <div class="rank-duo">${p1} ${p2 ? '& ' + p2 : ''}</div>
         <div class="rank-meta">
           <span class="rank-tag">🎯 ${data.answeredCount || 0} questões</span>
           <span class="rank-tag">⚡ Seq. ${data.streak || 0}</span>

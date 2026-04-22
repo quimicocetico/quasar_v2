@@ -1295,6 +1295,7 @@ window.openDetail = function(eventId) {
     : '📖 Apenas Leitura';
 
   openModal('detailModal');
+  saveProgress(); // Atualiza o status (lastUpdate) ao explorar um evento
 }
 
 // ============ OPEN QUIZ ============
@@ -1538,8 +1539,11 @@ function subscribeRanking() {
 async function saveProgress() {
   if (!challengeId || !gameState.player1) return;
   
-  // Criar um ID único para a dupla baseado nos nomes
-  const duplaId = btoa(`${gameState.player1}-${gameState.player2}-${gameState.turma}`).replace(/[^a-zA-Z0-9]/g, '');
+  // Criar um ID seguro para a dupla (limpa espaços e caracteres especiais)
+  const safeP1 = gameState.player1.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const safeP2 = gameState.player2.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const safeTurma = gameState.turma.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const duplaId = `${safeP1}_${safeP2}_${safeTurma}`;
 
   try {
     // Salva no documento individual da dupla
