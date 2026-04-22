@@ -1587,6 +1587,18 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/fi
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
+    // Preenche automaticamente o nome do primeiro aluno (Guerreiro 1)
+    if (user.displayName) {
+      const firstName = user.displayName.split(' ')[0];
+      const p1Input = document.getElementById('player1Input');
+      if (p1Input) {
+        p1Input.value = firstName;
+        p1Input.readOnly = true;
+        p1Input.style.opacity = '0.7';
+        p1Input.title = "Nome identificado pelo login institucional";
+      }
+    }
+
     init().then(() => {
       document.getElementById('loadingScreen').classList.add('hidden');
     });
