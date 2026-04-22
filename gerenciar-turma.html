@@ -49,6 +49,9 @@
               <i data-lucide="graduation-cap" class="text-[#00F0FF]"></i> Estudantes
             </h2>
             <div class="flex gap-2">
+              <button onclick="limparTurma()" class="p-2 text-red-500/50 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all" title="Limpar todos os alunos">
+                <i data-lucide="trash-2" class="w-5 h-5"></i>
+              </button>
               <button onclick="abrirModalMassa()" class="px-4 py-2 bg-white/5 border border-white/10 rounded-xl font-bold hover:bg-white/10 transition-all text-sm text-gray-400">
                 Matrícula em Massa
               </button>
@@ -407,6 +410,29 @@
         } catch (e) {
           console.error(e);
           alert("Erro ao remover aluno.");
+        }
+      }
+    };
+
+    window.limparTurma = async () => {
+      if (confirm("⚠️ ATENÇÃO: Deseja remover TODOS os alunos desta turma? Esta ação não pode ser desfeita.")) {
+        try {
+          const q = query(collection(db, "matriculas"), where("turma_id", "==", turmaId), where("escola_id", "==", escolaId));
+          const snap = await getDocs(q);
+          
+          if (snap.empty) return alert("A turma já está vazia.");
+
+          const batch = writeBatch(db);
+          snap.docs.forEach(d => {
+            batch.delete(d.ref);
+          });
+
+          await batch.commit();
+          alert(`${snap.size} matrículas removidas.`);
+          await carregarAlunos();
+        } catch (e) {
+          console.error(e);
+          alert("Erro ao limpar turma.");
         }
       }
     };
