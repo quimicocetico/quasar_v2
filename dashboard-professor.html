@@ -15,15 +15,15 @@
 </head>
 <body class="bg-[#0A0F1C] text-white font-['Outfit'] min-h-screen">
 
-  <main class="max-w-5xl mx-auto px-4 py-12">
-    <div class="flex justify-between items-center mb-10">
-      <div>
-        <h1 class="text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-[#00F0FF] to-[#7000FF]">Painel do Mestre</h1>
-        <p class="text-gray-400 mt-2">Gerencie suas escolas e turmas do Quasar.</p>
+  <main class="max-w-5xl mx-auto px-4 py-8 md:py-12">
+    <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-6 mb-10">
+      <div class="text-center md:text-left">
+        <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-[#00F0FF] to-[#7000FF]">Painel do Mestre</h1>
+        <p class="text-gray-400 mt-2 text-sm md:text-base">Gerencie suas escolas e turmas do Quasar.</p>
       </div>
-      <a href="/index.html" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all">
+      <a href="/index.html" class="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all w-full md:w-auto">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
-        <span>Voltar ao Hub</span>
+        <span class="font-bold">Voltar ao Hub</span>
       </a>
     </div>
 
@@ -159,30 +159,30 @@
 
     function renderizarEscola(escola, turmas) {
       const div = document.createElement('div');
-      div.className = 'glass rounded-3xl p-8';
+      div.className = 'glass rounded-3xl p-4 md:p-8';
       div.innerHTML = `
-        <div class="flex justify-between items-start mb-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
-            <h2 class="text-2xl font-bold">${escola.nome}</h2>
-            <p class="text-gray-500 text-sm">ID: ${escola.id}</p>
+            <h2 class="text-xl md:text-2xl font-bold">${escola.nome}</h2>
+            <p class="text-gray-500 text-xs md:text-sm">ID: ${escola.id}</p>
           </div>
-          <button onclick="window.abrirModal('${escola.id}', '${escola.nome}')" class="flex items-center gap-2 px-4 py-2 bg-[#00F0FF]/10 text-[#00F0FF] border border-[#00F0FF]/20 rounded-xl hover:bg-[#00F0FF]/20 transition-all text-sm font-bold">
+          <button onclick="window.abrirModal('${escola.id}', '${escola.nome}')" class="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-[#00F0FF]/10 text-[#00F0FF] border border-[#00F0FF]/20 rounded-xl hover:bg-[#00F0FF]/20 transition-all text-sm font-bold">
             <i data-lucide="plus" class="w-4 h-4"></i>
             Nova Turma
           </button>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
           ${turmas.map(t => `
-            <div class="p-4 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-between">
+            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-between group hover:bg-white/10 transition-all">
               <div>
-                <div class="font-bold">${t.nome}</div>
-                <div class="text-xs text-gray-500">${t.alunoCount || 0} Alunos</div>
+                <div class="font-bold text-lg md:text-base">${t.nome}</div>
+                <div class="text-xs text-gray-500 uppercase tracking-wider font-semibold">${t.alunoCount || 0} Alunos</div>
               </div>
-              <a href="/gerenciar-turma.html?escola=${escola.id}&turma=${t.id}" class="p-2 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-colors">
-                <i data-lucide="settings" class="w-4 h-4"></i>
+              <a href="/gerenciar-turma.html?escola=${escola.id}&turma=${t.id}" class="p-3 bg-white/5 md:bg-transparent md:p-2 hover:bg-white/10 rounded-xl text-[#00F0FF] md:text-gray-400 md:hover:text-white transition-all">
+                <i data-lucide="settings" class="w-5 h-5 md:w-4 md:h-4"></i>
               </a>
             </div>
-          `).join('') || '<p class="text-gray-500 italic col-span-full">Nenhuma turma cadastrada nesta escola.</p>'}
+          `).join('') || '<p class="text-gray-500 italic col-span-full py-4 text-center">Nenhuma turma cadastrada nesta escola.</p>'}
         </div>
       `;
       return div;
