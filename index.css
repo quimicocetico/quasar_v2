@@ -142,3 +142,7 @@
 @media (max-width: 640px) {
     .blob { opacity: 0.3; }
 }
+
+/* Role-based visibility */
+body:not([data-role="professor"]) .professor-only { display: none !important; }
+body:not([data-role="aluno"]) .aluno-only { display: none !important; }

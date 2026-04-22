@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard do Professor — Quasar</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .glass { background: rgba(17,24,39,0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
+    .btn-action { transition: all 0.2s; }
+    .btn-action:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,240,255,0.2); }
+  </style>
+</head>
+<body class="bg-[#0A0F1C] text-white font-['Outfit'] min-h-screen">
+
+  <main class="max-w-5xl mx-auto px-4 py-12">
+    <div class="flex justify-between items-center mb-10">
+      <div>
+        <h1 class="text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-[#00F0FF] to-[#7000FF]">Painel do Mestre</h1>
+        <p class="text-gray-400 mt-2">Gerencie suas escolas e turmas do Quasar.</p>
+      </div>
+      <a href="/index.html" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+        <span>Voltar ao Hub</span>
+      </a>
+    </div>
+
+    <div id="loading-state" class="flex justify-center py-20">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00F0FF]"></div>
+    </div>
+
+    <div id="dashboard-content" class="hidden space-y-8">
+      <!-- Escolas serão injetadas aqui -->
+    </div>
+
+    <div id="empty-state" class="hidden text-center py-20 glass rounded-3xl">
+      <div class="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i data-lucide="school" class="w-8 h-8 text-gray-500"></i>
+      </div>
+      <h3 class="text-xl font-bold">Nenhuma escola encontrada</h3>
+      <p class="text-gray-400 mt-2 mb-6">Você ainda não está vinculado a nenhuma instituição.</p>
+      <a href="/onboarding.html" class="px-6 py-3 bg-[#00F0FF] text-[#0A0F1C] font-bold rounded-xl btn-action inline-block">
+        Configurar Escola
+      </a>
+    </div>
+  </main>
+
+  <!-- Modal Nova Turma -->
+  <div id="modal-turma" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
+    <div class="max-w-md w-full glass rounded-3xl p-8 shadow-2xl">
+      <h2 class="text-2xl font-bold mb-2">Nova Turma</h2>
+      <p class="text-gray-400 mb-6" id="modal-escola-nome">Escola...</p>
+      
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-1">Nome da Turma</label>
+          <input type="text" id="nova-turma-nome" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:border-[#00F0FF] outline-none transition-all" placeholder="Ex: 8º Ano B">
+        </div>
+        <div class="flex gap-3">
+          <button onclick="fecharModal()" class="flex-1 py-3 bg-white/5 hover:bg-white/10 rounded-xl font-medium transition-all">Cancelar</button>
+          <button id="btn-save-turma" class="flex-1 py-3 bg-[#00F0FF] text-[#0A0F1C] font-bold rounded-xl btn-action">Criar Turma</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/app.js"></script>
+  <script type="module">
+    import { requireAuth } from "./_shared/gatekeeper.js";
+    import { db, collection, getDocs, addDoc, query, where, serverTimestamp } from "./_shared/db.js";
+
+    let activeEscolaId = null;
+
+    requireAuth(async (user) => {
+      await carregarDashboard(user);
+      lucide.createIcons();
+    });
+
+    async function carregarDashboard(user) {
+      const dashboard = document.getElementById('dashboard-content');
+      const loading = document.getElementById('loading-state');
+      const empty = document.getElementById('empty-state');
+
+      try {
+        // Buscar escolas onde o professor está vinculado
+        // Regra simplificada: Escolas que ele criou ou onde ele tem turmas.
+        // Vamos buscar as escolas do professor.
+        const qEscolas = query(collection(db, "escolas"), where("professor_uid", "==", user.uid));
+        const snapEscolas = await getDocs(qEscolas);
+
+        if (snapEscolas.empty) {
+          loading.classList.add('hidden');
+          empty.classList.remove('hidden');
+          return;
+        }
+
+        dashboard.innerHTML = '';
+        
+        for (const escolaDoc of snapEscolas.docs) {
+          const escola = { id: escolaDoc.id, ...escolaDoc.data() };
+          
+          // Buscar turmas desta escola que pertencem ao professor
+          const qTurmas = query(collection(db, "escolas", escola.id, "turmas"), where("professor_uid", "==", user.uid));
+          const snapTurmas = await getDocs(qTurmas);
+          const turmas = snapTurmas.docs.map(d => ({ id: d.id, ...d.data() }));
+
+          dashboard.appendChild(renderizarEscola(escola, turmas));
+        }
+
+        loading.classList.add('hidden');
+        dashboard.classList.remove('hidden');
+        lucide.createIcons();
+      } catch (e) {
+        console.error(e);
+        alert("Erro ao carregar dashboard.");
+      }
+    }
+
+    function renderizarEscola(escola, turmas) {
+      const div = document.createElement('div');
+      div.className = 'glass rounded-3xl p-8';
+      div.innerHTML = `
+        <div class="flex justify-between items-start mb-6">
+          <div>
+            <h2 class="text-2xl font-bold">${escola.nome}</h2>
+            <p class="text-gray-500 text-sm">ID: ${escola.id}</p>
+          </div>
+          <button onclick="window.abrirModal('${escola.id}', '${escola.nome}')" class="flex items-center gap-2 px-4 py-2 bg-[#00F0FF]/10 text-[#00F0FF] border border-[#00F0FF]/20 rounded-xl hover:bg-[#00F0FF]/20 transition-all text-sm font-bold">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            Nova Turma
+          </button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          ${turmas.map(t => `
+            <div class="p-4 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-between">
+              <div>
+                <div class="font-bold">${t.nome}</div>
+                <div class="text-xs text-gray-500">0 Alunos</div>
+              </div>
+              <button class="p-2 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-colors">
+                <i data-lucide="settings" class="w-4 h-4"></i>
+              </button>
+            </div>
+          `).join('') || '<p class="text-gray-500 italic col-span-full">Nenhuma turma cadastrada nesta escola.</p>'}
+        </div>
+      `;
+      return div;
+    }
+
+    window.abrirModal = (id, nome) => {
+      activeEscolaId = id;
+      document.getElementById('modal-escola-nome').textContent = nome;
+      document.getElementById('modal-turma').classList.remove('hidden');
+      document.getElementById('nova-turma-nome').focus();
+    };
+
+    window.fecharModal = () => {
+      document.getElementById('modal-turma').classList.add('hidden');
+      document.getElementById('nova-turma-nome').value = '';
+    };
+
+    document.getElementById('btn-save-turma').onclick = async () => {
+      const nome = document.getElementById('nova-turma-nome').value.trim();
+      const user = JSON.parse(localStorage.getItem('quasar_user')); // Fallback ou usar state real
+      
+      // Para o dashboard, precisamos do auth real. Vamos pegar do requireAuth.
+      // Vou ajustar a lógica para usar o user do closure do requireAuth.
+    };
+
+    // Ajuste da lógica de salvamento dentro do requireAuth para ter acesso ao 'user'
+    requireAuth((user) => {
+      document.getElementById('btn-save-turma').onclick = async () => {
+        const nome = document.getElementById('nova-turma-nome').value.trim();
+        if (!nome) return alert("Informe o nome da turma.");
+
+        const btn = document.getElementById('btn-save-turma');
+        btn.disabled = true;
+        btn.textContent = "Criando...";
+
+        try {
+          // 1. Prevenir duplicidade na mesma escola
+          const qCheck = query(collection(db, "escolas", activeEscolaId, "turmas"), where("nome", "==", nome));
+          const snapCheck = await getDocs(qCheck);
+          
+          if (!snapCheck.empty) {
+            alert("Uma turma com este nome já existe nesta escola!");
+            btn.disabled = false;
+            btn.textContent = "Criar Turma";
+            return;
+          }
+
+          // 2. Criar Turma
+          await addDoc(collection(db, "escolas", activeEscolaId, "turmas"), {
+            nome: nome,
+            professor_uid: user.uid,
+            created_at: serverTimestamp()
+          });
+
+          fecharModal();
+          await carregarDashboard(user);
+        } catch (e) {
+          console.error(e);
+          alert("Erro ao criar turma.");
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "Criar Turma";
+        }
+      };
+    });
+  </script>
+</body>
+</html>

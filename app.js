@@ -4,8 +4,8 @@ import { db, doc, getDoc, setDoc, serverTimestamp } from "./_shared/db.js";
 import { signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 import { auth } from "./firebase-config.js";
 
-const isLoginPage = window.location.pathname.endsWith('login.html');
-const isOnboardingPage = window.location.pathname.endsWith('onboarding.html');
+const isLoginPage = window.location.pathname.includes('login');
+const isOnboardingPage = window.location.pathname.includes('onboarding');
 
 // ─── 1. Estilos globais injetados uma única vez ───────────────────────────────
 document.head.insertAdjacentHTML('beforeend', `
@@ -119,9 +119,23 @@ function atualizarHeaderUsuario(user, profile) {
     }
 
     authBtn.innerHTML = `
-      <i data-lucide="log-out" class="w-4 h-4 text-red-400"></i>
-      <span class="text-red-400 font-medium">Sair da Conta</span>
+      ${papel === 'professor' ? `
+        <a href="/dashboard-professor.html" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-sm transition-colors mb-1">
+          <i data-lucide="layout-dashboard" class="w-4 h-4 text-[#00F0FF]"></i>
+          <span>Painel do Mestre</span>
+        </a>
+      ` : ''}
+      <button id="auth-signout-btn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-sm transition-colors">
+        <i data-lucide="log-out" class="w-4 h-4 text-red-400"></i>
+        <span class="text-red-400 font-medium">Sair da Conta</span>
+      </button>
     `;
+
+    document.getElementById('auth-signout-btn').onclick = async () => {
+      await signOut(auth);
+      window.location.href = '/login.html';
+    };
+
     if (window.lucide) lucide.createIcons();
   } else {
     headerName.textContent = 'Entrar';
@@ -129,43 +143,48 @@ function atualizarHeaderUsuario(user, profile) {
 }
 
 // ─── 3. Lógica de Gatekeeper e Onboarding ─────────────────────────────────────
-if (!isLoginPage) {
-  requireAuth(async (user) => {
-    if (isLoginPage) return;
+// ─── 3. Lógica de Gatekeeper e Onboarding ─────────────────────────────────────
+requireAuth(async (user) => {
+  // Se estamos na página de login e o usuário já está autenticado, vai para o index
+  if (isLoginPage && user) {
+    window.location.href = "/index.html";
+    return;
+  }
 
-    renderizarHeader();
-    
-    const userRef = doc(db, "users", user.uid);
-    const snap = await getDoc(userRef);
+  if (isLoginPage) return;
 
-    if (!snap.exists()) {
-      // Primeiro acesso — criar profile
-      const papel = user.email.endsWith('@educar.rn.gov.br') ? "professor" : "aluno";
-      const profile = {
-        nome: user.displayName,
-        email: user.email,
-        papel: papel,
-        created_at: serverTimestamp()
-      };
-      await setDoc(userRef, profile);
-      atualizarHeaderUsuario(user, profile);
-      
-      if (!isOnboardingPage) window.location.href = "/onboarding.html";
-      return;
-    }
+  renderizarHeader();
+  
+  const userRef = doc(db, "users", user.uid);
+  const snap = await getDoc(userRef);
 
-    const profile = snap.data();
+  if (!snap.exists()) {
+    // Primeiro acesso — criar profile
+    const papel = user.email.endsWith('@educar.rn.gov.br') ? "professor" : "aluno";
+    const profile = {
+      nome: user.displayName,
+      email: user.email,
+      papel: papel,
+      created_at: serverTimestamp()
+    };
+    await setDoc(userRef, profile);
     atualizarHeaderUsuario(user, profile);
+    
+    if (!isOnboardingPage) window.location.href = "/onboarding.html";
+    return;
+  }
 
-    if (!profile.escola_id && !isOnboardingPage) {
-      window.location.href = "/onboarding.html";
-      return;
-    }
+  const profile = snap.data();
+  atualizarHeaderUsuario(user, profile);
 
-    // Se já tiver escola e estiver na onboarding, vai pro index
-    if (profile.escola_id && isOnboardingPage) {
-      window.location.href = "/index.html";
-      return;
-    }
-  });
-}
+  if (!profile.escola_id && !isOnboardingPage) {
+    window.location.href = "/onboarding.html";
+    return;
+  }
+
+  // Se já tiver escola e estiver na onboarding, vai pro index
+  if (profile.escola_id && isOnboardingPage) {
+    window.location.href = "/index.html";
+    return;
+  }
+});
