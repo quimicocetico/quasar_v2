@@ -332,10 +332,9 @@ body::before {
 .tl-card-side {
   width: calc(50% - 36px);
   padding: 0 24px;
-  display: flex;
 }
-.tl-node-wrap.left .tl-card-side { justify-content: flex-end; text-align: right; }
-.tl-node-wrap.right .tl-card-side { justify-content: flex-start; text-align: left; }
+.tl-node-wrap.left .tl-card-side { text-align: right; }
+.tl-node-wrap.right .tl-card-side { text-align: left; }
 
 .tl-node-center {
   width: 72px;
@@ -411,8 +410,6 @@ body::before {
   cursor: pointer;
   transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
   margin-bottom: 4px;
-  max-width: 280px; /* Garante que o conteúdo fique perto da linha */
-  width: 100%;
   animation: cardReveal 0.7s cubic-bezier(0.34,1.56,0.64,1) both;
 }
 .tl-card-preview:hover {
@@ -1155,22 +1152,22 @@ window.startGame = async function() {
 
   console.log('Iniciando missão para:', p1, p2);
   gameState.player1 = p1;
-  // Criar um ID seguro para a dupla (limpa espaços e caracteres especiais)
-  const safeP1 = gameState.player1.toLowerCase().replace(/[^a-z0-9]/g, '');
-  const safeP2 = gameState.player2.toLowerCase().replace(/[^a-z0-9]/g, '');
-  const safeTurma = gameState.turma.toLowerCase().replace(/[^a-z0-9]/g, '');
-  const duplaId = `${safeP1}_${safeP2}_${safeTurma}`;
+  gameState.player2 = p2;
+  gameState.turma = t;
 
-  // Verificar se já existe progresso no Firebase
+  // Lógica de Recuperação de Progresso (Checkpoint)
   try {
-    const docRef = doc(db, 'sessoes_timeline', challengeId, 'jogadores', duplaId);
-    const snap = await getDoc(docRef);
+    const safeP1 = gameState.player1.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const safeP2 = gameState.player2.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const safeTurma = gameState.turma.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const duplaId = `${safeP1}_${safeP2}_${safeTurma}`;
+
+    const snap = await getDoc(doc(db, 'sessoes_timeline', challengeId, 'jogadores', duplaId));
     if (snap.exists()) {
       const data = snap.data();
-      if (confirm(`⚔️ Olá Guerreiros! Encontramos um progresso salvo com ${data.score} pontos. Desejam continuar de onde pararam?`)) {
+      if (confirm(`⚔️ Olá Guerreiros! Encontramos um progresso salvo (${data.score} pts). Desejam continuar?`)) {
         gameState.score = data.score || 0;
         gameState.streak = data.streak || 0;
-        gameState.burst = data.burst || false;
         gameState.answeredEvents = data.respostas || {};
         gameState.answeredCount = data.answeredCount || 0;
         gameState.multiplier = data.burst ? 1.5 : 1.0;
@@ -1194,8 +1191,9 @@ window.startGame = async function() {
   buildTimeline();
   subscribeRanking();
   
-  // Força o salvamento/atualização no ranking
+  // Força o primeiro salvamento para aparecer no ranking
   await saveProgress();
+  console.log('Progresso inicial salvo no Firebase');
 }
 
 // ============ TIMELINE ============
@@ -1257,27 +1255,22 @@ function buildTimeline() {
 
       const preview = document.createElement('div');
       preview.className = 'tl-card-preview';
-      // Recupera visualmente se já foi respondido
-      if (gameState.answeredEvents[ev.id]) preview.classList.add('complete');
-
       preview.id = `card_${ev.id}`;
       preview.onclick = () => openDetail(ev.id);
       const hasQ = ev.questao ? true : false;
       const alreadyDone = gameState.answeredEvents[ev.id];
-      
       preview.innerHTML = `
         <div class="card-year">${ev.ano || ''}</div>
         <div class="card-title">${ev.titulo}</div>
         <div class="card-hint">${hasQ ? (alreadyDone ? '✅ Completada' : '📜 Contém questão') : '📖 Leitura'}</div>`;
+      if (alreadyDone) preview.classList.add('complete');
       cardSide.appendChild(preview);
 
       const center = document.createElement('div');
       center.className = 'tl-node-center';
       const node = document.createElement('div');
       node.className = 'tl-node';
-      // Recupera visualmente se já foi respondido
       if (gameState.answeredEvents[ev.id]) node.classList.add('complete');
-      
       node.id = `node_${ev.id}`;
       node.textContent = ev.icone || '📌';
       node.onclick = () => openDetail(ev.id);
@@ -1295,9 +1288,11 @@ function buildTimeline() {
         wrap.appendChild(center);
         wrap.appendChild(emptySide);
       }
+
       sideToggle = !sideToggle;
-    
-      container.appendChild(wrap);
+    }
+
+    container.appendChild(wrap);
 
     // Animate in on scroll
     const observer = new IntersectionObserver((entries) => {
@@ -1339,9 +1334,9 @@ window.openDetail = function(eventId) {
 
   const quizBtn = document.getElementById('detailQuizBtn');
   const alreadyAnswered = gameState.answeredEvents[eventId];
-  quizBtn.disabled = !ev.questao; // Só desativa se não houver questão
+  quizBtn.disabled = alreadyAnswered || !ev.questao;
   quizBtn.textContent = alreadyAnswered
-    ? '👁️ REVISAR RESPOSTA'
+    ? '✓ Questão já respondida'
     : ev.questao
     ? '📜 RESPONDER QUESTÃO   +10 pts'
     : '📖 Apenas Leitura';
@@ -1365,24 +1360,14 @@ window.openQuiz = function() {
   const optsEl = document.getElementById('quizOptions');
   optsEl.innerHTML = '';
   const letters = ['A','B','C','D','E'];
-  const alreadyAnswered = gameState.answeredEvents[currentEventId];
 
   ev.questao.opcoes.forEach((opt, i) => {
     const btn = document.createElement('button');
     btn.className = 'quiz-opt';
-    if (alreadyAnswered) {
-      btn.disabled = true;
-      if (i === ev.questao.correta) btn.classList.add('correct');
-    }
     btn.innerHTML = `<span class="quiz-opt-letter">${letters[i]}</span>${opt}`;
-    if (!alreadyAnswered) btn.onclick = () => answerQuestion(i, ev);
+    btn.onclick = () => answerQuestion(i, ev);
     optsEl.appendChild(btn);
   });
-
-  if (alreadyAnswered) {
-    document.getElementById('quizFeedback').className = 'quiz-feedback correct-fb';
-    document.getElementById('quizFeedback').textContent = '✓ Você já completou este desafio.';
-  }
 
   openModal('quizModal');
 }
@@ -1395,12 +1380,8 @@ function answerQuestion(selectedIdx, ev) {
 
   opts.forEach((btn, i) => {
     btn.disabled = true;
-    if (isCorrect) {
-      if (i === correct) btn.classList.add('correct');
-    } else {
-      if (i === selectedIdx) btn.classList.add('wrong');
-      // Não mostra a correta se errou
-    }
+    if (i === correct) btn.classList.add('correct');
+    if (i === selectedIdx && !isCorrect) btn.classList.add('wrong');
   });
 
   const feedback = document.getElementById('quizFeedback');
