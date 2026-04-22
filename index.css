@@ -87,6 +87,7 @@
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 20px;
     padding: 1.25rem 1rem; /* Padding reduzido para mobile */
+    min-height: 160px; /* Altura mínima para alinhar botões */
     text-decoration: none;
     color: #ffffff;
     transition: all 0.35s ease;
@@ -147,6 +148,7 @@
 }
 
 .btn-enter {
+    margin-top: auto; /* Empurra o botão para a base do card */
     padding: 8px 12px;
     background: rgba(0, 240, 255, 0.08);
     border: 1px solid rgba(0, 240, 255, 0.2);

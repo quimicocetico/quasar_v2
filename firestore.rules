@@ -53,7 +53,7 @@ service cloud.firestore {
                   || isProfessor();
       allow create: if isProfessor();
       allow update: if isProfessor();
-      allow delete: if false;
+      allow delete: if isAutenticado();
     }
 
     // ─── CATÁLOGO CODEX ──────────────────────────────────────────
