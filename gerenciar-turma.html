@@ -173,7 +173,7 @@
   <script type="module" src="/app.js"></script>
   <script type="module">
     import { requireAuth } from "./_shared/gatekeeper.js";
-    import { db, doc, getDoc, setDoc, updateDoc, deleteDoc, collection, getDocs, query, where, addDoc, serverTimestamp } from "./_shared/db.js";
+    import { db, doc, getDoc, setDoc, updateDoc, deleteDoc, writeBatch, collection, getDocs, query, where, addDoc, serverTimestamp } from "./_shared/db.js";
 
     const params = new URLSearchParams(window.location.search);
     const escolaId = params.get('escola');
