@@ -1102,6 +1102,17 @@ async function init() {
     gameState.totalQuestions = challengeData.events.filter(e => e.tipo === 'detalhe' && e.questao).length;
 
     document.getElementById('challengeTitle').textContent = challengeData.titulo || 'Desafio Histórico';
+    
+    // Preenche automaticamente a turma se estiver no JSON
+    if (challengeData.turma) {
+      const tInput = document.getElementById('turmaInput');
+      if (tInput) {
+        tInput.value = challengeData.turma;
+        tInput.readOnly = true;
+        tInput.style.opacity = '0.7';
+      }
+    }
+
     showScreen('loginScreen');
   } catch (err) {
     console.error(err);
@@ -1295,9 +1306,9 @@ window.openDetail = function(eventId) {
 
   const quizBtn = document.getElementById('detailQuizBtn');
   const alreadyAnswered = gameState.answeredEvents[eventId];
-  quizBtn.disabled = alreadyAnswered || !ev.questao;
+  quizBtn.disabled = !ev.questao; // Só desativa se não houver questão
   quizBtn.textContent = alreadyAnswered
-    ? '✓ Questão já respondida'
+    ? '👁️ REVISAR RESPOSTA'
     : ev.questao
     ? '📜 RESPONDER QUESTÃO   +10 pts'
     : '📖 Apenas Leitura';
@@ -1321,14 +1332,24 @@ window.openQuiz = function() {
   const optsEl = document.getElementById('quizOptions');
   optsEl.innerHTML = '';
   const letters = ['A','B','C','D','E'];
+  const alreadyAnswered = gameState.answeredEvents[currentEventId];
 
   ev.questao.opcoes.forEach((opt, i) => {
     const btn = document.createElement('button');
     btn.className = 'quiz-opt';
+    if (alreadyAnswered) {
+      btn.disabled = true;
+      if (i === ev.questao.correta) btn.classList.add('correct');
+    }
     btn.innerHTML = `<span class="quiz-opt-letter">${letters[i]}</span>${opt}`;
-    btn.onclick = () => answerQuestion(i, ev);
+    if (!alreadyAnswered) btn.onclick = () => answerQuestion(i, ev);
     optsEl.appendChild(btn);
   });
+
+  if (alreadyAnswered) {
+    document.getElementById('quizFeedback').className = 'quiz-feedback correct-fb';
+    document.getElementById('quizFeedback').textContent = '✓ Você já completou este desafio.';
+  }
 
   openModal('quizModal');
 }
@@ -1341,8 +1362,12 @@ function answerQuestion(selectedIdx, ev) {
 
   opts.forEach((btn, i) => {
     btn.disabled = true;
-    if (i === correct) btn.classList.add('correct');
-    if (i === selectedIdx && !isCorrect) btn.classList.add('wrong');
+    if (isCorrect) {
+      if (i === correct) btn.classList.add('correct');
+    } else {
+      if (i === selectedIdx) btn.classList.add('wrong');
+      // Não mostra a correta se errou
+    }
   });
 
   const feedback = document.getElementById('quizFeedback');
