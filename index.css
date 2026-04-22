@@ -45,17 +45,17 @@
     }
 }
 
-/* Grid de cards - Mobile First */
+/* Grid de cards - Mobile First (Grid Compacto) */
 .container {
     display: grid;
-    grid-template-columns: 1fr; /* Coluna única no mobile */
-    gap: 1rem;
+    grid-template-columns: repeat(2, 1fr); /* 2 colunas no mobile */
+    gap: 0.75rem;
     width: 100%;
     max-width: 1200px;
     z-index: 1;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 768px) {
     .container {
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         gap: 1.5rem;
@@ -79,16 +79,6 @@
     font-weight: 300;
 }
 
-/* Grid de cards */
-.container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1.5rem;
-    max-width: 1100px;
-    width: 100%;
-    z-index: 1;
-}
-
 /* Cards */
 .quest-card {
     background: rgba(255, 255, 255, 0.04);
@@ -96,7 +86,7 @@
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 20px;
-    padding: 2.5rem 1.75rem;
+    padding: 1.25rem 1rem; /* Padding reduzido para mobile */
     text-decoration: none;
     color: #ffffff;
     transition: all 0.35s ease;
@@ -108,39 +98,41 @@
     overflow: hidden;
 }
 
-.quest-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%;
-    width: 50%; height: 100%;
-    background: linear-gradient(to right, transparent, rgba(255,255,255,0.06), transparent);
-    transform: skewX(-20deg);
-    transition: 0.5s;
+@media (min-width: 768px) {
+    .quest-card {
+        padding: 2.5rem 1.75rem;
+    }
 }
-
-.quest-card:hover {
-    transform: translateY(-8px);
-    background: rgba(255, 255, 255, 0.07);
-    border-color: rgba(0, 240, 255, 0.25);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 240, 255, 0.05);
-}
-
-.quest-card:hover::before { left: 150%; }
 
 .quest-card .icon {
-    font-size: 3.5rem;
-    margin-bottom: 1.25rem;
+    font-size: 2.5rem; /* Ícone menor no mobile */
+    margin-bottom: 0.75rem;
     filter: drop-shadow(0 0 12px rgba(255,255,255,0.2));
 }
 
+@media (min-width: 768px) {
+    .quest-card .icon {
+        font-size: 3.5rem;
+        margin-bottom: 1.25rem;
+    }
+}
+
 .quest-card h2 {
-    font-size: 1.3rem;
+    font-size: 1rem; /* Título menor no mobile */
     font-weight: 700;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
     color: #f1f5f9;
 }
 
+@media (min-width: 768px) {
+    .quest-card h2 {
+        font-size: 1.3rem;
+        margin-bottom: 0.75rem;
+    }
+}
+
 .quest-card p {
+    display: none; /* Ocultar descrição no mobile compacto */
     font-size: 0.9rem;
     line-height: 1.6;
     color: #64748b;
@@ -148,15 +140,21 @@
     flex-grow: 1;
 }
 
+@media (min-width: 768px) {
+    .quest-card p {
+        display: block;
+    }
+}
+
 .btn-enter {
-    padding: 10px 24px;
+    padding: 8px 12px;
     background: rgba(0, 240, 255, 0.08);
     border: 1px solid rgba(0, 240, 255, 0.2);
     border-radius: 50px;
-    font-weight: 600;
-    font-size: 0.82rem;
+    font-weight: 700;
+    font-size: 0.7rem;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
     transition: all 0.3s;
     color: #00F0FF;
     width: 100%;
