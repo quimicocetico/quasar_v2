@@ -1129,12 +1129,17 @@ function hideAllScreens() {
 }
 
 // ============ START GAME ============
-window.startGame = function() {
+window.startGame = async function() {
   const p1 = document.getElementById('player1Input').value.trim();
   const p2 = document.getElementById('player2Input').value.trim();
   const t = document.getElementById('turmaInput').value.trim();
-  if (!p1 || !p2 || !t) { alert('Insira os nomes dos guerreiros e a turma!'); return; }
+  
+  if (!p1 || !p2 || !t) { 
+    alert('Insira os nomes dos guerreiros e a turma!'); 
+    return; 
+  }
 
+  console.log('Iniciando missão para:', p1, p2);
   gameState.player1 = p1;
   gameState.player2 = p2;
   gameState.turma = t;
@@ -1149,7 +1154,10 @@ window.startGame = function() {
 
   buildTimeline();
   subscribeRanking();
-  saveProgress();
+  
+  // Força o primeiro salvamento para aparecer no ranking
+  await saveProgress();
+  console.log('Progresso inicial salvo no Firebase');
 }
 
 // ============ TIMELINE ============
@@ -1547,18 +1555,21 @@ async function saveProgress() {
 
   try {
     // Salva no documento individual da dupla
-    await setDoc(doc(db, 'sessoes_timeline', challengeId, 'jogadores', duplaId), {
+    const payload = {
       nome: `${gameState.player1} & ${gameState.player2}`,
       player1: gameState.player1,
       player2: gameState.player2,
       turma: gameState.turma,
-      score: gameState.score,
-      streak: gameState.streak,
-      burst: gameState.burst,
-      answeredCount: gameState.answeredCount,
-      respostas: gameState.answeredEvents,
+      score: gameState.score || 0,
+      streak: gameState.streak || 0,
+      burst: gameState.burst || false,
+      answeredCount: gameState.answeredCount || 0,
+      respostas: gameState.answeredEvents || {},
       lastUpdate: Date.now()
-    }, { merge: true });
+    };
+
+    await setDoc(doc(db, 'sessoes_timeline', challengeId, 'jogadores', duplaId), payload, { merge: true });
+    console.log('SaveProgress sucesso:', duplaId);
 
     // Atualiza metadados da sessão (opcional)
     await setDoc(doc(db, 'sessoes_timeline', challengeId), {

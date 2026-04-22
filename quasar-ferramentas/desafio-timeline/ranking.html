@@ -816,7 +816,10 @@ async function endChallenge() {
 
 // ============ RANKING ============
 function subscribeRanking(id) {
+  if (!id) return;
   if (rankingUnsub) rankingUnsub();
+
+  console.log('Iniciando escuta do ranking para o desafio:', id);
 
   // Escuta a subcoleção de jogadores dentro da sessão atual
   const q = query(
@@ -825,9 +828,13 @@ function subscribeRanking(id) {
   );
 
   rankingUnsub = onSnapshot(q, (snap) => {
+    console.log(`Ranking atualizado: ${snap.size} jogadores encontrados.`);
     renderRanking(snap.docs);
   }, (err) => {
-    console.warn('Erro no ranking:', err);
+    console.error('ERRO CRÍTICO NO RANKING:', err);
+    if (err.code === 'failed-precondition') {
+      console.warn('DICA: Você precisa criar um índice no Firestore. Verifique o link no erro acima.');
+    }
   });
 }
 
