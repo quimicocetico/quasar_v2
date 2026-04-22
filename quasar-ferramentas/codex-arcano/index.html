@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Codex Arcano — Quasar</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .glass { background: rgba(17,24,39,0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
+    .card-arcane { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); perspective: 1000px; }
+    .card-arcane:hover { transform: translateY(-10px) rotateY(10deg); }
+    .locked { filter: grayscale(1) brightness(0.5); opacity: 0.5; cursor: not-allowed; }
+    .locked::after { content: '🔒'; position: absolute; inset: 0; display: flex; items-center: center; justify-content: center; font-size: 3rem; opacity: 0.5; }
+    body { background: radial-gradient(circle at center, #1e1b4b 0%, #020617 100%); }
+    .rarity-comum { border-color: #94a3b8; }
+    .rarity-raro { border-color: #3b82f6; box-shadow: 0 0 15px rgba(59,130,246,0.3); }
+    .rarity-epico { border-color: #a855f7; box-shadow: 0 0 20px rgba(168,85,247,0.4); }
+    .rarity-lendario { border-color: #eab308; box-shadow: 0 0 25px rgba(234,179,8,0.5); animation: pulse-glow 2s infinite; }
+    @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 20px rgba(234,179,8,0.4); } 50% { box-shadow: 0 0 40px rgba(234,179,8,0.7); } }
+  </style>
+</head>
+<body class="text-white font-['Outfit'] min-h-screen">
+  <main class="max-w-7xl mx-auto px-4 py-12">
+    <header class="flex flex-col md:flex-row justify-between items-end gap-6 mb-16">
+      <div>
+        <h1 class="text-6xl font-black tracking-tighter mb-2 italic bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">CODEX ARCANO</h1>
+        <p class="text-gray-400 font-medium">Sua coleção mística de conhecimentos e conquistas.</p>
+      </div>
+      <div class="flex gap-4">
+        <div class="glass px-6 py-3 rounded-2xl flex items-center gap-3">
+          <i data-lucide="layers" class="text-blue-400"></i>
+          <span class="text-xl font-bold" id="inventory-count">0/0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Filtros -->
+    <div class="flex flex-wrap gap-4 mb-12">
+      <button class="px-6 py-2 rounded-full glass border-[#00F0FF]/30 text-[#00F0FF] font-bold">Todos</button>
+      <button class="px-6 py-2 rounded-full glass border-white/10 hover:border-white/30 transition-all">Química</button>
+      <button class="px-6 py-2 rounded-full glass border-white/10 hover:border-white/30 transition-all">História</button>
+      <button class="px-6 py-2 rounded-full glass border-white/10 hover:border-white/30 transition-all">Conquistas</button>
+    </div>
+
+    <!-- Galeria -->
+    <div id="codex-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+      <!-- Skeleton Loading -->
+      <div class="h-80 glass rounded-3xl animate-pulse"></div>
+      <div class="h-80 glass rounded-3xl animate-pulse"></div>
+      <div class="h-80 glass rounded-3xl animate-pulse"></div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { requireAuth } from "../../_shared/gatekeeper.js";
+    import { db, collection, getDocs, onSnapshot } from "../../_shared/db.js";
+
+    requireAuth(async (user) => {
+      await initCodex(user);
+    });
+
+    async function initCodex(user) {
+      const grid = document.getElementById('codex-grid');
+      
+      try {
+        // 1. Carregar Catálogo Global
+        const snapCat = await getDocs(collection(db, "codex"));
+        const catalogo = snapCat.docs.map(d => ({ id: d.id, ...d.data() }));
+
+        // 2. Escutar Inventário do Usuário em Real-time
+        onSnapshot(collection(db, "users", user.uid, "inventario"), (snapInv) => {
+          const obtidas = new Set(snapInv.docs.map(d => d.id));
+          renderizarGaleria(catalogo, obtidas);
+          document.getElementById('inventory-count').textContent = `${obtidas.size}/${catalogo.length}`;
+        });
+      } catch (e) {
+        console.error(e);
+        grid.innerHTML = `<div class="col-span-full text-center py-20 text-red-400">Erro ao carregar o Codex.</div>`;
+      }
+    }
+
+    function renderizarGaleria(catalogo, obtidas) {
+      const grid = document.getElementById('codex-grid');
+      grid.innerHTML = catalogo.map(item => {
+        const isLocked = !obtidas.has(item.id);
+        return `
+          <div class="card-arcane relative aspect-[3/4] glass rounded-3xl p-4 flex flex-col justify-between border-2 overflow-hidden rarity-${item.raridade || 'comum'} ${isLocked ? 'locked' : ''}">
+            <div class="absolute top-0 right-0 p-3">
+              <span class="text-[10px] font-black uppercase tracking-widest px-2 py-1 bg-black/40 rounded-lg">${item.raridade || 'comum'}</span>
+            </div>
+            
+            <div class="h-2/3 flex items-center justify-center text-6xl">
+              ${item.emoji || '🔮'}
+            </div>
+
+            <div>
+              <h3 class="font-black text-lg leading-tight uppercase mb-1">${item.nome}</h3>
+              <p class="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">${item.categoria || 'Arcano'}</p>
+            </div>
+
+            <!-- Glow Effect -->
+            <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-blue-500/20 blur-3xl rounded-full"></div>
+          </div>
+        `;
+      }).join('');
+      
+      if (window.lucide) lucide.createIcons();
+    }
+  </script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 import { requireAuth } from "../../_shared/gatekeeper.js";
-import { db, collection, onSnapshot, doc, updateDoc, addDoc, serverTimestamp } from "../../_shared/db.js";
+import { db, collection, onSnapshot, doc, updateDoc, addDoc, serverTimestamp, increment } from "../../_shared/db.js";
 
 export function initRanking(renderFn) {
   requireAuth((user) => {
@@ -28,11 +28,9 @@ export async function atribuirPontos(temporadaId, casaId, pontos, motivo, alunoI
       created_at: serverTimestamp()
     });
 
-    // 2. Atualizar total (nota: em prod usar increment(), aqui simplificado)
-    const snap = await getDoc(casaRef);
-    const atual = snap.data().pontos_total || 0;
+    // 2. Atualizar total de forma atômica
     await updateDoc(casaRef, {
-      pontos_total: atual + pontos
+      pontos_total: increment(pontos)
     });
 
     return true;
