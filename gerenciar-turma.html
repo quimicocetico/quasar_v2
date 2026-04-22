@@ -111,10 +111,14 @@
   <div id="modal-aluno" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
     <div class="max-w-md w-full glass rounded-3xl p-8 shadow-2xl">
       <h2 class="text-2xl font-bold mb-2">Matricular Estudante</h2>
-      <p class="text-gray-400 mb-6">Insira o e-mail institucional do aluno para adicioná-lo à turma.</p>
+      <p class="text-gray-400 mb-6">Insira os dados do aluno para adicioná-lo à turma.</p>
       <div class="space-y-4">
         <div>
-          <label class="block text-sm font-medium text-gray-300 mb-1">E-mail</label>
+          <label class="block text-sm font-medium text-gray-300 mb-1">Nome Completo</label>
+          <input type="text" id="novo-aluno-nome" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:border-[#00F0FF] outline-none transition-all" placeholder="Ex: João Silva">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-1">E-mail Institucional</label>
           <input type="email" id="novo-aluno-email" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:border-[#00F0FF] outline-none transition-all" placeholder="exemplo@estudante.rn.gov.br">
         </div>
         <div class="flex gap-3">
@@ -150,10 +154,10 @@
   <div id="modal-massa" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
     <div class="max-w-2xl w-full glass rounded-3xl p-8 shadow-2xl">
       <h2 class="text-2xl font-bold mb-2">Matrícula em Lote</h2>
-      <p class="text-gray-400 mb-6">Cole aqui a lista de e-mails institucionais (separados por vírgula, espaço ou quebra de linha).</p>
+      <p class="text-gray-400 mb-6">Cole aqui a lista. Formatos aceitos: <b>"Nome;Email"</b> ou apenas e-mails.</p>
       
       <div class="space-y-4">
-        <textarea id="input-massa-emails" class="w-full h-48 bg-white/5 border border-white/10 rounded-2xl p-4 focus:border-[#00F0FF] outline-none transition-all font-mono text-sm" placeholder="exemplo1@estudante.rn.gov.br&#10;exemplo2@estudante.rn.gov.br..."></textarea>
+        <textarea id="input-massa-emails" class="w-full h-48 bg-white/5 border border-white/10 rounded-2xl p-4 focus:border-[#00F0FF] outline-none transition-all font-mono text-sm" placeholder="João Silva;joao@estudante.rn.gov.br&#10;Maria Souza;maria@estudante.rn.gov.br"></textarea>
         
         <div class="flex justify-between items-center">
           <span id="contagem-emails" class="text-[#00F0FF] font-bold">0 e-mails detectados</span>
@@ -232,8 +236,8 @@
                 <i data-lucide="user" class="w-5 h-5 text-gray-500"></i>
               </div>
               <div>
-                <div class="font-bold text-gray-200">${aluno.email}</div>
-                <div class="text-xs text-gray-500">Matriculado em ${dateStr}</div>
+                <div class="font-bold text-gray-200">${aluno.nome || 'Estudante'}</div>
+                <div class="text-xs text-gray-500">${aluno.email} • ${dateStr}</div>
               </div>
             </div>
             <button onclick="removerAluno('${d.id}')" class="p-2 text-red-500/50 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all">
@@ -275,16 +279,20 @@
 
       // Matricular Aluno
       document.getElementById('btn-save-aluno').onclick = async () => {
+        const nome = document.getElementById('novo-aluno-nome').value.trim();
         const email = document.getElementById('novo-aluno-email').value.trim();
-        if (!email) return;
+        if (!email) return alert("E-mail é obrigatório.");
         
         await addDoc(collection(db, "matriculas"), {
-          email,
+          nome: nome || email.split('@')[0],
+          email: email.toLowerCase(),
           escola_id: escolaId,
           turma_id: turmaId,
           papel: "aluno",
           created_at: serverTimestamp()
         });
+        document.getElementById('novo-aluno-nome').value = '';
+        document.getElementById('novo-aluno-email').value = '';
         fecharModais();
         await carregarAlunos();
       };
@@ -312,10 +320,9 @@
       // Matrícula em Massa
       document.getElementById('btn-processar-massa').onclick = async () => {
         const text = document.getElementById('input-massa-emails').value;
-        const emails = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g) || [];
+        const lines = text.split(/\n/).filter(line => line.trim());
         
-        if (emails.length === 0) return alert("Nenhum e-mail válido encontrado.");
-        if (emails.length > 500) return alert("Limite de 500 e-mails por vez excedido.");
+        if (lines.length === 0) return alert("Nenhuma linha encontrada.");
 
         const btn = document.getElementById('btn-processar-massa');
         btn.disabled = true;
@@ -323,19 +330,37 @@
 
         try {
           const batch = writeBatch(db);
-          emails.forEach(email => {
-            const ref = doc(collection(db, "matriculas"));
-            batch.set(ref, {
-              email: email.toLowerCase(),
-              escola_id: escolaId,
-              turma_id: turmaId,
-              papel: "aluno",
-              created_at: serverTimestamp()
-            });
+          let count = 0;
+
+          lines.forEach(line => {
+            // Suporta "Nome;Email" ou "Email"
+            let [nome, email] = line.split(';').map(s => s.trim());
+            if (!email && nome.includes('@')) {
+              email = nome;
+              nome = email.split('@')[0];
+            }
+
+            if (email && email.includes('@')) {
+              const ref = doc(collection(db, "matriculas"));
+              batch.set(ref, {
+                nome: nome || email.split('@')[0],
+                email: email.toLowerCase(),
+                escola_id: escolaId,
+                turma_id: turmaId,
+                papel: "aluno",
+                created_at: serverTimestamp()
+              });
+              count++;
+            }
           });
 
-          await batch.commit();
-          alert(`${emails.length} alunos matriculados com sucesso!`);
+          if (count > 0) {
+            await batch.commit();
+            alert(`${count} alunos matriculados com sucesso!`);
+          } else {
+            alert("Nenhum e-mail válido encontrado nas linhas fornecidas.");
+          }
+
           document.getElementById('input-massa-emails').value = '';
           fecharModais();
           await carregarAlunos();
