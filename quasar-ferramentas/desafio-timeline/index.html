@@ -1296,9 +1296,8 @@ function buildTimeline() {
         wrap.appendChild(emptySide);
       }
       sideToggle = !sideToggle;
-    });
-
-    container.appendChild(wrap);
+    
+      container.appendChild(wrap);
 
     // Animate in on scroll
     const observer = new IntersectionObserver((entries) => {
