@@ -332,9 +332,10 @@ body::before {
 .tl-card-side {
   width: calc(50% - 36px);
   padding: 0 24px;
+  display: flex;
 }
-.tl-node-wrap.left .tl-card-side { text-align: right; }
-.tl-node-wrap.right .tl-card-side { text-align: left; }
+.tl-node-wrap.left .tl-card-side { justify-content: flex-end; text-align: right; }
+.tl-node-wrap.right .tl-card-side { justify-content: flex-start; text-align: left; }
 
 .tl-node-center {
   width: 72px;
@@ -410,6 +411,8 @@ body::before {
   cursor: pointer;
   transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
   margin-bottom: 4px;
+  max-width: 280px; /* Garante que o conteúdo fique perto da linha */
+  width: 100%;
   animation: cardReveal 0.7s cubic-bezier(0.34,1.56,0.64,1) both;
 }
 .tl-card-preview:hover {
@@ -1152,8 +1155,33 @@ window.startGame = async function() {
 
   console.log('Iniciando missão para:', p1, p2);
   gameState.player1 = p1;
-  gameState.player2 = p2;
-  gameState.turma = t;
+  // Criar um ID seguro para a dupla (limpa espaços e caracteres especiais)
+  const safeP1 = gameState.player1.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const safeP2 = gameState.player2.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const safeTurma = gameState.turma.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const duplaId = `${safeP1}_${safeP2}_${safeTurma}`;
+
+  // Verificar se já existe progresso no Firebase
+  try {
+    const docRef = doc(db, 'sessoes_timeline', challengeId, 'jogadores', duplaId);
+    const snap = await getDoc(docRef);
+    if (snap.exists()) {
+      const data = snap.data();
+      if (confirm(`⚔️ Olá Guerreiros! Encontramos um progresso salvo com ${data.score} pontos. Desejam continuar de onde pararam?`)) {
+        gameState.score = data.score || 0;
+        gameState.streak = data.streak || 0;
+        gameState.burst = data.burst || false;
+        gameState.answeredEvents = data.respostas || {};
+        gameState.answeredCount = data.answeredCount || 0;
+        gameState.multiplier = data.burst ? 1.5 : 1.0;
+        updateHUD();
+        updateStreakDots(gameState.streak);
+        console.log('Progresso recuperado do Firebase');
+      }
+    }
+  } catch (err) {
+    console.warn('Erro ao tentar recuperar progresso:', err);
+  }
 
   hideAllScreens();
   document.getElementById('timelineContainer').style.display = 'block';
@@ -1166,9 +1194,8 @@ window.startGame = async function() {
   buildTimeline();
   subscribeRanking();
   
-  // Força o primeiro salvamento para aparecer no ranking
+  // Força o salvamento/atualização no ranking
   await saveProgress();
-  console.log('Progresso inicial salvo no Firebase');
 }
 
 // ============ TIMELINE ============
@@ -1230,19 +1257,27 @@ function buildTimeline() {
 
       const preview = document.createElement('div');
       preview.className = 'tl-card-preview';
+      // Recupera visualmente se já foi respondido
+      if (gameState.answeredEvents[ev.id]) preview.classList.add('complete');
+
       preview.id = `card_${ev.id}`;
       preview.onclick = () => openDetail(ev.id);
       const hasQ = ev.questao ? true : false;
+      const alreadyDone = gameState.answeredEvents[ev.id];
+      
       preview.innerHTML = `
         <div class="card-year">${ev.ano || ''}</div>
         <div class="card-title">${ev.titulo}</div>
-        <div class="card-hint">${hasQ ? '📜 Contém questão' : '📖 Leitura'}</div>`;
+        <div class="card-hint">${hasQ ? (alreadyDone ? '✅ Completada' : '📜 Contém questão') : '📖 Leitura'}</div>`;
       cardSide.appendChild(preview);
 
       const center = document.createElement('div');
       center.className = 'tl-node-center';
       const node = document.createElement('div');
       node.className = 'tl-node';
+      // Recupera visualmente se já foi respondido
+      if (gameState.answeredEvents[ev.id]) node.classList.add('complete');
+      
       node.id = `node_${ev.id}`;
       node.textContent = ev.icone || '📌';
       node.onclick = () => openDetail(ev.id);
