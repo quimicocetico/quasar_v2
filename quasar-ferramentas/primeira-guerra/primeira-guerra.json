@@ -1,0 +1,231 @@
+{
+  "titulo": "Primeira Guerra Mundial — Causas, Desenvolvimento e Legado",
+
+  "events": [
+
+    {
+      "id": "evt_era_pre",
+      "tipo": "contexto",
+      "era": "Antecedentes (1870–1913)",
+      "ano": "",
+      "titulo": "Era dos Antecedentes — Europa tensa e armada",
+      "icone": "🌍"
+    },
+
+    {
+      "id": "evt_unif_alemanha",
+      "tipo": "contexto",
+      "era": "Antecedentes (1870–1913)",
+      "ano": "1871",
+      "titulo": "Unificação Alemã e novo equilíbrio de poder",
+      "icone": "🦅"
+    },
+
+    {
+      "id": "evt_triplice_alianca",
+      "tipo": "detalhe",
+      "era": "Antecedentes (1870–1913)",
+      "ano": "1882",
+      "titulo": "Formação da Tríplice Aliança",
+      "icone": "⚔️",
+      "imagem": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Europe_1914_alliances.svg/800px-Europe_1914_alliances.svg.png",
+      "conteudo": "Em 1882, Alemanha, Áustria-Hungria e Itália formaram a Tríplice Aliança, um pacto de defesa mútua que reconfigurou o equilíbrio europeu. O acordo surgiu do temor alemão ao isolamento diplomático e da rivalidade austro-húngara com a Rússia nos Bálcãs. A Itália, apesar de membro fundador, abandonaria o bloco em 1915, ao ingressar na guerra ao lado da Entente.",
+      "questao": {
+        "pergunta": "Qual era o principal objetivo da Tríplice Aliança ao ser formada em 1882?",
+        "opcoes": [
+          "Promover a expansão colonial conjunta na África",
+          "Garantir defesa mútua e evitar o isolamento diplomático da Alemanha",
+          "Unificar os territórios germânicos sob liderança austríaca",
+          "Criar uma zona de livre-comércio no coração da Europa"
+        ],
+        "correta": 1,
+        "feedback_correto": "Exato! A Tríplice Aliança nasceu como resposta ao medo alemão de cerco diplomático após a unificação. Bismarck foi o grande articulador desse sistema de alianças defensivas.",
+        "feedback_errado": "Revise! A formação da Tríplice Aliança foi, sobretudo, uma estratégia de segurança da Alemanha bismarckiana contra o isolamento — não uma aliança expansionista ou comercial."
+      }
+    },
+
+    {
+      "id": "evt_triplice_entente",
+      "tipo": "detalhe",
+      "era": "Antecedentes (1870–1913)",
+      "ano": "1907",
+      "titulo": "Consolidação da Tríplice Entente",
+      "icone": "🤝",
+      "imagem": "",
+      "conteudo": "Com a Entente Cordiale franco-britânica (1904) e a aliança franco-russa (1894), a Entente se consolidou em 1907 quando a Grã-Bretanha firmou um acordo com a Rússia. A Europa ficou dividida em dois blocos armados: de um lado a Tríplice Aliança; de outro, a Tríplice Entente. Esse sistema de alianças transformaria qualquer conflito localizado numa guerra continental.",
+      "questao": {
+        "pergunta": "Como o sistema de alianças europeu contribuiu para transformar um conflito regional numa guerra mundial?",
+        "opcoes": [
+          "As alianças impediram que outros países entrassem na guerra",
+          "Os acordos de defesa mútua garantiram que um conflito entre dois países arrastasse todos os demais",
+          "A Entente foi criada exclusivamente para disputas coloniais, sem relação com a Europa",
+          "Os países aliados evitaram o conflito por pressão diplomática conjunta"
+        ],
+        "correta": 1,
+        "feedback_correto": "Perfeito! O sistema de alianças funcionou como uma 'armadilha'. O atentado em Sarajevo acendeu o estopim, e os mecanismos de defesa mútua transformaram um conflito austro-sérvio em guerra mundial.",
+        "feedback_errado": "Atenção! O sistema de alianças teve o efeito inverso: em vez de conter conflitos, garantiu que qualquer disputa local escalasse rapidamente para nível continental."
+      }
+    },
+
+    {
+      "id": "evt_corrida_armamentos",
+      "tipo": "contexto",
+      "era": "Antecedentes (1870–1913)",
+      "ano": "1900–1913",
+      "titulo": "Corrida armamentista — Europa se prepara para a guerra",
+      "icone": "💣"
+    },
+
+    {
+      "id": "evt_era_guerra",
+      "tipo": "contexto",
+      "era": "A Grande Guerra (1914–1918)",
+      "ano": "",
+      "titulo": "Início do conflito — O mundo em chamas",
+      "icone": "🔥"
+    },
+
+    {
+      "id": "evt_sarajevo",
+      "tipo": "detalhe",
+      "era": "A Grande Guerra (1914–1918)",
+      "ano": "28 jun 1914",
+      "titulo": "O Estopim: Atentado de Sarajevo",
+      "icone": "💥",
+      "imagem": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Assassination_of_Archduke_Franz_Ferdinand.jpg/640px-Assassination_of_Archduke_Franz_Ferdinand.jpg",
+      "conteudo": "O arquiduque Francisco Ferdinando, herdeiro do trono austro-húngaro, foi assassinado em Sarajevo pelo estudante bósnio Gavrilo Princip, membro da organização secreta Mão Negra. O atentado forneceu à Áustria-Hungria o pretexto para um ultimato à Sérvia — e com isso, acionou o sistema de alianças que transformaria o assassinato político numa guerra de proporções jamais vistas.",
+      "questao": {
+        "pergunta": "Por que o assassinato de Francisco Ferdinando em Sarajevo é considerado o 'estopim' e não a 'causa' da Primeira Guerra Mundial?",
+        "opcoes": [
+          "Porque o arquiduque não tinha importância política real no Império Austro-Húngaro",
+          "Porque o atentado foi planejado pelas potências da Entente como pretexto para a guerra",
+          "Porque as causas profundas (imperialismo, alianças, militarismo, nacionalismo) já existiam — o atentado apenas detonou uma situação explosiva preexistente",
+          "Porque a Áustria-Hungria não estava preparada para entrar em guerra em 1914"
+        ],
+        "correta": 2,
+        "feedback_correto": "Excelente raciocínio histórico! O atentado foi o gatilho, mas a 'pólvora' já estava acumulada: décadas de militarismo, rivalidades imperialistas, tensões nacionais e alianças rígidas deixaram a Europa à beira do colapso.",
+        "feedback_errado": "Pense nas causas estruturais! Historiadores distinguem 'causas imediatas' de 'causas profundas'. O atentado foi imediato, mas o terreno para a guerra foi preparado ao longo de décadas de tensão."
+      }
+    },
+
+    {
+      "id": "evt_declaracoes",
+      "tipo": "contexto",
+      "era": "A Grande Guerra (1914–1918)",
+      "ano": "jul–ago 1914",
+      "titulo": "Declarações de guerra em cascata — O sistema de alianças se ativa",
+      "icone": "📜"
+    },
+
+    {
+      "id": "evt_guerra_trincheiras",
+      "tipo": "detalhe",
+      "era": "A Grande Guerra (1914–1918)",
+      "ano": "1914–1918",
+      "titulo": "A Guerra de Trincheiras",
+      "icone": "🪖",
+      "imagem": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Cheshire_Regiment_trench_Somme_1916.jpg/640px-Cheshire_Regiment_trench_Somme_1916.jpg",
+      "conteudo": "Ao contrário da guerra de movimento esperada pelos estrategistas, o front ocidental congelou numa rede de trincheiras que se estendia do Mar do Norte à Suíça. Soldados viviam em condições subumanas — lama, ratos, doenças, morteiros. A Batalha do Somme (1916) resultou em mais de um milhão de baixas em poucos meses, sem avanços territoriais significativos. A guerra industrial mostrou seu rosto mais brutal.",
+      "questao": {
+        "pergunta": "O que explica a estabilização da frente ocidental numa guerra de trincheiras, ao contrário da guerra de movimento prevista pelos estrategistas?",
+        "opcoes": [
+          "A superioridade numérica das forças da Entente impediu qualquer avanço alemão",
+          "O equilíbrio entre o poder defensivo (artilharia, arame farpado, metralhadoras) e o poder ofensivo tornou ataques frontais extremamente custosos",
+          "A Alemanha optou deliberadamente pela guerra de desgaste desde o início",
+          "A falta de cavalaria impediu movimentos rápidos nas planícies do norte da França"
+        ],
+        "correta": 1,
+        "feedback_correto": "Preciso! A tecnologia da época favorecia enormemente a defesa. Artilharia pesada, metralhadoras e arame farpado tornavam qualquer avanço um massacre. Os generais ainda pensavam em táticas napoleônicas num campo de batalha industrializado.",
+        "feedback_errado": "Revise o contexto tecnológico! O problema central era o desequilíbrio tecnológico entre atacar e defender — e a defesa levava enorme vantagem no início do século XX."
+      }
+    },
+
+    {
+      "id": "evt_eua_entrada",
+      "tipo": "detalhe",
+      "era": "A Grande Guerra (1914–1918)",
+      "ano": "1917",
+      "titulo": "Entrada dos EUA e a Virada da Guerra",
+      "icone": "🗽",
+      "imagem": "",
+      "conteudo": "Em abril de 1917, os Estados Unidos abandonaram a neutralidade e entraram na guerra ao lado da Entente. A guerra submarina irrestrita alemã — que afundou navios americanos — e o escândalo do Telegrama Zimmermann (proposta alemã de aliança com o México contra os EUA) foram os gatilhos imediatos. A entrada americana trouxe novos recursos, tropas frescas e moral elevado para um lado já exausto pela guerra de trincheiras.",
+      "questao": {
+        "pergunta": "Qual foi o principal motivo imediato para a entrada dos Estados Unidos na Primeira Guerra Mundial em 1917?",
+        "opcoes": [
+          "A invasão alemã da Bélgica, que violou a neutralidade europeia",
+          "O assassinato de Francisco Ferdinando, que ameaçou os interesses americanos",
+          "A guerra submarina irrestrita alemã contra navios neutros e o Telegrama Zimmermann",
+          "A solicitação formal da França após a derrota na Batalha do Marne"
+        ],
+        "correta": 2,
+        "feedback_correto": "Correto! A guerra submarina irrestrita afundou navios americanos e o Telegrama Zimmermann — interceptado pelos britânicos — revelou a proposta alemã de aliança com o México. O Congresso americano não hesitou.",
+        "feedback_errado": "Atenção à cronologia! A invasão da Bélgica ocorreu em 1914 — três anos antes da entrada americana. Os EUA tardaram a entrar exatamente por buscar neutralidade. O que mudou foram os ataques diretos a interesses americanos."
+      }
+    },
+
+    {
+      "id": "evt_era_pos",
+      "tipo": "contexto",
+      "era": "O Pós-Guerra e o Legado (1918–1923)",
+      "ano": "",
+      "titulo": "O mundo que a guerra deixou",
+      "icone": "🕊️"
+    },
+
+    {
+      "id": "evt_armisticio",
+      "tipo": "contexto",
+      "era": "O Pós-Guerra e o Legado (1918–1923)",
+      "ano": "11 nov 1918",
+      "titulo": "Armistício — O silêncio dos canhões",
+      "icone": "🔔"
+    },
+
+    {
+      "id": "evt_versalhes",
+      "tipo": "detalhe",
+      "era": "O Pós-Guerra e o Legado (1918–1923)",
+      "ano": "1919",
+      "titulo": "O Tratado de Versalhes e as Sementes do Próximo Conflito",
+      "icone": "📋",
+      "imagem": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Signing_Treaty_of_Versailles.jpg/640px-Signing_Treaty_of_Versailles.jpg",
+      "conteudo": "O Tratado de Versalhes (1919) impôs à Alemanha a 'Cláusula de Culpa pela Guerra', indenizações bilionárias, perda de territórios e limitação das forças armadas. A humilhação alemã criou o caldo de cultura para o ressentimento nacional que Hitler exploraria 15 anos depois. John Maynard Keynes — presente nas negociações — previu que as condições do tratado levariam à catástrofe. Tinha razão.",
+      "questao": {
+        "pergunta": "Por que muitos historiadores afirmam que o Tratado de Versalhes foi uma das principais causas da Segunda Guerra Mundial?",
+        "opcoes": [
+          "Porque o tratado desarmou completamente todas as potências europeias, criando um vácuo de poder",
+          "Porque as condições humilhantes impostas à Alemanha geraram ressentimento profundo, instabilidade econômica e campo fértil para o surgimento de movimentos extremistas",
+          "Porque o tratado dividiu a Alemanha em dois países separados por décadas",
+          "Porque o tratado ignorou completamente a questão da culpa alemã pela guerra"
+        ],
+        "correta": 1,
+        "feedback_correto": "Excelente análise! A 'paz punitiva' de Versalhes humilhou a Alemanha sem destruí-la como potência. O historiador A.J.P. Taylor chamou o tratado de 'uma paz improvável que garantia nova guerra'. A hiperinflação, o desemprego e o orgulho ferido foram o terreno onde o nazismo germinou.",
+        "feedback_errado": "Revise as consequências de Versalhes! A Alemanha não foi dividida em 1919. O problema central foi a combinação de humilhação nacional com colapso econômico — condições que movimentos extremistas como o nazismo souberam explorar."
+      }
+    },
+
+    {
+      "id": "evt_liga_nacoes",
+      "tipo": "detalhe",
+      "era": "O Pós-Guerra e o Legado (1918–1923)",
+      "ano": "1920",
+      "titulo": "A Liga das Nações — A Paz Que Não Veio",
+      "icone": "🌐",
+      "imagem": "",
+      "conteudo": "Proposta pelos 14 Pontos de Woodrow Wilson, a Liga das Nações foi criada para garantir a paz coletiva e resolver disputas por via diplomática. Paradoxalmente, os próprios Estados Unidos — por decisão do Senado — recusaram-se a ingressar. Sem os EUA e com a Alemanha e a URSS inicialmente excluídas, a Liga careceu de força real. Sua incapacidade de agir diante das agressões japonesas na Manchúria (1931) e italianas na Etiópia (1935) revelou sua fragilidade fatal.",
+      "questao": {
+        "pergunta": "Qual foi a principal fraqueza estrutural da Liga das Nações que comprometeu sua capacidade de manter a paz?",
+        "opcoes": [
+          "O excesso de membros que tornava as decisões lentas demais",
+          "A ausência dos Estados Unidos — seu principal idealizador — enfraqueceu a organização desde o início",
+          "A falta de um idioma oficial para as negociações diplomáticas",
+          "A recusa da Grã-Bretanha e França em participar das sessões plenárias"
+        ],
+        "correta": 1,
+        "feedback_correto": "Correto! A ironia histórica é notável: Wilson propôs a Liga e seu próprio Senado a rejeitou. Sem a maior potência econômica do mundo, a organização nasceu enfraquecida. A Liga virou símbolo da distância entre intenção e capacidade.",
+        "feedback_errado": "Revise! Grã-Bretanha e França participaram ativamente. O problema central foi que os EUA — criadores do projeto — ficaram de fora por decisão do Senado americano, que temia envolvimentos europeus."
+      }
+    }
+
+  ]
+}

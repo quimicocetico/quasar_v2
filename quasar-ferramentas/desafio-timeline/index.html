@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Timeline Quest</title>
+  <!-- 1. Tailwind (síncrono, necessário para o header do app.js) -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+ 
+  <!-- 2. Lucide Icons -->
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- 3. Gatekeeper (Autenticação e Header) -->
+  <script type="module" src="/app.js"></script>
+
+<style>
+:root {
+  --bg: #0a0e27;
+  --surface: #141829;
+  --text: #f5f5f7;
+  --primary: #8b7355;
+  --secondary: #d4a574;
+  --accent: #2d5a3d;
+  --correct: #6ee7b7;
+  --wrong: #fca5a5;
+  --glow: rgba(212,165,116,0.4);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Crimson Text', serif;
+  font-size: 18px;
+  overflow-x: hidden;
+}
+
+body::-webkit-scrollbar { width: 6px; }
+body::-webkit-scrollbar-track { background: var(--surface); }
+body::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
+
+/* ============ NOISE TEXTURE ============ */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+
+/* ============ SCREENS ============ */
+.screen {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.6s, visibility 0.6s;
+}
+.screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* ============ LOGIN ============ */
+#loginScreen {
+  background: radial-gradient(ellipse at 50% 40%, rgba(139,115,85,0.18) 0%, var(--bg) 70%);
+}
+
+.login-box {
+  background: var(--surface);
+  border: 1px solid rgba(139,115,85,0.35);
+  border-radius: 24px;
+  padding: 48px 40px;
+  width: min(480px, 92vw);
+  text-align: center;
+  box-shadow: 0 0 80px rgba(139,115,85,0.12), inset 0 1px 0 rgba(212,165,116,0.1);
+  animation: loginReveal 0.8s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+@keyframes loginReveal {
+  from { opacity: 0; transform: translateY(30px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.login-sword { font-size: 64px; margin-bottom: 16px; display: block; animation: swordPulse 3s ease-in-out infinite; }
+
+@keyframes swordPulse {
+  0%,100% { transform: scale(1) rotate(-5deg); filter: drop-shadow(0 0 8px rgba(212,165,116,0.3)); }
+  50% { transform: scale(1.08) rotate(5deg); filter: drop-shadow(0 0 20px rgba(212,165,116,0.7)); }
+}
+
+.login-title {
+  font-family: 'Cinzel', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--secondary);
+  text-shadow: 0 0 30px rgba(212,165,116,0.4);
+  margin-bottom: 6px;
+  letter-spacing: 2px;
+}
+
+.login-subtitle {
+  color: rgba(245,245,247,0.5);
+  font-size: 0.95rem;
+  margin-bottom: 32px;
+  font-style: italic;
+}
+
+#challengeTitle {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  color: var(--primary);
+  letter-spacing: 1px;
+  margin-bottom: 28px;
+  padding: 10px 16px;
+  border: 1px solid rgba(139,115,85,0.3);
+  border-radius: 8px;
+  background: rgba(139,115,85,0.08);
+  min-height: 40px;
+}
+
+.input-group { margin-bottom: 16px; text-align: left; }
+.input-group label {
+  display: block;
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  color: var(--primary);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.input-group input {
+  width: 100%;
+  background: rgba(139,115,85,0.08);
+  border: 1px solid rgba(139,115,85,0.4);
+  border-radius: 10px;
+  padding: 14px 16px;
+  color: var(--text);
+  font-family: 'Crimson Text', serif;
+  font-size: 1.1rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  outline: none;
+}
+.input-group input:focus {
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 3px rgba(212,165,116,0.15);
+}
+
+.btn-primary {
+  width: 100%;
+  margin-top: 24px;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border: none;
+  border-radius: 12px;
+  color: var(--bg);
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 20px rgba(212,165,116,0.3);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(212,165,116,0.5);
+}
+.btn-primary:active { transform: translateY(0); }
+
+/* ============ HEADER ============ */
+#header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: rgba(20,24,41,0.95);
+  border-bottom: 1px solid rgba(139,115,85,0.15);
+  backdrop-filter: blur(12px);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transform: translateY(-100%);
+  transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+#header.visible { transform: translateY(0); }
+
+#headerTitle {
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  color: var(--secondary);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  max-width: 40%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stats-bar { display: flex; align-items: center; gap: 20px; }
+
+.stat-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.stat-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem;
+  color: rgba(245,245,247,0.4);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.stat-value {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--secondary);
+  transition: transform 0.2s;
+}
+.stat-value.bump { animation: statBump 0.3s ease; }
+@keyframes statBump {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+}
+
+#multiplierChip .stat-value { color: var(--correct); }
+#multiplierChip.burst .stat-value {
+  animation: streakGlow 1.5s ease-in-out infinite;
+  color: var(--secondary);
+}
+@keyframes streakGlow {
+  0%,100% { text-shadow: 0 0 8px var(--primary); }
+  50% { text-shadow: 0 0 20px var(--secondary), 0 0 40px var(--secondary); }
+}
+
+/* Progress ring */
+.progress-ring-wrap { position: relative; width: 44px; height: 44px; }
+.progress-ring-wrap svg { transform: rotate(-90deg); }
+.progress-ring-bg { fill: none; stroke: rgba(139,115,85,0.2); stroke-width: 3; }
+.progress-ring-fill { fill: none; stroke: var(--secondary); stroke-width: 3; stroke-linecap: round; transition: stroke-dashoffset 0.8s ease; }
+.progress-ring-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  color: var(--text);
+}
+
+/* Duo names */
+#duoNames {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  color: rgba(245,245,247,0.5);
+  letter-spacing: 1px;
+}
+
+/* ============ TIMELINE ============ */
+#timelineContainer {
+  padding-top: 80px;
+  padding-bottom: 80px;
+  min-height: 100vh;
+  position: relative;
+}
+
+.tl-line {
+  position: absolute;
+  left: 50%;
+  top: 80px;
+  bottom: 0;
+  width: 3px;
+  transform: translateX(-50%);
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    var(--primary) 5%,
+    var(--secondary) 50%,
+    var(--primary) 95%,
+    transparent 100%
+  );
+  opacity: 0.5;
+}
+
+.tl-section { position: relative; margin-bottom: 0; }
+
+/* Era divider */
+.tl-era {
+  text-align: center;
+  padding: 40px 20px 20px;
+  position: relative;
+  z-index: 2;
+}
+.tl-era-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: rgba(212,165,116,0.5);
+  background: var(--bg);
+  padding: 0 16px;
+  display: inline-block;
+}
+
+/* Node wrapper - alternates left/right */
+.tl-node-wrap {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  padding: 16px 0;
+  position: relative;
+  z-index: 2;
+}
+.tl-node-wrap.left { flex-direction: row; }
+.tl-node-wrap.right { flex-direction: row-reverse; }
+
+.tl-card-side {
+  width: calc(50% - 36px);
+  padding: 0 24px;
+}
+.tl-node-wrap.left .tl-card-side { text-align: right; }
+.tl-node-wrap.right .tl-card-side { text-align: left; }
+
+.tl-node-center {
+  width: 72px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 4px;
+  flex-shrink: 0;
+}
+
+/* The node dot */
+.tl-node {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--primary);
+  background: rgba(139,115,85,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+  position: relative;
+  flex-shrink: 0;
+}
+.tl-node:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 24px var(--glow);
+}
+.tl-node.visited {
+  background: rgba(139,115,85,0.25);
+}
+.tl-node.complete {
+  background: rgba(45,90,61,0.5);
+  border-color: var(--correct);
+  box-shadow: 0 0 16px rgba(110,231,183,0.3);
+}
+.tl-node.complete::after {
+  content: '✓';
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  background: var(--accent);
+  color: var(--correct);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--correct);
+}
+
+/* Context node (no card) */
+.tl-node.context-node {
+  width: 28px;
+  height: 28px;
+  font-size: 12px;
+  cursor: default;
+  border-color: rgba(139,115,85,0.3);
+  background: rgba(139,115,85,0.05);
+}
+.tl-node.context-node:hover { transform: none; box-shadow: none; }
+
+/* Card preview (inline on timeline) */
+.tl-card-preview {
+  background: var(--surface);
+  border: 1px solid rgba(139,115,85,0.25);
+  border-radius: 14px;
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+  margin-bottom: 4px;
+  animation: cardReveal 0.7s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+.tl-card-preview:hover {
+  border-color: rgba(139,115,85,0.6);
+  box-shadow: 0 4px 24px rgba(139,115,85,0.15);
+  transform: translateY(-2px);
+}
+.tl-card-preview.complete { border-color: rgba(45,90,61,0.5); }
+
+@keyframes cardReveal {
+  from { opacity: 0; transform: translateY(20px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.card-year {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  color: var(--secondary);
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+.card-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
+}
+.card-hint {
+  font-size: 0.8rem;
+  color: rgba(245,245,247,0.4);
+  margin-top: 6px;
+  font-style: italic;
+}
+
+/* Context label (inline, no card) */
+.tl-context-label {
+  padding: 6px 0;
+}
+.context-year {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  color: rgba(212,165,116,0.4);
+  letter-spacing: 2px;
+}
+.context-title {
+  font-size: 0.85rem;
+  color: rgba(245,245,247,0.35);
+  font-style: italic;
+}
+
+/* ============ MODAL ============ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(10px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s, visibility 0.4s;
+  padding: 20px;
+}
+.modal-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-box {
+  background: var(--surface);
+  border: 2px solid var(--primary);
+  border-radius: 20px;
+  padding: 32px;
+  width: min(620px, 96vw);
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  transform: scale(0.85) translateY(20px);
+  transition: transform 0.6s cubic-bezier(0.34,1.56,0.64,1);
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) var(--surface);
+}
+.modal-overlay.open .modal-box {
+  transform: scale(1) translateY(0);
+}
+.modal-box::-webkit-scrollbar { width: 4px; }
+.modal-box::-webkit-scrollbar-thumb { background: var(--primary); }
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(139,115,85,0.15);
+  border: 1px solid rgba(139,115,85,0.3);
+  color: var(--text);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.modal-close:hover { background: rgba(139,115,85,0.3); }
+
+.modal-year {
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  color: var(--secondary);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.modal-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+  margin-bottom: 20px;
+}
+
+.modal-image {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(139,115,85,0.2);
+  margin-bottom: 20px;
+  object-fit: cover;
+  max-height: 220px;
+}
+
+.modal-content {
+  color: rgba(245,245,247,0.85);
+  line-height: 1.8;
+  font-size: 1.05rem;
+  margin-bottom: 24px;
+}
+
+.btn-quiz {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, rgba(139,115,85,0.2), rgba(212,165,116,0.15));
+  border: 1px solid rgba(212,165,116,0.4);
+  border-radius: 12px;
+  color: var(--secondary);
+  font-family: 'Cinzel', serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.btn-quiz:hover {
+  background: linear-gradient(135deg, rgba(139,115,85,0.3), rgba(212,165,116,0.25));
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(212,165,116,0.2);
+}
+.btn-quiz:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ============ QUIZ MODAL ============ */
+#quizModal .modal-box { max-width: 560px; }
+
+.quiz-question {
+  font-family: 'Crimson Text', serif;
+  font-size: 1.2rem;
+  line-height: 1.6;
+  color: var(--text);
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(139,115,85,0.2);
+}
+
+.quiz-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+
+.quiz-opt {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 18px;
+  background: rgba(139,115,85,0.08);
+  border: 1px solid rgba(139,115,85,0.2);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  text-align: left;
+  color: var(--text);
+  font-family: 'Crimson Text', serif;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+.quiz-opt:hover:not(:disabled) {
+  border-color: var(--secondary);
+  background: rgba(212,165,116,0.12);
+  transform: translateX(6px);
+}
+.quiz-opt:disabled { cursor: not-allowed; }
+.quiz-opt.correct {
+  border-color: var(--correct);
+  background: rgba(110,231,183,0.1);
+  color: var(--correct);
+}
+.quiz-opt.wrong {
+  border-color: var(--wrong);
+  background: rgba(252,165,165,0.1);
+  color: var(--wrong);
+}
+.quiz-opt-letter {
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--secondary);
+  flex-shrink: 0;
+  margin-top: 2px;
+  transition: color 0.3s;
+}
+.quiz-opt.correct .quiz-opt-letter { color: var(--correct); }
+.quiz-opt.wrong .quiz-opt-letter { color: var(--wrong); }
+
+.quiz-feedback {
+  text-align: center;
+  padding: 16px;
+  border-radius: 10px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  margin-top: 12px;
+  display: none;
+  animation: feedbackSlide 0.4s ease;
+}
+@keyframes feedbackSlide {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.quiz-feedback.correct-fb {
+  display: block;
+  background: rgba(110,231,183,0.1);
+  border: 1px solid rgba(110,231,183,0.3);
+  color: var(--correct);
+}
+.quiz-feedback.wrong-fb {
+  display: block;
+  background: rgba(252,165,165,0.1);
+  border: 1px solid rgba(252,165,165,0.3);
+  color: var(--wrong);
+}
+
+/* ============ BURST OVERLAY ============ */
+#burstOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+#burstOverlay.show { opacity: 1; }
+.burst-text {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-weight: 900;
+  color: var(--secondary);
+  text-align: center;
+  text-shadow: 0 0 40px var(--secondary), 0 0 80px rgba(212,165,116,0.5);
+  animation: burstAnim 1.2s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  letter-spacing: 3px;
+  line-height: 1.3;
+}
+@keyframes burstAnim {
+  0% { transform: scale(0.3); opacity: 0; }
+  40% { transform: scale(1.2); opacity: 1; }
+  70% { transform: scale(0.95); }
+  100% { transform: scale(1); opacity: 0; }
+}
+
+/* ============ SCORE POPUP ============ */
+.score-popup {
+  position: fixed;
+  top: 80px;
+  right: 24px;
+  z-index: 400;
+  font-family: 'Cinzel', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  pointer-events: none;
+  animation: scoreFloat 2s ease forwards;
+}
+.score-popup.positive { color: var(--correct); text-shadow: 0 0 20px rgba(110,231,183,0.6); }
+.score-popup.negative { color: var(--wrong); text-shadow: 0 0 20px rgba(252,165,165,0.6); }
+
+@keyframes scoreFloat {
+  0% { opacity: 0; transform: translateY(0) scale(0.8); }
+  20% { opacity: 1; transform: translateY(-10px) scale(1.1); }
+  60% { opacity: 1; transform: translateY(-30px) scale(1); }
+  100% { opacity: 0; transform: translateY(-60px) scale(1.2); }
+}
+
+/* ============ CONFETTI ============ */
+.confetti-piece {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  top: -10px;
+  pointer-events: none;
+  z-index: 600;
+  animation: confettiFall var(--duration) ease forwards;
+}
+@keyframes confettiFall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+/* ============ RANKING PAGE ============ */
+#rankingPage {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 90;
+  overflow-y: auto;
+  padding: 80px 20px 40px;
+  display: none;
+}
+#rankingPage.visible { display: block; }
+
+.ranking-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.ranking-title {
+  font-family: 'Cinzel', serif;
+  font-size: 2rem;
+  color: var(--secondary);
+  text-shadow: 0 0 30px rgba(212,165,116,0.3);
+  margin-bottom: 8px;
+}
+.ranking-subtitle {
+  font-size: 0.9rem;
+  color: rgba(245,245,247,0.4);
+  font-style: italic;
+}
+
+.ranking-list { max-width: 600px; margin: 0 auto; }
+
+.ranking-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--surface);
+  border: 1px solid rgba(139,115,85,0.2);
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  animation: rankSlide 0.5s ease both;
+  transition: transform 0.3s;
+}
+.ranking-item:hover { transform: translateX(4px); }
+@keyframes rankSlide {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.rank-pos {
+  font-family: 'Cinzel', serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  width: 32px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.rank-pos.gold { color: #ffd700; text-shadow: 0 0 12px rgba(255,215,0,0.5); }
+.rank-pos.silver { color: #c0c0c0; }
+.rank-pos.bronze { color: #cd7f32; }
+.rank-names { flex: 1; }
+.rank-duo {
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+.rank-duo-sub {
+  font-size: 0.8rem;
+  color: rgba(245,245,247,0.4);
+  margin-top: 2px;
+}
+.rank-score {
+  font-family: 'Cinzel', serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--secondary);
+}
+.rank-badge {
+  font-size: 1.2rem;
+}
+
+.btn-back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(139,115,85,0.15);
+  border: 1px solid rgba(139,115,85,0.3);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 20px;
+}
+.btn-back:hover { background: rgba(139,115,85,0.25); }
+
+/* ============ RANKING BTN FIXED ============ */
+#rankingBtn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 60;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border: none;
+  border-radius: 50px;
+  padding: 12px 20px;
+  color: var(--bg);
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(212,165,116,0.4);
+  display: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+#rankingBtn.visible { display: flex; align-items: center; gap: 8px; }
+#rankingBtn:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(212,165,116,0.5); }
+
+/* ============ LOADING ============ */
+#loadingScreen {
+  background: var(--bg);
+}
+.loader-ring {
+  width: 60px;
+  height: 60px;
+  border: 3px solid rgba(139,115,85,0.2);
+  border-top-color: var(--secondary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loader-text {
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  color: var(--primary);
+  letter-spacing: 3px;
+  margin-top: 20px;
+  text-transform: uppercase;
+}
+
+/* ============ NO CHALLENGE ============ */
+#noChallengeMsg {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 0.85rem;
+  color: rgba(245,245,247,0.35);
+  font-style: italic;
+}
+
+/* ============ STREAK INDICATOR ============ */
+.streak-dots {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  margin-top: 4px;
+}
+.streak-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(139,115,85,0.3);
+  border: 1px solid rgba(139,115,85,0.4);
+  transition: all 0.3s;
+}
+.streak-dot.filled {
+  background: var(--secondary);
+  box-shadow: 0 0 8px var(--glow);
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 640px) {
+  .tl-card-side { width: calc(50% - 28px); padding: 0 12px; }
+  .tl-node-center { width: 56px; }
+  .tl-node { width: 40px; height: 40px; font-size: 16px; }
+  .card-title { font-size: 0.85rem; }
+  .stats-bar { gap: 12px; }
+  .stat-value { font-size: 0.85rem; }
+  #duoNames { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="screen" id="loadingScreen">
+  <div style="text-align:center">
+    <div class="loader-ring" style="margin:0 auto"></div>
+    <div class="loader-text">Carregando Desafio...</div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div class="screen hidden" id="loginScreen">
+  <div class="login-box">
+    <span class="login-sword">⚔️</span>
+    <div class="login-title">Timeline Quest</div>
+    <div class="login-subtitle">Uma jornada pela história</div>
+    <div id="challengeTitle">Carregando desafio...</div>
+    <div class="input-group">
+      <label>⚔️ Guerreiro 1</label>
+      <input type="text" id="player1Input" placeholder="Nome do primeiro aluno" maxlength="30">
+    </div>
+    <div class="input-group">
+      <label>🛡️ Guerreiro 2</label>
+      <input type="text" id="player2Input" placeholder="Nome do segundo aluno" maxlength="30">
+    </div>
+    <div class="input-group">
+      <label>🏫 Turma</label>
+      <input type="text" id="turmaInput" placeholder="Nome da turma" maxlength="30">
+    </div>
+    <div id="noChallengeMsg" style="display:none">⚠️ Nenhum desafio ativo. Aguarde o professor iniciar a atividade.</div>
+    <button class="btn-primary" id="startBtn" onclick="startGame()">⚔️ INICIAR MISSÃO</button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div id="header">
+  <div>
+    <div id="headerTitle">Timeline Quest</div>
+    <div id="duoNames">—</div>
+  </div>
+  <div class="stats-bar">
+    <div class="stat-chip">
+      <span class="stat-label">Pontos</span>
+      <span class="stat-value" id="scoreDisplay">0</span>
+    </div>
+    <div class="stat-chip" id="streakChip">
+      <span class="stat-label">Sequência</span>
+      <span class="stat-value" id="streakDisplay">0</span>
+      <div class="streak-dots" id="streakDots">
+        <div class="streak-dot" id="dot0"></div>
+        <div class="streak-dot" id="dot1"></div>
+        <div class="streak-dot" id="dot2"></div>
+      </div>
+    </div>
+    <div class="stat-chip" id="multiplierChip">
+      <span class="stat-label">Mult.</span>
+      <span class="stat-value" id="multDisplay">×1.0</span>
+    </div>
+    <div class="progress-ring-wrap" title="Progresso">
+      <svg width="44" height="44" viewBox="0 0 44 44">
+        <circle class="progress-ring-bg" cx="22" cy="22" r="18"/>
+        <circle class="progress-ring-fill" id="progressRing" cx="22" cy="22" r="18"
+          stroke-dasharray="113.1"
+          stroke-dashoffset="113.1"/>
+      </svg>
+      <div class="progress-ring-text" id="progressText">0%</div>
+    </div>
+  </div>
+</div>
+
+<!-- TIMELINE -->
+<div id="timelineContainer" style="display:none">
+  <div class="tl-line"></div>
+  <div id="timelineContent"></div>
+</div>
+
+<!-- RANKING BUTTON -->
+<button id="rankingBtn" class="visible" onclick="showRanking()" style="display:none">
+  🏆 RANKING
+</button>
+
+<!-- EVENT DETAIL MODAL -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
+    <div class="modal-year" id="detailYear"></div>
+    <div class="modal-title" id="detailTitle"></div>
+    <img class="modal-image" id="detailImage" src="" alt="" style="display:none">
+    <div class="modal-content" id="detailContent"></div>
+    <button class="btn-quiz" id="detailQuizBtn" onclick="openQuiz()">
+      📜 RESPONDER QUESTÃO &nbsp;+10 pts
+    </button>
+  </div>
+</div>
+
+<!-- QUIZ MODAL -->
+<div class="modal-overlay" id="quizModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('quizModal')">✕</button>
+    <div style="font-family:'Cinzel',serif;font-size:0.7rem;color:var(--secondary);letter-spacing:3px;margin-bottom:16px" id="quizEventLabel"></div>
+    <div class="quiz-question" id="quizQuestion"></div>
+    <div class="quiz-options" id="quizOptions"></div>
+    <div class="quiz-feedback" id="quizFeedback"></div>
+  </div>
+</div>
+
+<!-- BURST OVERLAY -->
+<div id="burstOverlay">
+  <div class="burst-text" id="burstText">📜 DOMÍNIO HISTÓRICO!<br><span style="font-size:0.6em;opacity:0.8">Multiplicador Ativo ×1.5</span></div>
+</div>
+
+<!-- RANKING PAGE -->
+<div id="rankingPage">
+  <div class="ranking-header">
+    <div class="ranking-title">🏆 Ranking da Missão</div>
+    <div class="ranking-subtitle" id="rankingSubtitle">Placar em tempo real</div>
+  </div>
+  <div class="ranking-list" id="rankingList"></div>
+  <div style="text-align:center;margin-top:24px">
+    <button class="btn-back" onclick="hideRanking()">← Voltar à Missão</button>
+  </div>
+</div>
+
+<!-- Firebase -->
+<script type="module">
+// Firebase unificado via firebase-config.js
+import { db, auth } from "/firebase-config.js";
+import { doc, getDoc, setDoc, onSnapshot, collection, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+// ============ STATE ============
+let challengeId = null;
+let challengeData = null;
+let gameState = {
+  player1: '',
+  player2: '',
+  turma: '',
+  score: 0,
+  streak: 0,
+  burst: false,
+  multiplier: 1.0,
+  answeredEvents: {},
+  visitedEvents: {},
+  totalQuestions: 0,
+  answeredCount: 0
+};
+let currentEventId = null;
+let rankingUnsub = null;
+
+// ============ INIT ============
+async function init() {
+  try {
+    // Check active challenge
+    const metaRef = doc(db, 'config', 'activeChallenge');
+    const metaSnap = await getDoc(metaRef);
+
+    if (!metaSnap.exists() || !metaSnap.data().challengeId) {
+      showLoginNoChallengeMode();
+      return;
+    }
+
+    challengeId = metaSnap.data().challengeId;
+    const localPath = metaSnap.data().localPath;
+
+    if (localPath) {
+      // Load from local file
+      const response = await fetch(`./conteudos/${localPath}`);
+      challengeData = await response.json();
+    } else {
+      // Fallback to Firestore (legacy mode)
+      const challengeRef = doc(db, 'challenges', challengeId);
+      const challengeSnap = await getDoc(challengeRef);
+      if (!challengeSnap.exists()) {
+        showLoginNoChallengeMode();
+        return;
+      }
+      challengeData = challengeSnap.data();
+    }
+
+    gameState.totalQuestions = challengeData.events.filter(e => e.tipo === 'detalhe' && e.questao).length;
+
+    document.getElementById('challengeTitle').textContent = challengeData.titulo || 'Desafio Histórico';
+    showScreen('loginScreen');
+  } catch (err) {
+    console.error(err);
+    showLoginNoChallengeMode();
+  }
+}
+
+function showLoginNoChallengeMode() {
+  document.getElementById('challengeTitle').textContent = 'Nenhum desafio ativo';
+  document.getElementById('noChallengeMsg').style.display = 'block';
+  document.getElementById('startBtn').disabled = true;
+  document.getElementById('startBtn').style.opacity = '0.4';
+  showScreen('loginScreen');
+}
+
+// ============ SCREENS ============
+window.showScreen = function(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('hidden');
+}
+
+function hideAllScreens() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+}
+
+// ============ START GAME ============
+window.startGame = function() {
+  const p1 = document.getElementById('player1Input').value.trim();
+  const p2 = document.getElementById('player2Input').value.trim();
+  const t = document.getElementById('turmaInput').value.trim();
+  if (!p1 || !p2 || !t) { alert('Insira os nomes dos guerreiros e a turma!'); return; }
+
+  gameState.player1 = p1;
+  gameState.player2 = p2;
+  gameState.turma = t;
+
+  hideAllScreens();
+  document.getElementById('timelineContainer').style.display = 'block';
+  document.getElementById('header').classList.add('visible');
+  document.getElementById('rankingBtn').style.display = 'flex';
+
+  document.getElementById('headerTitle').textContent = challengeData.titulo;
+  document.getElementById('duoNames').textContent = `${p1} & ${p2}`;
+
+  buildTimeline();
+  subscribeRanking();
+  saveProgress();
+}
+
+// ============ TIMELINE ============
+function buildTimeline() {
+  const container = document.getElementById('timelineContent');
+  container.innerHTML = '';
+  const events = challengeData.events;
+  let sideToggle = false;
+  let lastEra = null;
+
+  events.forEach((ev, idx) => {
+    // Era divider
+    if (ev.era && ev.era !== lastEra) {
+      lastEra = ev.era;
+      const era = document.createElement('div');
+      era.className = 'tl-era';
+      era.innerHTML = `<span class="tl-era-label">— ${ev.era} —</span>`;
+      container.appendChild(era);
+    }
+
+    const wrap = document.createElement('div');
+
+    if (ev.tipo === 'contexto') {
+      wrap.className = 'tl-node-wrap ' + (sideToggle ? 'right' : 'left');
+      const side = document.createElement('div');
+      side.className = 'tl-card-side';
+      const label = document.createElement('div');
+      label.className = 'tl-context-label';
+      label.innerHTML = `
+        <div class="context-year">${ev.ano || ''}</div>
+        <div class="context-title">${ev.titulo}</div>`;
+      side.appendChild(label);
+
+      const center = document.createElement('div');
+      center.className = 'tl-node-center';
+      const node = document.createElement('div');
+      node.className = 'tl-node context-node';
+      node.textContent = ev.icone || '◆';
+      center.appendChild(node);
+
+      const emptySide = document.createElement('div');
+      emptySide.className = 'tl-card-side';
+
+      if (sideToggle) {
+        wrap.appendChild(emptySide);
+        wrap.appendChild(center);
+        wrap.appendChild(side);
+      } else {
+        wrap.appendChild(side);
+        wrap.appendChild(center);
+        wrap.appendChild(emptySide);
+      }
+
+    } else {
+      // Detail node
+      wrap.className = 'tl-node-wrap ' + (sideToggle ? 'right' : 'left');
+      const cardSide = document.createElement('div');
+      cardSide.className = 'tl-card-side';
+
+      const preview = document.createElement('div');
+      preview.className = 'tl-card-preview';
+      preview.id = `card_${ev.id}`;
+      preview.onclick = () => openDetail(ev.id);
+      const hasQ = ev.questao ? true : false;
+      preview.innerHTML = `
+        <div class="card-year">${ev.ano || ''}</div>
+        <div class="card-title">${ev.titulo}</div>
+        <div class="card-hint">${hasQ ? '📜 Contém questão' : '📖 Leitura'}</div>`;
+      cardSide.appendChild(preview);
+
+      const center = document.createElement('div');
+      center.className = 'tl-node-center';
+      const node = document.createElement('div');
+      node.className = 'tl-node';
+      node.id = `node_${ev.id}`;
+      node.textContent = ev.icone || '📌';
+      node.onclick = () => openDetail(ev.id);
+      center.appendChild(node);
+
+      const emptySide = document.createElement('div');
+      emptySide.className = 'tl-card-side';
+
+      if (sideToggle) {
+        wrap.appendChild(emptySide);
+        wrap.appendChild(center);
+        wrap.appendChild(cardSide);
+      } else {
+        wrap.appendChild(cardSide);
+        wrap.appendChild(center);
+        wrap.appendChild(emptySide);
+      }
+
+      sideToggle = !sideToggle;
+    }
+
+    container.appendChild(wrap);
+
+    // Animate in on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.style.animationPlayState = 'running';
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    observer.observe(wrap);
+  });
+}
+
+// ============ OPEN DETAIL ============
+window.openDetail = function(eventId) {
+  const ev = challengeData.events.find(e => e.id === eventId);
+  if (!ev || ev.tipo !== 'detalhe') return;
+
+  currentEventId = eventId;
+
+  // Mark visited
+  gameState.visitedEvents[eventId] = true;
+  const node = document.getElementById(`node_${eventId}`);
+  if (node) node.classList.add('visited');
+
+  document.getElementById('detailYear').textContent = ev.ano || '';
+  document.getElementById('detailTitle').textContent = ev.titulo;
+  document.getElementById('detailContent').textContent = ev.conteudo || '';
+
+  const img = document.getElementById('detailImage');
+  if (ev.imagem) {
+    img.src = ev.imagem;
+    img.alt = ev.titulo;
+    img.style.display = 'block';
+  } else {
+    img.style.display = 'none';
+  }
+
+  const quizBtn = document.getElementById('detailQuizBtn');
+  const alreadyAnswered = gameState.answeredEvents[eventId];
+  quizBtn.disabled = alreadyAnswered || !ev.questao;
+  quizBtn.textContent = alreadyAnswered
+    ? '✓ Questão já respondida'
+    : ev.questao
+    ? '📜 RESPONDER QUESTÃO   +10 pts'
+    : '📖 Apenas Leitura';
+
+  openModal('detailModal');
+}
+
+// ============ OPEN QUIZ ============
+window.openQuiz = function() {
+  const ev = challengeData.events.find(e => e.id === currentEventId);
+  if (!ev || !ev.questao) return;
+
+  closeModal('detailModal');
+
+  document.getElementById('quizEventLabel').textContent = ev.titulo.toUpperCase();
+  document.getElementById('quizQuestion').textContent = ev.questao.pergunta;
+  document.getElementById('quizFeedback').className = 'quiz-feedback';
+  document.getElementById('quizFeedback').textContent = '';
+
+  const optsEl = document.getElementById('quizOptions');
+  optsEl.innerHTML = '';
+  const letters = ['A','B','C','D','E'];
+
+  ev.questao.opcoes.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.innerHTML = `<span class="quiz-opt-letter">${letters[i]}</span>${opt}`;
+    btn.onclick = () => answerQuestion(i, ev);
+    optsEl.appendChild(btn);
+  });
+
+  openModal('quizModal');
+}
+
+// ============ ANSWER ============
+function answerQuestion(selectedIdx, ev) {
+  const correct = ev.questao.correta;
+  const isCorrect = selectedIdx === correct;
+  const opts = document.querySelectorAll('.quiz-opt');
+
+  opts.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === correct) btn.classList.add('correct');
+    if (i === selectedIdx && !isCorrect) btn.classList.add('wrong');
+  });
+
+  const feedback = document.getElementById('quizFeedback');
+
+  if (isCorrect) {
+    gameState.streak++;
+    updateStreakDots(gameState.streak);
+
+    // Check burst trigger
+    if (gameState.streak >= 3 && !gameState.burst) {
+      gameState.burst = true;
+      gameState.multiplier = 1.5;
+      triggerBurst();
+    }
+
+    const pts = Math.round(10 * gameState.multiplier);
+    gameState.score += pts;
+
+    showScorePopup(`+${pts}`, true);
+
+    feedback.className = 'quiz-feedback correct-fb';
+    const fbMsgs = [
+      `⚔️ ${ev.questao.feedback_correto || 'Excelente! Seu conhecimento histórico é admirável!'}`,
+      `🏆 Resposta correta! +${pts} pontos${gameState.burst ? ' (×1.5 BURST!)' : ''}`,
+    ];
+    feedback.textContent = fbMsgs[0];
+
+    if (gameState.streak === 3) confetti();
+
+    // Mark node complete
+    gameState.answeredEvents[currentEventId] = true;
+    gameState.answeredCount++;
+    const node = document.getElementById(`node_${currentEventId}`);
+    if (node) { node.classList.remove('visited'); node.classList.add('complete'); }
+    const card = document.getElementById(`card_${currentEventId}`);
+    if (card) card.classList.add('complete');
+
+  } else {
+    gameState.streak = 0;
+    gameState.burst = false;
+    gameState.multiplier = 1.0;
+    gameState.score = Math.max(0, gameState.score - 5);
+    updateStreakDots(0);
+    updateMultiplierDisplay();
+
+    showScorePopup('-5', false);
+    feedback.className = 'quiz-feedback wrong-fb';
+    feedback.textContent = `🗡️ ${ev.questao.feedback_errado || 'Incorreto. Revise este período histórico e tente novamente!'}`;
+  }
+
+  updateHUD();
+  saveProgress();
+
+  setTimeout(() => {
+    closeModal('quizModal');
+  }, 2800);
+}
+
+// ============ HUD ============
+function updateHUD() {
+  const score = document.getElementById('scoreDisplay');
+  score.textContent = gameState.score;
+  score.classList.remove('bump');
+  void score.offsetWidth;
+  score.classList.add('bump');
+
+  document.getElementById('streakDisplay').textContent = gameState.streak;
+  updateMultiplierDisplay();
+  updateProgress();
+}
+
+function updateMultiplierDisplay() {
+  const chip = document.getElementById('multiplierChip');
+  document.getElementById('multDisplay').textContent = `×${gameState.multiplier.toFixed(1)}`;
+  if (gameState.burst) {
+    chip.classList.add('burst');
+  } else {
+    chip.classList.remove('burst');
+  }
+}
+
+function updateStreakDots(streak) {
+  for (let i = 0; i < 3; i++) {
+    const dot = document.getElementById(`dot${i}`);
+    if (dot) dot.classList.toggle('filled', i < streak);
+  }
+}
+
+function updateProgress() {
+  const total = gameState.totalQuestions;
+  const done = gameState.answeredCount;
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  const circ = 113.1;
+  const offset = circ - (circ * pct / 100);
+  document.getElementById('progressRing').style.strokeDashoffset = offset;
+  document.getElementById('progressText').textContent = pct + '%';
+}
+
+// ============ BURST ============
+function triggerBurst() {
+  const overlay = document.getElementById('burstOverlay');
+  overlay.classList.add('show');
+  setTimeout(() => overlay.classList.remove('show'), 1400);
+  updateMultiplierDisplay();
+}
+
+// ============ SCORE POPUP ============
+function showScorePopup(text, positive) {
+  const popup = document.createElement('div');
+  popup.className = 'score-popup ' + (positive ? 'positive' : 'negative');
+  popup.textContent = text;
+  document.body.appendChild(popup);
+  setTimeout(() => popup.remove(), 2100);
+}
+
+// ============ CONFETTI ============
+function confetti() {
+  const colors = ['#8b7355','#d4a574','#6ee7b7','#fca5a5','#f5f5f7','#2d5a3d'];
+  for (let i = 0; i < 20; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.cssText = `
+      left: ${Math.random() * 100}vw;
+      background: ${colors[Math.floor(Math.random() * colors.length)]};
+      border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+      --duration: ${1.5 + Math.random()}s;
+      animation-delay: ${Math.random() * 0.5}s;
+    `;
+    document.body.appendChild(piece);
+    setTimeout(() => piece.remove(), 2500);
+  }
+}
+
+// ============ MODALS ============
+window.openModal = function(id) {
+  document.getElementById(id).classList.add('open');
+}
+window.closeModal = function(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+// Click outside to close
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) overlay.classList.remove('open');
+  });
+});
+
+// ============ RANKING ============
+window.showRanking = function() {
+  document.getElementById('rankingSubtitle').textContent = `Turma: ${gameState.turma}`;
+  document.getElementById('rankingPage').classList.add('visible');
+}
+window.hideRanking = function() {
+  document.getElementById('rankingPage').classList.remove('visible');
+}
+
+function subscribeRanking() {
+  if (!challengeId) return;
+  if (rankingUnsub) rankingUnsub();
+
+  // Escuta todos os jogadores da sessão
+  const q = query(
+    collection(db, 'sessoes_timeline', challengeId, 'jogadores'),
+    orderBy('score', 'desc')
+  );
+
+  rankingUnsub = onSnapshot(q, (snap) => {
+    const list = document.getElementById('rankingList');
+    list.innerHTML = '';
+    const medals = ['🥇','🥈','🥉'];
+    const posClasses = ['gold','silver','bronze'];
+
+    if (snap.empty) {
+      list.innerHTML = '<div style="text-align:center;color:rgba(245,245,247,0.3);font-style:italic;padding:40px">Nenhuma dupla iniciou ainda...</div>';
+      return;
+    }
+
+    snap.docs.forEach((doc, i) => {
+      const aluno = doc.data();
+      const p1 = aluno.player1 || (aluno.nome ? aluno.nome.split('&')[0].trim() : 'Jogador');
+      const p2 = aluno.player2 || (aluno.nome ? aluno.nome.split('&')[1]?.trim() : '');
+      
+      const item = document.createElement('div');
+      item.className = 'ranking-item';
+      item.style.animationDelay = `${i * 0.08}s`;
+      item.innerHTML = `
+        <div class="rank-pos ${posClasses[i] || ''}">${i < 3 ? medals[i] : (i+1)+'º'}</div>
+        <div class="rank-names">
+          <div class="rank-duo">${p1} ${p2 ? '& ' + p2 : ''}</div>
+          <div class="rank-duo-sub">${aluno.answeredCount || 0} questões respondidas</div>
+        </div>
+        <div class="rank-score">${aluno.score} pts</div>
+        <div class="rank-badge"></div>
+      `;
+      list.appendChild(item);
+    });
+  }, (err) => console.warn('Erro ao carregar ranking:', err));
+}
+
+// ============ SAVE TO FIREBASE ============
+async function saveProgress() {
+  if (!challengeId || !gameState.player1) return;
+  
+  // Criar um ID único para a dupla baseado nos nomes
+  const duplaId = btoa(`${gameState.player1}-${gameState.player2}-${gameState.turma}`).replace(/[^a-zA-Z0-9]/g, '');
+
+  try {
+    // Salva no documento individual da dupla
+    await setDoc(doc(db, 'sessoes_timeline', challengeId, 'jogadores', duplaId), {
+      nome: `${gameState.player1} & ${gameState.player2}`,
+      player1: gameState.player1,
+      player2: gameState.player2,
+      turma: gameState.turma,
+      score: gameState.score,
+      streak: gameState.streak,
+      burst: gameState.burst,
+      answeredCount: gameState.answeredCount,
+      respostas: gameState.answeredEvents,
+      lastUpdate: Date.now()
+    }, { merge: true });
+
+    // Atualiza metadados da sessão (opcional)
+    await setDoc(doc(db, 'sessoes_timeline', challengeId), {
+      lastActivity: Date.now(),
+      status: 'active'
+    }, { merge: true });
+
+  } catch (err) {
+    console.warn('Erro ao salvar progresso:', err);
+  }
+}
+
+// Espera o Firebase Auth inicializar antes de rodar o init
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    init().then(() => {
+      document.getElementById('loadingScreen').classList.add('hidden');
+    });
+  }
+});
+</script>
+</body>
+</html>

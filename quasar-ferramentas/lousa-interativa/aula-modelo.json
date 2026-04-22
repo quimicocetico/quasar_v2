@@ -1,0 +1,65 @@
+{
+  "titulo": "⚡ ENERGIA TÉRMICA",
+  "subtitulo": "Capítulo 10 — Física · Ensino Médio",
+  "paineis": [
+    {
+      "menu": "📋 Aula Completa",
+      "blocos": [
+        { "tipo": "titulo-secao", "cor": "y", "icone": "📌", "texto": "O QUE VAMOS ESTUDAR" },
+        {
+          "tipo": "colunas",
+          "layout": "cols2",
+          "estilo": "margin-top:12px",
+          "col1": [
+            { "tipo": "lista", "estilo": "star", "itens": [
+                "<span class='y'>1.</span> <span class='ch-ul'>Calor</span> — energia térmica em trânsito",
+                "<span class='y'>2.</span> Unidades de medida: <span class='b'>cal, kcal, J, BTU</span>"
+            ]}
+          ],
+          "col2": [
+            { "tipo": "lista", "estilo": "star", "itens": [
+                "<span class='y'>5.</span> Fórmula fundamental: <span class='g'>Q = m · c · Δθ</span>",
+                "<span class='y'>6.</span> Calor latente: <span class='o'>Q = m · L</span>"
+            ]}
+          ]
+        },
+        { "tipo": "linha" },
+        { "tipo": "titulo-secao", "cor": "b", "icone": "💡", "texto": "DEFINIÇÕES-CHAVE" },
+        {
+          "tipo": "colunas",
+          "layout": "cols2",
+          "col1": [
+             { "tipo": "caixa-formula", "cor": "b", "label": "CALOR", "texto": "Energia <span class='ch-ul b'>térmica em trânsito</span>", "estiloTexto": "font-size: 1rem; font-family: var(--hand);" }
+          ],
+          "col2": [
+             { "tipo": "caixa-formula", "cor": "g", "label": "EQUILÍBRIO TÉRMICO", "texto": "Atingem a <span class='ch-ul g'>mesma temperatura</span>", "estiloTexto": "font-size: 1rem; font-family: var(--hand);" }
+          ]
+        },
+        { "tipo": "caixa-destaque", "cor": "y", "conteudo": "⚠ <strong class='y'>ATENÇÃO:</strong> <span class='w'>Calor ≠ Temperatura. Calor é transferência de energia.</span>" },
+        { "tipo": "carimbo", "texto": "Caderno de Física · 2026" }
+      ]
+    },
+    {
+      "menu": "1. Calor",
+      "blocos": [
+        { "tipo": "titulo-secao", "cor": "y", "icone": "1", "texto": "CALOR — ENERGIA EM TRÂNSITO" },
+        { "tipo": "carimbo", "texto": "James Prescott Joule", "cor": "y", "alinhamento": "left" },
+        { "tipo": "texto", "conteudo": "<br>" },
+        {
+          "tipo": "colunas",
+          "layout": "cols2",
+          "col1": [
+            { "tipo": "lista", "estilo": "bullet", "itens": [
+                "<span class='ch-ul y'>Calor</span> = energia térmica <strong>em movimento</strong>",
+                "Flui <strong class='b'>espontaneamente</strong> do corpo <span class='r'>quente</span> → <span class='b'>frio</span>"
+            ]}
+          ],
+          "col2": [
+             { "tipo": "caixa-formula", "cor": "y", "label": "EQUIVALENTE MECÂNICO", "texto": "1 cal = 4,186 J" },
+             { "tipo": "caixa-destaque", "cor": "r", "conteudo": "<strong class='r'>Teoria do Calórico:</strong> <span class='d'>Totalmente superada.</span>" }
+          ]
+        }
+      ]
+    }
+  ]
+}

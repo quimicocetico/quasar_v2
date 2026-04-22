@@ -1,38 +1,19 @@
 {
-  "name": "quimico-cetico",
-  "version": "1.0.0",
-  "description": "Plataforma educacional interativa para ensino de ciências",
-  "main": "index.html",
+  "name": "quasar-hub",
+  "version": "2.0.0",
+  "description": "Plataforma Quasar - Hub Central de Ferramentas Educacionais",
+  "main": "app.js",
   "scripts": {
-    "predev": "node gerar-catalogo.js",
-    "dev": "firebase serve",
-    "build": "echo 'No build step required for static site'",
-    "deploy": "firebase deploy",
-    "setup": "python setup_obsidian.py",
-    "lint": "echo 'Add linter configuration'",
-    "test": "echo 'Add test scripts'"
+    "dev": "live-server --port=3000 --entry-file=index.html"
   },
   "keywords": [
     "educacao",
-    "gamificacao",
-    "ciencias",
     "firebase",
-    "web"
+    "vanillajs"
   ],
-  "author": "Equipe Químico Cético",
-  "license": "MIT",
+  "author": "Robson",
+  "license": "ISC",
   "devDependencies": {
-    "firebase-tools": "^12.0.0"
-  },
-  "engines": {
-    "node": ">=16.0.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/username/quimico-cetico.git"
-  },
-  "bugs": {
-    "url": "https://github.com/username/quimico-cetico/issues"
-  },
-  "homepage": "https://quimico-cetico.web.app"
+    "live-server": "^1.2.2"
+  }
 }

@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Timeline Quest — Painel do Professor</title>
+  <!-- 1. Tailwind (síncrono, necessário para o header do app.js) -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+ 
+  <!-- 2. Lucide Icons -->
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- 3. Gatekeeper (Autenticação e Header) -->
+  <script type="module" src="/app.js"></script>
+
+<style>
+:root {
+  --bg: #0a0e27;
+  --surface: #141829;
+  --text: #f5f5f7;
+  --primary: #8b7355;
+  --secondary: #d4a574;
+  --accent: #2d5a3d;
+  --correct: #6ee7b7;
+  --wrong: #fca5a5;
+  --glow: rgba(212,165,116,0.4);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Crimson Text', serif;
+  font-size: 18px;
+  min-height: 100vh;
+}
+body::-webkit-scrollbar { width: 6px; }
+body::-webkit-scrollbar-track { background: var(--surface); }
+body::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+
+/* ============ TOP BAR ============ */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(20,24,41,0.97);
+  border-bottom: 1px solid rgba(139,115,85,0.2);
+  backdrop-filter: blur(12px);
+  padding: 14px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.topbar-logo { font-size: 1.8rem; }
+.topbar-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--secondary);
+  letter-spacing: 2px;
+}
+.topbar-sub {
+  font-size: 0.7rem;
+  color: rgba(245,245,247,0.4);
+  letter-spacing: 1px;
+  font-style: italic;
+}
+.topbar-actions { display: flex; align-items: center; gap: 12px; }
+
+/* ============ BUTTONS ============ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  letter-spacing: 1.5px;
+  font-weight: 600;
+  transition: all 0.25s;
+}
+.btn-gold {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: var(--bg);
+  box-shadow: 0 4px 16px rgba(212,165,116,0.3);
+}
+.btn-gold:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(212,165,116,0.5);
+}
+.btn-outline {
+  background: rgba(139,115,85,0.1);
+  border: 1px solid rgba(139,115,85,0.35);
+  color: var(--text);
+}
+.btn-outline:hover { background: rgba(139,115,85,0.2); }
+.btn-danger {
+  background: rgba(252,165,165,0.1);
+  border: 1px solid rgba(252,165,165,0.3);
+  color: var(--wrong);
+}
+.btn-danger:hover { background: rgba(252,165,165,0.2); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+
+/* ============ LAYOUT ============ */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 800px) { .grid-2 { grid-template-columns: 1fr; } }
+
+/* ============ PANEL CARD ============ */
+.panel {
+  background: var(--surface);
+  border: 1px solid rgba(139,115,85,0.2);
+  border-radius: 20px;
+  padding: 28px;
+  position: sticky;
+  top: 90px;
+}
+.panel-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(139,115,85,0.15);
+}
+
+/* ============ CHALLENGE STATUS ============ */
+.status-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.9rem;
+}
+.status-key { color: rgba(245,245,247,0.5); font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 1px; }
+.status-val { color: var(--text); font-weight: 600; text-align: right; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.status-val.active { color: var(--correct); }
+.status-val.inactive { color: rgba(245,245,247,0.3); }
+
+.badge-active {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: rgba(45,90,61,0.3);
+  border: 1px solid rgba(110,231,183,0.3);
+  border-radius: 20px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  color: var(--correct);
+  letter-spacing: 1px;
+}
+.badge-active::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--correct); animation: pulse 1.5s ease-in-out infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; box-shadow: 0 0 0 0 rgba(110,231,183,0.4); } 50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(110,231,183,0); } }
+
+/* ============ THEME LIST ============ */
+.theme-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.theme-item {
+  background: rgba(139,115,85,0.08);
+  border: 1px solid rgba(139,115,85,0.25);
+  border-radius: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.theme-item:hover {
+  background: rgba(139,115,85,0.15);
+  border-color: var(--secondary);
+  transform: translateX(4px);
+}
+.theme-item.selected {
+  background: rgba(212,165,116,0.15);
+  border-color: var(--secondary);
+  box-shadow: 0 0 15px rgba(212,165,116,0.2);
+}
+.theme-icon { font-size: 1.2rem; }
+.theme-name { font-family: 'Cinzel', serif; font-size: 0.85rem; color: var(--text); flex: 1; }
+
+#fileInput { display: none; }
+
+.json-preview {
+  background: rgba(10,14,39,0.6);
+  border: 1px solid rgba(139,115,85,0.2);
+  border-radius: 10px;
+  padding: 14px;
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: var(--secondary);
+  max-height: 120px;
+  overflow-y: auto;
+  margin-bottom: 14px;
+  word-break: break-all;
+  display: none;
+}
+
+/* ============ STATS ROW ============ */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid rgba(139,115,85,0.15);
+  border-radius: 14px;
+  padding: 16px;
+  text-align: center;
+}
+.stat-card-num {
+  font-family: 'Cinzel', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--secondary);
+  line-height: 1;
+}
+.stat-card-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 1.5px;
+  color: rgba(245,245,247,0.4);
+  margin-top: 6px;
+  text-transform: uppercase;
+}
+
+/* ============ RANKING ============ */
+.ranking-title-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.ranking-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.4rem;
+  color: var(--secondary);
+  text-shadow: 0 0 20px rgba(212,165,116,0.3);
+}
+.live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: rgba(139,115,85,0.15);
+  border: 1px solid rgba(139,115,85,0.3);
+  border-radius: 20px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  color: var(--secondary);
+  letter-spacing: 1px;
+}
+.live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--secondary); animation: pulse 1.5s ease-in-out infinite; }
+
+.ranking-list { display: flex; flex-direction: column; gap: 10px; }
+
+.ranking-item {
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  align-items: center;
+  gap: 16px;
+  background: rgba(20,24,41,0.8);
+  border: 1px solid rgba(139,115,85,0.15);
+  border-radius: 14px;
+  padding: 16px 20px;
+  transition: all 0.3s;
+  animation: itemIn 0.4s ease both;
+}
+.ranking-item:nth-child(1) {
+  border-color: rgba(255,215,0,0.3);
+  background: rgba(255,215,0,0.04);
+}
+.ranking-item:nth-child(2) {
+  border-color: rgba(192,192,192,0.25);
+}
+.ranking-item:nth-child(3) {
+  border-color: rgba(205,127,50,0.25);
+}
+@keyframes itemIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.rank-medal {
+  font-size: 1.4rem;
+  text-align: center;
+  line-height: 1;
+}
+.rank-num {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: center;
+  color: rgba(245,245,247,0.4);
+}
+
+.rank-info { min-width: 0; }
+.rank-duo {
+  font-family: 'Cinzel', serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rank-meta { display: flex; gap: 12px; margin-top: 4px; flex-wrap: wrap; }
+.rank-tag {
+  font-size: 0.7rem;
+  color: rgba(245,245,247,0.4);
+  font-style: italic;
+}
+.rank-tag.burst { color: var(--secondary); }
+
+.rank-right { text-align: right; }
+.rank-score {
+  font-family: 'Cinzel', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--secondary);
+  line-height: 1;
+}
+.rank-pts {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  color: rgba(245,245,247,0.3);
+  letter-spacing: 2px;
+}
+
+.empty-ranking {
+  text-align: center;
+  padding: 48px 20px;
+  color: rgba(245,245,247,0.25);
+  font-style: italic;
+  font-size: 0.95rem;
+}
+.empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
+
+/* ============ TOAST ============ */
+#toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--surface);
+  border: 1px solid rgba(139,115,85,0.4);
+  border-radius: 12px;
+  padding: 14px 24px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  color: var(--text);
+  z-index: 999;
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.4s;
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+}
+#toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+#toast.success { border-color: rgba(110,231,183,0.4); color: var(--correct); }
+#toast.error { border-color: rgba(252,165,165,0.4); color: var(--wrong); }
+
+/* ============ MODAL ============ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(10px);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+  padding: 20px;
+}
+.modal-overlay.open { opacity: 1; visibility: visible; }
+.modal-box {
+  background: var(--surface);
+  border: 2px solid var(--primary);
+  border-radius: 20px;
+  padding: 32px;
+  width: min(500px, 96vw);
+  transform: scale(0.9);
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+.modal-overlay.open .modal-box { transform: scale(1); }
+.modal-title { font-family: 'Cinzel', serif; font-size: 1.2rem; color: var(--secondary); margin-bottom: 16px; }
+.modal-text { font-size: 0.95rem; line-height: 1.7; color: rgba(245,245,247,0.7); margin-bottom: 24px; }
+.modal-actions { display: flex; gap: 12px; justify-content: flex-end; }
+
+/* ============ HISTORY ============ */
+.history-section { margin-top: 32px; }
+.history-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 3px;
+  color: rgba(245,245,247,0.3);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(10,14,39,0.5);
+  margin-bottom: 6px;
+  font-size: 0.82rem;
+}
+.history-name { color: rgba(245,245,247,0.6); font-style: italic; }
+.history-date { color: rgba(245,245,247,0.3); font-size: 0.7rem; font-family: 'Cinzel', serif; }
+.history-load {
+  color: var(--secondary);
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  transition: opacity 0.2s;
+}
+.history-load:hover { opacity: 0.7; }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <span class="topbar-logo">🏛️</span>
+    <div>
+      <div class="topbar-title">TIMELINE QUEST</div>
+      <div class="topbar-sub">Painel do Professor</div>
+    </div>
+  </div>
+  <div class="topbar-actions">
+    <span id="liveStatus" class="live-badge" style="display:none">
+      <span class="live-dot"></span> AO VIVO
+    </span>
+    <button class="btn btn-gold" onclick="window.location.reload()">
+      🔄 Atualizar
+    </button>
+    <button class="btn btn-danger" id="endChallengeBtn" onclick="confirmEndChallenge()" style="display:none">
+      ⚔️ Encerrar Desafio
+    </button>
+  </div>
+</div>
+
+<input type="file" id="fileInput" accept=".json" onchange="handleFileUpload(event)">
+
+<!-- CONTAINER -->
+<div class="container">
+  <div class="grid-2">
+
+    <!-- LEFT PANEL -->
+    <div>
+      <div class="panel" id="challengePanel">
+        <div class="panel-title">Estado do Desafio</div>
+
+        <div class="status-block" id="statusBlock">
+          <div class="status-row">
+            <span class="status-key">Título</span>
+            <span class="status-val inactive" id="statusTitle">Nenhum ativo</span>
+          </div>
+          <div class="status-row">
+            <span class="status-key">Eventos</span>
+            <span class="status-val inactive" id="statusEvents">—</span>
+          </div>
+          <div class="status-row">
+            <span class="status-key">Questões</span>
+            <span class="status-val inactive" id="statusQuestions">—</span>
+          </div>
+          <div class="status-row">
+            <span class="status-key">Iniciado</span>
+            <span class="status-val inactive" id="statusTime">—</span>
+          </div>
+          <div class="status-row">
+            <span class="status-key">Status</span>
+            <span class="status-val inactive" id="statusBadge">Inativo</span>
+          </div>
+        </div>
+
+        <div class="theme-list" id="themeList">
+          <div style="text-align:center; padding: 20px; color: rgba(245,245,247,0.3); font-style: italic; font-size: 0.8rem;">
+            Carregando temas...
+          </div>
+        </div>
+
+        <div class="json-preview" id="jsonPreview"></div>
+
+        <button class="btn btn-gold" id="activateBtn" style="width:100%;justify-content:center;display:none" onclick="activateChallenge()">
+          ⚔️ ATIVAR DESAFIO
+        </button>
+      </div>
+
+      <!-- Histórico de desafios -->
+      <div class="history-section" id="historySection" style="display:none">
+        <div class="history-title">Desafios Anteriores</div>
+        <div id="historyList"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div>
+      <!-- Stats -->
+      <div class="stats-row" id="statsRow">
+        <div class="stat-card">
+          <div class="stat-card-num" id="statDuplas">0</div>
+          <div class="stat-card-label">Duplas Ativas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-num" id="statTopScore">—</div>
+          <div class="stat-card-label">Maior Pontuação</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-num" id="statBursts">0</div>
+          <div class="stat-card-label">Em Burst 🔥</div>
+        </div>
+      </div>
+
+      <!-- Ranking -->
+      <div class="ranking-title-bar">
+        <div class="ranking-title">🏆 Ranking em Tempo Real</div>
+        <span class="live-badge" id="rankingLiveBadge" style="display:none">
+          <span class="live-dot"></span> AO VIVO
+        </span>
+      </div>
+
+      <div class="ranking-list" id="rankingList">
+        <div class="empty-ranking">
+          <div class="empty-icon">🏛️</div>
+          Ative um desafio para ver o ranking ao vivo
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-box">
+    <div class="modal-title" id="confirmTitle">Confirmar ação</div>
+    <div class="modal-text" id="confirmText"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-gold" id="confirmOk">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- Firebase -->
+<script type="module">
+// Firebase unificado via firebase-config.js
+import { db, auth } from "/firebase-config.js";
+import { doc, setDoc, getDoc, onSnapshot, collection, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+let pendingJson = null;
+let pendingThemeId = null;
+let activeChallengeId = null;
+let rankingUnsub = null;
+
+// ============ INIT ============
+async function init() {
+  await checkActiveChallenge();
+  await loadHistory();
+  await loadThemes();
+}
+
+async function loadThemes() {
+  try {
+    const response = await fetch('./conteudos/manifest.json');
+    const themes = await response.json();
+    renderThemes(themes);
+  } catch (err) {
+    document.getElementById('themeList').innerHTML = '<div style="color:var(--wrong); font-size:0.8rem; text-align:center;">Erro ao carregar temas locais.</div>';
+  }
+}
+
+function renderThemes(themes) {
+  const list = document.getElementById('themeList');
+  list.innerHTML = '';
+  themes.forEach(theme => {
+    const div = document.createElement('div');
+    div.className = 'theme-item';
+    div.id = `theme-${theme.id}`;
+    div.innerHTML = `
+      <div class="theme-icon">📜</div>
+      <div class="theme-name">${theme.titulo}</div>
+    `;
+    div.onclick = () => selectTheme(theme);
+    list.appendChild(div);
+  });
+}
+
+async function selectTheme(theme) {
+  document.querySelectorAll('.theme-item').forEach(el => el.classList.remove('selected'));
+  document.getElementById(`theme-${theme.id}`).classList.add('selected');
+  
+  try {
+    const response = await fetch(`./conteudos/${theme.arquivo}`);
+    pendingJson = await response.json();
+    pendingThemeId = theme.id;
+    validateJson(pendingJson);
+    
+    const preview = document.getElementById('jsonPreview');
+    preview.style.display = 'block';
+    preview.textContent = JSON.stringify(pendingJson, null, 2).slice(0, 400) + '\n...';
+    document.getElementById('activateBtn').style.display = 'flex';
+    showToast(`✓ Tema selecionado: "${theme.titulo}"`, 'success');
+  } catch (err) {
+    showToast('❌ Erro ao carregar tema: ' + err.message, 'error');
+    pendingJson = null;
+  }
+}
+
+async function checkActiveChallenge() {
+  try {
+    const snap = await getDoc(doc(db, 'config', 'activeChallenge'));
+    if (snap.exists() && snap.data().challengeId) {
+      activeChallengeId = snap.data().challengeId;
+      await loadChallengeStatus(activeChallengeId);
+      subscribeRanking(activeChallengeId);
+    }
+  } catch (err) {
+    console.warn('Erro ao verificar desafio ativo:', err);
+  }
+}
+
+async function loadChallengeStatus(id) {
+  try {
+    const snap = await getDoc(doc(db, 'challenges', id));
+    if (!snap.exists()) return;
+    const data = snap.data();
+    updateStatusUI(data, id);
+  } catch (err) { console.warn(err); }
+}
+
+function updateStatusUI(data, id) {
+  document.getElementById('statusTitle').textContent = data.titulo || '—';
+  document.getElementById('statusTitle').className = 'status-val active';
+  
+  const eventosCount = data.eventsCount !== undefined ? data.eventsCount : (data.events?.length || 0);
+  document.getElementById('statusEvents').textContent = eventosCount + ' eventos';
+  document.getElementById('statusEvents').className = 'status-val';
+  
+  const questoesCount = data.questionsCount !== undefined ? data.questionsCount : (data.events?.filter(e=>e.tipo==='detalhe'&&e.questao).length || 0);
+  document.getElementById('statusQuestions').textContent = questoesCount + ' questões';
+  document.getElementById('statusQuestions').className = 'status-val';
+
+  const ts = data.createdAt ? new Date(data.createdAt).toLocaleString('pt-BR') : '—';
+  document.getElementById('statusTime').textContent = ts;
+  document.getElementById('statusTime').className = 'status-val';
+
+  document.getElementById('statusBadge').innerHTML = '<span class="badge-active">ATIVO</span>';
+  document.getElementById('endChallengeBtn').style.display = 'flex';
+  document.getElementById('liveStatus').style.display = 'inline-flex';
+  document.getElementById('rankingLiveBadge').style.display = 'inline-flex';
+  document.getElementById('activateBtn').style.display = 'none';
+  document.getElementById('themeList').style.display = 'none';
+}
+
+
+function validateJson(data) {
+  if (!data.titulo) throw new Error('Campo "titulo" obrigatório');
+  if (!Array.isArray(data.events) || data.events.length === 0) throw new Error('Campo "events" deve ser array não vazio');
+  data.events.forEach((ev, i) => {
+    if (!ev.id) throw new Error(`Evento ${i}: campo "id" obrigatório`);
+    if (!ev.titulo) throw new Error(`Evento ${i}: campo "titulo" obrigatório`);
+    if (!ev.tipo || !['detalhe','contexto'].includes(ev.tipo)) throw new Error(`Evento ${i}: "tipo" deve ser "detalhe" ou "contexto"`);
+  });
+}
+
+// ============ ACTIVATE ============
+window.activateChallenge = async function() {
+  if (!pendingJson) return;
+
+  const challengeId = 'desafio_' + new Date().toISOString().replace(/[:.]/g, '-').slice(0,19);
+
+  try {
+    // Salva APENAS metadados para histórico, sem o payload do JSON
+    await setDoc(doc(db, 'challenges', challengeId), {
+      titulo: pendingJson.titulo,
+      themeId: pendingThemeId,
+      eventsCount: pendingJson.events.length,
+      questionsCount: pendingJson.events.filter(e => e.tipo === 'detalhe' && e.questao).length,
+      createdAt: Date.now(),
+      challengeId
+    });
+
+    await setDoc(doc(db, 'config', 'activeChallenge'), {
+      challengeId,
+      titulo: pendingJson.titulo,
+      themeId: pendingThemeId,
+      localPath: pendingThemeId + '.json',
+      activatedAt: Date.now()
+    });
+
+    activeChallengeId = challengeId;
+    updateStatusUI(pendingJson, challengeId);
+    subscribeRanking(challengeId);
+    await loadHistory();
+    showToast('✓ Desafio ativado com sucesso!', 'success');
+  } catch (err) {
+    showToast('Erro ao ativar: ' + err.message, 'error');
+  }
+}
+
+// ============ END CHALLENGE ============
+window.confirmEndChallenge = function() {
+  document.getElementById('confirmTitle').textContent = 'Encerrar Desafio';
+  document.getElementById('confirmText').textContent = 'Ao encerrar, os alunos não poderão mais responder questões. Os dados ficam salvos no histórico. Deseja continuar?';
+  document.getElementById('confirmOk').onclick = endChallenge;
+  document.getElementById('confirmModal').classList.add('open');
+}
+
+window.closeModal = function() {
+  document.getElementById('confirmModal').classList.remove('open');
+}
+
+async function endChallenge() {
+  closeModal();
+  try {
+    await setDoc(doc(db, 'config', 'activeChallenge'), {
+      challengeId: null,
+      endedAt: Date.now()
+    });
+
+    if (rankingUnsub) rankingUnsub();
+    activeChallengeId = null;
+
+    document.getElementById('statusTitle').textContent = 'Nenhum ativo';
+    document.getElementById('statusTitle').className = 'status-val inactive';
+    document.getElementById('statusEvents').textContent = '—';
+    document.getElementById('statusQuestions').textContent = '—';
+    document.getElementById('statusTime').textContent = '—';
+    document.getElementById('statusBadge').textContent = 'Inativo';
+    document.getElementById('statusBadge').className = 'status-val inactive';
+    document.getElementById('endChallengeBtn').style.display = 'none';
+    document.getElementById('liveStatus').style.display = 'none';
+    document.getElementById('rankingLiveBadge').style.display = 'none';
+    document.getElementById('themeList').style.display = 'flex';
+    document.getElementById('jsonPreview').style.display = 'none';
+
+    document.getElementById('rankingList').innerHTML = `
+      <div class="empty-ranking">
+        <div class="empty-icon">🏛️</div>
+        Desafio encerrado. Carregue um novo JSON para continuar.
+      </div>`;
+
+    document.getElementById('statDuplas').textContent = '0';
+    document.getElementById('statTopScore').textContent = '—';
+    document.getElementById('statBursts').textContent = '0';
+
+    showToast('✓ Desafio encerrado', 'success');
+  } catch (err) {
+    showToast('Erro: ' + err.message, 'error');
+  }
+}
+
+// ============ RANKING ============
+function subscribeRanking(id) {
+  if (rankingUnsub) rankingUnsub();
+
+  // Escuta a subcoleção de jogadores dentro da sessão atual
+  const q = query(
+    collection(db, 'sessoes_timeline', id, 'jogadores'),
+    orderBy('score', 'desc')
+  );
+
+  rankingUnsub = onSnapshot(q, (snap) => {
+    renderRanking(snap.docs);
+  }, (err) => {
+    console.warn('Erro no ranking:', err);
+  });
+}
+
+function renderRanking(docs) {
+  const list = document.getElementById('rankingList');
+
+  if (docs.length === 0) {
+    list.innerHTML = `
+      <div class="empty-ranking">
+        <div class="empty-icon">⏳</div>
+        Aguardando duplas iniciarem...
+      </div>`;
+    document.getElementById('statDuplas').textContent = '0';
+    document.getElementById('statTopScore').textContent = '—';
+    document.getElementById('statBursts').textContent = '0';
+    return;
+  }
+
+  const medals = ['🥇','🥈','🥉'];
+  list.innerHTML = '';
+
+  let bursts = 0;
+  docs.forEach((d, i) => {
+    const data = d.data();
+    if (data.burst) bursts++;
+
+    const item = document.createElement('div');
+    item.className = 'ranking-item';
+    item.style.animationDelay = `${i * 0.06}s`;
+
+    const posHtml = i < 3
+      ? `<div class="rank-medal">${medals[i]}</div>`
+      : `<div class="rank-num">${i+1}º</div>`;
+
+    item.innerHTML = `
+      ${posHtml}
+      <div class="rank-info">
+        <div class="rank-duo">${data.player1 || data.nome.split('&')[0]} & ${data.player2 || data.nome.split('&')[1] || ''}</div>
+        <div class="rank-meta">
+          <span class="rank-tag">🎯 ${data.answeredCount || 0} questões</span>
+          <span class="rank-tag">⚡ Seq. ${data.streak || 0}</span>
+          ${data.burst ? '<span class="rank-tag burst">🔥 BURST ×1.5</span>' : ''}
+        </div>
+      </div>
+      <div class="rank-right">
+        <div class="rank-score">${data.score}</div>
+        <div class="rank-pts">PONTOS</div>
+      </div>
+    `;
+    list.appendChild(item);
+  });
+
+  document.getElementById('statDuplas').textContent = docs.length;
+  document.getElementById('statTopScore').textContent = docs[0]?.data()?.score || '—';
+  document.getElementById('statBursts').textContent = bursts;
+}
+
+// ============ HISTORY ============
+async function loadHistory() {
+  try {
+    const snap = await getDocs(collection(db, 'challenges'));
+    if (snap.empty) return;
+
+    const items = [];
+    snap.forEach(d => {
+      const data = d.data();
+      if (data.titulo && data.createdAt) items.push({ id: d.id, ...data });
+    });
+    items.sort((a,b) => b.createdAt - a.createdAt);
+
+    if (items.length === 0) return;
+
+    document.getElementById('historySection').style.display = 'block';
+    const list = document.getElementById('historyList');
+    list.innerHTML = '';
+    items.slice(0, 5).forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'history-item';
+      div.innerHTML = `
+        <div>
+          <div class="history-name">${item.titulo}</div>
+          <div class="history-date">${new Date(item.createdAt).toLocaleDateString('pt-BR')}</div>
+        </div>
+        <button class="history-load" onclick="reactivateChallenge('${item.id}')">REATIVAR →</button>
+      `;
+      list.appendChild(div);
+    });
+  } catch (err) { /* ignore */ }
+}
+
+window.reactivateChallenge = async function(id) {
+  document.getElementById('confirmTitle').textContent = 'Reativar Desafio';
+  document.getElementById('confirmText').textContent = `Deseja reativar este desafio? Os dados anteriores serão preservados.`;
+  document.getElementById('confirmOk').onclick = async () => {
+    closeModal();
+    try {
+      const snap = await getDoc(doc(db, 'challenges', id));
+      if (!snap.exists()) return;
+      const data = snap.data();
+      
+      await setDoc(doc(db, 'config', 'activeChallenge'), {
+        challengeId: id,
+        titulo: data.titulo,
+        themeId: data.themeId || 'primeira-republica',
+        localPath: (data.themeId || 'primeira-republica') + '.json',
+        activatedAt: Date.now()
+      });
+      activeChallengeId = id;
+      updateStatusUI(data, id);
+      subscribeRanking(id);
+      showToast('✓ Desafio reativado!', 'success');
+    } catch (err) {
+      showToast('Erro: ' + err.message, 'error');
+    }
+  };
+  document.getElementById('confirmModal').classList.add('open');
+}
+
+// ============ TOAST ============
+function showToast(msg, type = '') {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.className = 'show ' + type;
+  setTimeout(() => { toast.className = ''; }, 3500);
+}
+
+window.showToast = showToast;
+
+// Espera o Firebase Auth inicializar antes de rodar o init
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    console.log("Usuário autenticado:", user.email);
+    init();
+  } else {
+    console.warn("Aguardando autenticação...");
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Primeira Guerra Mundial — Timeline Interativa</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sepia: #c8a96e;
+    --sepia-dark: #8b6914;
+    --sepia-light: #f5e6c8;
+    --ink: #1a1208;
+    --paper: #f0e6d0;
+    --paper-dark: #ddd0b0;
+    --blood: #8b1a1a;
+    --steel: #4a5568;
+    --fog: #9ca3af;
+    --trench: #3d3520;
+    --accent: #c0392b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background-color: var(--trench);
+    background-image: 
+      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    font-family: 'Crimson Text', serif;
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(180deg, #0d0d0d 0%, var(--trench) 100%);
+    border-bottom: 3px solid var(--sepia);
+    padding: 2rem 0 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(200,169,110,0.03) 2px,
+      rgba(200,169,110,0.03) 4px
+    );
+  }
+
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    text-align: center;
+    position: relative;
+  }
+
+  .header-stamp {
+    display: inline-block;
+    border: 3px solid var(--blood);
+    color: var(--blood);
+    font-family: 'Special Elite', cursive;
+    font-size: 0.7rem;
+    letter-spacing: 0.4em;
+    padding: 0.3rem 1rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+    transform: rotate(-1deg);
+  }
+
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 900;
+    color: var(--sepia-light);
+    line-height: 1;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+    margin-bottom: 0.5rem;
+  }
+
+  .header h1 span {
+    color: var(--blood);
+    font-style: italic;
+  }
+
+  .header-subtitle {
+    font-family: 'Crimson Text', serif;
+    font-size: 1.1rem;
+    color: var(--sepia);
+    letter-spacing: 0.2em;
+    margin-bottom: 2rem;
+    font-style: italic;
+  }
+
+  /* NAV */
+  .nav-bar {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    background: rgba(0,0,0,0.4);
+    border-top: 1px solid rgba(200,169,110,0.3);
+    flex-wrap: wrap;
+  }
+
+  .nav-btn {
+    background: none;
+    border: none;
+    color: var(--sepia);
+    font-family: 'Special Elite', cursive;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    padding: 0.8rem 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-right: 1px solid rgba(200,169,110,0.2);
+    white-space: nowrap;
+  }
+
+  .nav-btn:hover, .nav-btn.active {
+    background: rgba(200,169,110,0.15);
+    color: var(--sepia-light);
+  }
+
+  .nav-btn .nav-num {
+    display: block;
+    font-size: 0.55rem;
+    opacity: 0.6;
+    margin-bottom: 0.2rem;
+  }
+
+  /* MAIN LAYOUT */
+  .main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  /* SECTION */
+  .section {
+    display: none;
+    animation: fadeIn 0.4s ease;
+  }
+
+  .section.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* PAPER CARD */
+  .paper {
+    background: var(--paper);
+    background-image: 
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='%23f0e6d0'/%3E%3Crect width='1' height='1' fill='%23e8dcc4' opacity='0.4'/%3E%3C/svg%3E");
+    border: 1px solid var(--paper-dark);
+    border-radius: 2px;
+    padding: 2rem;
+    position: relative;
+    box-shadow: 4px 4px 20px rgba(0,0,0,0.4), inset 0 0 60px rgba(0,0,0,0.05);
+  }
+
+  .paper::before {
+    content: '';
+    position: absolute;
+    left: 3rem;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: rgba(139,105,20,0.2);
+  }
+
+  /* SECTION HEADER */
+  .section-header {
+    margin-bottom: 2rem;
+  }
+
+  .section-tag {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--blood);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 900;
+    color: var(--trench);
+    line-height: 1.1;
+    border-bottom: 2px solid var(--sepia-dark);
+    padding-bottom: 0.8rem;
+  }
+
+  .section-date {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.8rem;
+    color: var(--steel);
+    margin-top: 0.5rem;
+  }
+
+  /* GRID LAYOUTS */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  /* TEXT */
+  .lead {
+    font-size: 1.2rem;
+    line-height: 1.7;
+    color: var(--ink);
+    margin-bottom: 1.2rem;
+    font-style: italic;
+  }
+
+  p {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: #2d2010;
+    margin-bottom: 1rem;
+  }
+
+  /* DOCUMENT BOX */
+  .doc-box {
+    background: #faf5e8;
+    border-left: 4px solid var(--sepia-dark);
+    border: 1px solid var(--paper-dark);
+    padding: 1.2rem 1.5rem;
+    margin: 1.5rem 0;
+    position: relative;
+    font-family: 'Special Elite', cursive;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #2d2010;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .doc-box::before {
+    content: attr(data-label);
+    position: absolute;
+    top: -0.6rem;
+    left: 1rem;
+    background: var(--sepia-dark);
+    color: var(--sepia-light);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    padding: 0.15rem 0.6rem;
+  }
+
+  /* CURIOSITY BOX */
+  .curiosity {
+    background: rgba(139,26,26,0.08);
+    border: 1px solid rgba(139,26,26,0.3);
+    border-radius: 2px;
+    padding: 1rem 1.2rem;
+    margin: 1rem 0;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .curiosity:hover { background: rgba(139,26,26,0.12); }
+
+  .curiosity-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Special Elite', cursive;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    color: var(--blood);
+  }
+
+  .curiosity-header::before { content: '◆'; font-size: 0.6rem; }
+  .curiosity-header .toggle { margin-left: auto; transition: transform 0.2s; }
+  .curiosity.open .toggle { transform: rotate(180deg); }
+
+  .curiosity-body {
+    display: none;
+    margin-top: 0.8rem;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #2d2010;
+  }
+
+  .curiosity.open .curiosity-body { display: block; }
+
+  /* STAT CARD */
+  .stat-card {
+    background: var(--trench);
+    color: var(--sepia-light);
+    padding: 1.2rem;
+    text-align: center;
+    border: 1px solid rgba(200,169,110,0.3);
+  }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--sepia);
+    display: block;
+  }
+
+  .stat-label {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    opacity: 0.7;
+    margin-top: 0.3rem;
+  }
+
+  /* MAP PLACEHOLDER */
+  .map-box {
+    background: #d4c9a8;
+    border: 2px solid var(--sepia-dark);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+    min-height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .map-svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ALLIANCE DIAGRAM */
+  .alliance-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 1rem;
+    align-items: center;
+    margin: 1.5rem 0;
+  }
+
+  .alliance-side {
+    padding: 1rem;
+    border: 2px solid;
+    text-align: center;
+  }
+
+  .alliance-side.entente {
+    border-color: #1a3a5c;
+    background: rgba(26,58,92,0.08);
+  }
+
+  .alliance-side.central {
+    border-color: var(--blood);
+    background: rgba(139,26,26,0.08);
+  }
+
+  .alliance-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .alliance-title.entente { color: #1a3a5c; }
+  .alliance-title.central { color: var(--blood); }
+
+  .alliance-countries {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    line-height: 1.8;
+    color: var(--steel);
+  }
+
+  .vs {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--blood);
+    text-align: center;
+  }
+
+  /* TECH CARDS */
+  .tech-card {
+    background: var(--paper-dark);
+    border: 1px solid var(--sepia-dark);
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .tech-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  .tech-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--trench);
+    margin-bottom: 0.3rem;
+  }
+
+  .tech-desc {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--steel);
+  }
+
+  /* BRAZIL SPECIAL */
+  .brazil-flag-strip {
+    display: flex;
+    height: 6px;
+    margin-bottom: 1.5rem;
+    border-radius: 1px;
+    overflow: hidden;
+  }
+
+  .brazil-flag-strip div {
+    flex: 1;
+  }
+
+  /* TIMELINE MINI */
+  .mini-timeline {
+    position: relative;
+    padding-left: 2rem;
+    margin: 1.5rem 0;
+  }
+
+  .mini-timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.4rem;
+    top: 0.5rem;
+    bottom: 0;
+    width: 2px;
+    background: var(--sepia-dark);
+  }
+
+  .mini-event {
+    position: relative;
+    margin-bottom: 1.2rem;
+  }
+
+  .mini-event::before {
+    content: '';
+    position: absolute;
+    left: -1.75rem;
+    top: 0.4rem;
+    width: 10px;
+    height: 10px;
+    background: var(--sepia);
+    border: 2px solid var(--sepia-dark);
+    border-radius: 50%;
+  }
+
+  .mini-event-date {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.7rem;
+    color: var(--blood);
+    letter-spacing: 0.1em;
+  }
+
+  .mini-event-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--trench);
+    margin: 0.1rem 0;
+  }
+
+  .mini-event-desc {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #3d3520;
+  }
+
+  /* QUOTE */
+  .quote-box {
+    border-left: 4px solid var(--sepia-dark);
+    padding: 1rem 1.5rem;
+    margin: 1.5rem 0;
+    background: rgba(200,169,110,0.1);
+    font-style: italic;
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--trench);
+  }
+
+  .quote-box cite {
+    display: block;
+    font-style: normal;
+    font-family: 'Special Elite', cursive;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: var(--blood);
+    margin-top: 0.5rem;
+  }
+
+  /* BADGE */
+  .badge {
+    display: inline-block;
+    background: var(--blood);
+    color: var(--sepia-light);
+    font-family: 'Special Elite', cursive;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    padding: 0.15rem 0.5rem;
+    margin: 0.2rem;
+    vertical-align: middle;
+  }
+
+  .badge.blue { background: #1a3a5c; }
+  .badge.green { background: #2d5a1b; }
+  .badge.gold { background: var(--sepia-dark); }
+
+  /* PROPAGANDA POSTER STYLE */
+  .poster-frame {
+    border: 6px solid var(--sepia-dark);
+    padding: 1.5rem;
+    text-align: center;
+    background: #f5e6c8;
+    position: relative;
+  }
+
+  .poster-frame::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border: 1px solid rgba(139,105,20,0.4);
+    pointer-events: none;
+  }
+
+  .poster-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--blood);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    line-height: 1.2;
+  }
+
+  /* SEPARATOR */
+  .sep {
+    text-align: center;
+    margin: 2rem 0;
+    color: var(--sepia-dark);
+    font-size: 1.2rem;
+    letter-spacing: 1rem;
+    opacity: 0.5;
+  }
+
+  /* HIGHLIGHT */
+  .highlight {
+    background: rgba(200,169,110,0.25);
+    padding: 0 0.2rem;
+    font-weight: 600;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--trench); }
+  ::-webkit-scrollbar-thumb { background: var(--sepia-dark); }
+
+  /* PROGRESS */
+  .progress-bar {
+    height: 3px;
+    background: rgba(200,169,110,0.2);
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--sepia);
+    transition: width 0.3s;
+  }
+
+  /* FOOTER NAV */
+  .section-nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--paper-dark);
+  }
+
+  .btn-nav {
+    background: var(--trench);
+    color: var(--sepia);
+    border: 1px solid var(--sepia-dark);
+    font-family: 'Special Elite', cursive;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    padding: 0.6rem 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-nav:hover {
+    background: var(--sepia-dark);
+    color: var(--sepia-light);
+  }
+
+  .btn-nav:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  /* SECTION INDICATOR */
+  .section-indicator {
+    text-align: center;
+    font-family: 'Special Elite', cursive;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--sepia);
+    opacity: 0.7;
+  }
+
+  /* MAP SVG STYLES */
+  .country { stroke: #8b6914; stroke-width: 0.5; cursor: pointer; transition: opacity 0.2s; }
+  .country:hover { opacity: 0.8; }
+  .entente-color { fill: #4a7cbf; }
+  .central-color { fill: #c0392b; }
+  .neutral-color { fill: #8a7d6b; }
+  .map-label { font-size: 6px; fill: #fff; font-family: sans-serif; font-weight: bold; text-anchor: middle; pointer-events: none; }
+
+  /* PHOTO PLACEHOLDER */
+  .photo-placeholder {
+    background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+    border: 2px solid var(--sepia-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    color: var(--sepia);
+    font-family: 'Special Elite', cursive;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-align: center;
+    padding: 2rem;
+    gap: 0.5rem;
+  }
+
+  .photo-icon { font-size: 2rem; opacity: 0.5; }
+
+</style>
+</head>
+<body>
+
+<div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-inner">
+    <div class="header-stamp">DOCUMENTO HISTÓRICO — USO PEDAGÓGICO</div>
+    <h1>A Grande<br><span>Guerra</span></h1>
+    <div class="header-subtitle">1914 — 1918 · Primeira Guerra Mundial · Timeline Interativa</div>
+  </div>
+  <nav class="nav-bar">
+    <button class="nav-btn active" onclick="goTo(0)"><span class="nav-num">01</span>EUROPA 1914</button>
+    <button class="nav-btn" onclick="goTo(1)"><span class="nav-num">02</span>O ESTOPIM</button>
+    <button class="nav-btn" onclick="goTo(2)"><span class="nav-num">03</span>AS FRENTES</button>
+    <button class="nav-btn" onclick="goTo(3)"><span class="nav-num">04</span>TECNOLOGIA</button>
+    <button class="nav-btn" onclick="goTo(4)"><span class="nav-num">05</span>BRASIL</button>
+    <button class="nav-btn" onclick="goTo(5)"><span class="nav-num">06</span>A VIRADA</button>
+    <button class="nav-btn" onclick="goTo(6)"><span class="nav-num">07</span>O DESFECHO</button>
+  </nav>
+</div>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- SEÇÃO 1: EUROPA 1914 -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="section active" id="sec-0">
+    <div class="paper">
+      <div class="section-header">
+        <span class="section-tag">CAPÍTULO I</span>
+        <h2 class="section-title">A Europa à Beira do Abismo</h2>
+        <div class="section-date">1871 — Julho de 1914</div>
+      </div>
+
+      <p class="lead">A Primeira Guerra Mundial não começou com um tiro — começou com décadas de tensões acumuladas entre as maiores potências do mundo. Compreender o contexto é compreender a inevitabilidade que ninguém quis ver.</p>
+
+      <!-- MAPA DAS ALIANÇAS -->
+      <div style="margin: 1.5rem 0;">
+        <div style="font-family:'Special Elite',cursive; font-size:0.7rem; letter-spacing:0.2em; color:var(--sepia-dark); margin-bottom:0.5rem;">◆ MAPA DAS ALIANÇAS — 1914</div>
+        <div class="map-box" style="min-height:320px;">
+          <img src="https://www.educabras.com/media/aula_files/aula%20hist%C3%B3ria/mapa_europa_divisao_politica_em_1914_e_primeira_guerra_mundial.gif" alt="Mapa das Alianças 1914" style="width:100%; height:auto;">
+        </div>
+        <div style="font-size:0.8rem; color:var(--steel); font-style:italic; text-align:right; margin-top:0.3rem;">Clique nos países para explorar — representação esquemática</div>
+      </div>
+
+      <div class="sep">✦ ✦ ✦</div>
+
+      <!-- CAUSAS MAIN -->
+      <div style="font-family:'Special Elite',cursive; font-size:0.7rem; letter-spacing:0.2em; color:var(--sepia-dark); margin-bottom:1rem;">◆ AS 4 CAUSAS ESTRUTURAIS — MÉTODO M.A.I.N.</div>
+
+      <div class="grid-2">
+        <div style="border:1px solid var(--sepia-dark); padding:1.2rem; background:#faf5e8;">
+          <div style="font-family:'Playfair Display',serif; font-size:2rem; font-weight:900; color:var(--blood); line-height:1;">M</div>
+          <div style="font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--trench); margin-bottom:0.4rem;">Militarismo</div>
+          <p style="font-size:0.9rem; margin:0; line-height:1.5;">A Europa vivia uma corrida armamentista sem precedentes. A Alemanha quintuplicou seus gastos militares entre 1870 e 1914. A Marinha alemã ameaçava diretamente a supremacia britânica nos mares.</p>
+        </div>
+        <div style="border:1px solid var(--sepia-dark); padding:1.2rem; background:#faf5e8;">
+          <div style="font-family:'Playfair Display',serif; font-size:2rem; font-weight:900; color:#1a3a5c; line-height:1;">A</div>
+          <div style="font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--trench); margin-bottom:0.4rem;">Alianças</div>
+          <p style="font-size:0.9rem; margin:0; line-height:1.5;">A Europa estava dividida em dois blocos militares rígidos: a Tríplice Entente (França, Reino Unido, Rússia) e a Tríplice Aliança (Alemanha, Áustria-Hungria, Itália). Um conflito local poderia arrastar o mundo inteiro.</p>
+        </div>
+        <div style="border:1px solid var(--sepia-dark); padding:1.2rem; background:#faf5e8;">
+          <div style="font-family:'Playfair Display',serif; font-size:2rem; font-weight:900; color:#2d5a1b; line-height:1;">I</div>
+          <div style="font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--trench); margin-bottom:0.4rem;">Imperialismo</div>
+          <p style="font-size:0.9rem; margin:0; line-height:1.5;">As potências europeias disputavam colônias e mercados na África e na Ásia. A Alemanha, unificada tardiamente (1871), reivindicava seu <em>"lugar ao sol"</em> — tensionando o equilíbrio colonial já estabelecido por Inglaterra e França.</p>
+        </div>
+        <div style="border:1px solid var(--sepia-dark); padding:1.2rem; background:#faf5e8;">
+          <div style="font-family:'Playfair Display',serif; font-size:2rem; font-weight:900; color:var(--sepia-dark); line-height:1;">N</div>
+          <div style="font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--trench); margin-bottom:0.4rem;">Nacionalismo</div>
+          <p style="font-size:0.9rem; margin:0; line-height:1.5;">Nos Bálcãs, povos eslavos sonhavam com autonomia frente ao Império Austro-Húngaro. O pan-eslavismo sérvio ameaçava a integridade do Império. A região era chamada de <em>"barril de pólvora da Europa"</em>.</p>
+        </div>
+      </div>
+
+      <!-- ALIANCAS -->
+      <div class="alliance-grid">
+        <div class="alliance-side entente">
+          <div class="alliance-title entente">TRÍPLICE ENTENTE</div>
+          <div class="alliance-countries">
+            🇫🇷 França<br>
+            🇬🇧 Reino Unido<br>
+            🇷🇺 Rússia<br>
+            <span style="opacity:0.6; font-size:0.65rem;">+ Sérvia, Bélgica, Itália (1915)...</span>
+          </div>
+        </div>
+        <div class="vs">VS</div>
+        <div class="alliance-side central">
+          <div class="alliance-title central">POTÊNCIAS CENTRAIS</div>
+          <div class="alliance-countries">
+            🇩🇪 Alemanha<br>
+            🇦🇹 Áustria-Hungria<br>
+            🇹🇷 Imp. Otomano<br>
+            <span style="opacity:0.6; font-size:0.65rem;">+ Bulgária (1915)...</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CRISES ANTERIORES -->
+      <div style="font-family:'Special Elite',cursive; font-size:0.7rem; letter-spacing:0.2em; color:var(--sepia-dark); margin: 1.5rem 0 0.8rem;">◆ CRISES QUE PRECEDERAM A GUERRA</div>
+      <div class="mini-timeline">
+        <div class="mini-event">
+          <div class="mini-event-date">1905 — 1ª CRISE DE MARROCOS</div>
+          <div class="mini-event-title">Alemanha versus França no norte da África</div>
+          <div class="mini-event-desc">O Kaiser Guilherme II desembarcou em Tânger para desafiar a influência francesa. Quase virou guerra. A Conferência de Algeciras (1906) resolveu — temporariamente.</div>
+        </div>
+        <div class="mini-event">
+          <div class="mini-event-date">1908 — CRISE DA BÓSNIA</div>
+          <div class="mini-event-title">Áustria anexa a Bósnia-Herzegovina</div>
+          <div class="mini-event-desc">A Sérvia e a Rússia ficaram furiosas. A Rússia, humilhada diplomamente, jurou que não recuaria numa próxima crise balcânica.</div>
+        </div>
+        <div class="mini-event">
+          <div class="mini-event-date">1912–1913 — GUERRAS BALCÂNICAS</div>
+          <div class="mini-event-title">Duas guerras reconfiguuram os Bálcãs</div>
+          <div class="mini-event-desc">A Sérvia dobrou de tamanho. A Áustria-Hungria ficou alarmada. O ódio entre as nações balkânicas atingiu o ponto de ebulição.</div>
+        </div>
+      </div>
+
+      <div class="curiosity" onclick="toggleCuriosity(this)">
+        <div class="curiosity-header">CURIOSIDADE — O "CONCERTO EUROPEU" E POR QUE FALHOU <span class="toggle">▼</span></div>
+        <div class="curiosity-body">Desde 1815, as potências europeias mantinham um sistema de reuniões diplomáticas chamado "Concerto Europeu" para resolver disputas sem guerra. Funcionou por quase um século! Mas o sistema colapsou por duas razões: (1) a Alemanha se recusava a aceitar a ordem estabelecida antes de sua unificação, e (2) nenhuma potência queria parecer fraca ao recuar em público. O orgulho nacional pesou mais que a diplomacia.</div>
+      </div>
+
+      <div class="curiosity" onclick="toggleCuriosity(this)">
+        <div class="curiosity-header">CURIOSIDADE — A FAMÍLIA QUE GOVERNAVA A EUROPA <span class="toggle">▼</span></div>
+        <div class="curiosity-body">O Kaiser Guilherme II da Alemanha, o Czar Nicolau II da Rússia e o Rei Jorge V do Reino Unido eram <strong>primos</strong> — todos netos da Rainha Vitória da Inglaterra. Guilherme chamava Jorge de "Georgie" e Nicolau de "Nicky" em cartas pessoais. Durante a Crise de Julho de 1914, os três se enviaram telegramas tentando evitar a guerra — e falharam. Uma das ironias mais amargas da história.</div>
+      </div>
+
+      <div class="section-nav">
+        <button class="btn-nav" disabled>← ANTERIOR</button>
+        <div class="section-indicator">1 / 7</div>
+        <button class="btn-nav" onclick="goTo(1)">PRÓXIMO →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- SEÇÃO 2: O ESTOPIM -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="section" id="sec-1">
+    <div class="paper">
+      <div class="section-header">
+        <span class="section-tag">CAPÍTULO II</span>
+        <h2 class="section-title">O Tiro de Sarajevo</h2>
+        <div class="section-date">28 de Junho — 4 de Agosto de 1914</div>
+      </div>
+
+      <p class="lead">Um único tiro numa cidade dos Bálcãs ativou o sistema de alianças e arrastou 30 países para a maior guerra que o mundo havia visto. Mas o tiro foi apenas a faísca — o barril de pólvora estava pronto há décadas.</p>
+
+      <div class="doc-box" data-label="TELEGRAMA RECONSTITUÍDO · VIENA, 28 JUN 1914">
+        "Sua Alteza Imperial e Real, o Arquiduque Francisco Ferdinando, herdeiro do trono austro-húngaro, foi assassinado hoje em Sarajevo junto com sua esposa, a Duquesa Sofia. O atirador pertence a organização nacionalista sérvia. Aguardamos instruções de Viena."
+        <cite style="display:block; margin-top:0.5rem; font-size:0.75rem; color:var(--steel);">— Reconstituição didática baseada em registros históricos</cite>
+      </div>
+
+      <!-- LINHA DO TEMPO DO ASSASSINATO -->
+      <div style="font-family:'Special Elite',cursive; font-size:0.7rem; letter-spacing:0.2em; color:var(--sepia-dark); margin: 1.5rem 0 0.8rem;">◆ OS 37 DIAS QUE MUDARAM O MUNDO</div>
+
+      <div class="mini-timeline">
+        <div class="mini-event">
+          <div class="mini-event-date">28 JUN 1914 — DOMINGO</div>
+          <div class="mini-event-title">Assassinato em Sarajevo</div>
+          <div class="mini-event-desc">Gavrilo Princip, membro da organização "Mão Negra", mata o Arquiduque Francisco Ferdinando e sua esposa Sofia. Antes, uma bomba jogada por outro conspirador havia falhado. Princip o encontrou por acaso numa padaria após o atentado fracassado.</div>
+        </div>
+        <div class="mini-event">
+          <div class="mini-event-date">5–23 JUL 1914</div>
+          <div class="mini-event-title">Ultimato austro-húngaro à Sérvia</div>
+          <div class="mini-event-desc">Áustria-Hungria envia 10 exigências humilhantes à Sérvia. A Sérvia aceita 9. Recusa a nº 6 (inspeção austro-húngara no território sérvio). A Áustria declara que é suficiente para romper relações diplomáticas.</div>
+        </div>
+        <div class="mini-event">
+          <div class="mini-event-date">28 JUL 1914</div>
+          <div class="mini-event-title">Áustria-Hungria declara guerra à Sérvia</div>
+          <div class="mini-event-desc">Exatamente um mês após o assassinato. É a primeira declaração de guerra. Belgrado é bombardeada.</div>
+        </div>
+        <div class="mini-event">
+          <div class="mini-event-date">1 AGO 1914</div>
+          <div class="mini-event-title">Alemanha declara guerra à Rússia</div>
+          <div class="mini-event-desc">A Rússia havia mobilizado seu exército em defesa da Sérvia. A Alemanha ativa o Plano Schlieffen: atacar a França pelo oeste (via Bélgica) antes de virar para o leste contra a Rússia.</div>
+        </div>
+        <div class="mini-event">
+          <div class="mini-event-date">3 AGO 1914</div>
+          <div class="mini-event-title">Alemanha declara guerra à França e invade a Bélgica</div>
+          <div class="mini-event-desc">A Bélgica era neutra e garantida por tratado. A invasão alemã viola o tratado — e arrasta o Reino Unido para a guerra.</div>
+        </div>
+        <div class="mini-event">
+          <div class="mini-event-date">4 AGO 1914</div>
+          <div class="mini-event-title">Reino Unido entra na guerra</div>
+          <div class="mini-event-desc">O Kaiser Guilherme II ficou em choque ao receber a notícia. Chamou o tratado com a Bélgica de "papel velho". Em 6 semanas, um conflito regional virou guerra mundial.</div>
+        </div>
+      </div>
+
+      <div class="doc-box" data-label="PLANO SCHLIEFFEN · ALEMANHA · 1905">
+        <strong>ESTRATÉGIA:</strong> Evitar guerra em duas frentes simultâneas.<br><br>
+        <strong>FASE 1</strong> → Cruzar a Bélgica e esmagar a França em 6 semanas.<br>
+        <strong>FASE 2</strong> → Transferir tropas por ferrovia para o leste e derrotar a Rússia.<br><br>
+        <em>O plano falhou porque: (1) a Bélgica resistiu; (2) o Reino Unido entrou na guerra; (3) a França não foi derrotada rapidamente.</em>
+      </div>
+
+      <div class="grid-2" style="margin-top:1.5rem;">
+        <div class="curiosity" onclick="toggleCuriosity(this)">
+          <div class="curiosity-header">CURIOSIDADE — A PADARIA QUE MUDOU A HISTÓRIA <span class="toggle">▼</span></div>
+          <div class="curiosity-body">O primeiro atentado havia fracassado. Gavrilo Princip, acreditando que a missão tinha falhado, foi a uma padaria comer um sanduíche. Por coincidência, o carro do Arquiduque (que havia se perdido no trajeto para visitar feridos do atentado) parou bem na frente da padaria. Princip estava a menos de 2 metros. Deu dois tiros. O restante é história. Historiadores debatem até hoje: e se o motorista não tivesse errado a rua?</div>
+        </div>
+        <div class="curiosity" onclick="toggleCuriosity(this)">
+          <div class="curiosity-header">CURIOSIDADE — GAVRILO PRINCIP: HERÓI OU VILÃO? <span class="toggle">▼</span></div>
+          <div class="curiosity-body">Na Sérvia e na Bósnia, Princip é considerado herói da libertação nacional — há estátuas em sua homenagem. Na Áustria e em boa parte do Ocidente, é visto como o homem que desencadeou a maior tragédia do século XX. Tinha apenas 19 anos quando atirou. Foi condenado, mas por ser menor de idade não pôde ser executado. Morreu na prisão em 1918, de tuberculose, meses antes do fim da guerra que iniciou.</div>
+        </div>
+      </div>
+
+      <div class="quote-box">
+        "Em algum lugar na Europa boba, algum maldito disparará um tiro e os senhores serão sugados para a guerra."
+        <cite>— Otto von Bismarck, ex-Chanceler alemão, anos antes da guerra</cite>
+      </div>
+
+      <div class="section-nav">
+        <button class="btn-nav" onclick="goTo(0)">← ANTERIOR</button>
+        <div class="section-indicator">2 / 7</div>
+        <button class="btn-nav" onclick="goTo(2)">PRÓXIMO →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- SEÇÃO 3: AS FRENTES -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="section" id="sec-2">
+    <div class="paper">
+      <div class="section-header">
+        <span class="section-tag">CAPÍTULO III</span>
+        <h2 class="section-title">As Frentes de Batalha</h2>
+        <div class="section-date">1914 — 1918</div>
+      </div>
+
+      <p class="lead">A guerra que os generais imaginavam durar meses transformou-se em um pesadelo de quatro anos. Na Frente Ocidental, exércitos inteiros avançavam metros por dia — e morriam aos milhares para conquistas minúsculas.</p>
+
+      <!-- MAPA DAS FRENTES -->
+      <div class="map-box" style="min-height:280px; margin:1.5rem 0;">
+        <svg viewBox="0 0 500 280" class="map-svg">
+          <rect width="500" height="280" fill="#c8d8c0"/>
+          <!-- FRENTE OCIDENTAL -->
+          <path d="M145,60 Q150,100 148,130 Q146,160 142,190" stroke="#8b1a1a" stroke-width="4" fill="none" stroke-dasharray="8,4"/>
+          <text x="160" y="130" style="font-size:8px; fill:#8b1a1a; font-family:sans-serif; font-weight:bold;">FRENTE OCIDENTAL</text>
+          <!-- FRENTE ORIENTAL -->
+          <path d="M300,60 Q290,100 280,140 Q270,180 265,220" stroke="#1a3a5c" stroke-width="4" fill="none" stroke-dasharray="8,4"/>
+          <text x="310" y="140" style="font-size:8px; fill:#1a3a5c; font-family:sans-serif; font-weight:bold;">FRENTE ORIENTAL</text>
+          <!-- PAÍSES BÁSICOS -->
+          <rect x="120" y="50" width="30" height="20" fill="#4a7cbf" opacity="0.5"/>
+          <text x="135" y="64" style="font-size:6px; fill:#fff; text-anchor:middle; font-family:sans-serif">BÉL</text>
+          <rect x="120" y="70" width="60" height="80" fill="#4a7cbf" opacity="0.4"/>
+          <text x="150" y="115" style="font-size:7px; fill:#fff; text-anchor:middle; font-family:sans-serif">FRANÇA</text>
+          <rect x="180" y="50" width="80" height="100" fill="#c0392b" opacity="0.4"/>
+          <text x="220" y="105" style="font-size:7px; fill:#fff; text-anchor:middle; font-family:sans-serif">ALEMANHA</text>
+          <rect x="260" y="80" width="120" height="100" fill="#4a7cbf" opacity="0.3"/>
+          <text x="320" y="135" style="font-size:7px; fill:#1a3a5c; text-anchor:middle; font-family:sans-serif">RÚSSIA</text>
+          <!-- TRINCHEIRAS SIMBOLIZADAS -->
+          <text x="250" y="260" style="font-size:9px; fill:#3d3520; text-anchor:middle; font-family:sans-serif; font-weight:bold;">A linha tracejada vermelha = Frente Ocidental (trincheiras)</text>
+          <text x="250" y="272" style="font-size:8px; fill:#3d3520; text-anchor:middle; font-family:sans-serif;">A linha azul = Frente Oriental (mais fluida)</text>
+        </svg>
+      </div>
+
+      <!-- FRENTE OCIDENTAL -->
+      <div style="font-family:'Special Elite',cursive; font-size:0.7rem; letter-spacing:0.2em; color:var(--sepia-dark); margin-bottom:0.8rem;">◆ FRENTE OCIDENTAL — A GUERRA DAS TRINCHEIRAS</div>
+      <p>Estendendo-se por <span class="highlight">750 km</span> do Canal da Mancha à fronteira suíça, a Frente Ocidental foi o teatro da guerra mais brutal. As trincheiras criaram um impasse: nenhum lado conseguia avançar. Soldados viviam em valas lamacentas, sob fogo constante, infestadas de ratos e doenças.</p>
+
+      <div class="grid-3">
+        <div class="stat-card">
+          <span class="stat-num">750km</span>
+          <span class="stat-label">EXTENSÃO DA FRENTE OCIDENTAL</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">1,2 mi</span>
+          <span class="stat-label">MORTOS NA BATALHA DO SOMME (1916)</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">300 mil</span>
+          <span class="stat-label">MORTOS EM VERDUN — 9 MESES</span>
+        </div>
+      </div>
+
+      <div class="doc-box" data-label="RELATO DE TRINCHEIRA · SOLDADO BRITÂNICO · 1916">
+        "A lama não tem cor. Só cheiro. Dormimos em pé, com as espingardas acima da cabeça. Os ratos comem os mortos antes de podermos enterrá-los. Mas o pior não é a morte — é a espera. Às vezes ficamos dias sem saber se ainda estamos na guerra ou se a guerra simplesmente parou enquanto não estávamos olhando."
+      </div>
+
+      <!-- A VIDA NA TRINCHEIRA -->
+      <div style="font-family:'Special Elite',cursive; font-size:0.7rem; letter-spacing:0.2em; color:var(--sepia-dark); margin: 1.5rem 0 0.8rem;">◆ UM DIA NA TRINCHEIRA</div>
+      <div class="grid-2">
+        <div style="border:1px solid var(--paper-dark); padding:1rem; background:#faf5e8;">
+          <div style="font-family:'Playfair Display',serif; font-weight:700; color:var(--trench); margin-bottom:0.5rem;">🌅 Amanhecer (Stand-to)</div>
+          <p style="font-size:0.85rem; margin:0; line-height:1.5;">Todo soldado deve ficar de prontidão no amanhecer — o horário preferido para ataques. Rifles carregados, olhos na terra de ninguém. O silêncio é mais assustador que o barulho.</p>
+        </div>
+        <div style="border:1px solid var(--paper-dark); padding:1rem; background:#faf5e8;">
+          <div style="font-family:'Playfair Display',serif; font-weight:700; color:var(--trench); margin-bottom:0.5rem;">☀️ Manhã (Manutenção)</div>
+          <p style="font-size:0.85rem; margin:0; line-height:1.5;">Limpeza de rifles, esvaziamento de latrinas, remoção de terra desmoronada. Soldados revezam para cozinhar a ração — geralmente corned beef frio e biscoitos duros.</p>
+        </div>
+        <div style="border:1px solid var(--paper-dark); padding:1rem; background:#faf5e8;">
+          <div style="font-family:'Playfair Display',serif; font-weight:700; color:var(--trench); margin-bottom:0.5rem;">🌙 Noite (Patrulha)</div>
+          <p style="font-size:0.85rem; margin:0; line-height:1.5;">A terra de ninguém pertence à noite. Soldados rastejam no escuro para cortar arame farpado inimigo, capturar prisioneiros ou simplesmente reconhecer o terreno.</p>
+        </div>
+        <div style="border:1px solid var(--paper-dark); padding:1rem; background:#faf5e8;">
+          <div style="font-family:'Playfair Display',serif; font-weight:700; color:var(--trench); margin-bottom:0.5rem;">🎄 Natal de 1914</div>
+          <p style="font-size:0.85rem; margin:0; line-height:1.5;">Britânicos e alemães saíram das trincheiras espontaneamente, jogaram futebol na terra de ninguém e trocaram cigarros. No dia 26, voltaram a se matar. A trégua não foi autorizada por nenhum general.</p>
+        </div>
+      </div>
+
+      <!-- FRENTE ORIENTAL -->
+      <div style="font-family:'Special Elite',cursive; font-size:0.7rem; letter-spacing:0.2em; color:var(--sepia-dark); margin: 1.5rem 0 0.8rem;">◆ FRENTE ORIENTAL — GUERRA DE MOVIMENTO</div>
+      <p>Na frente leste, contra a Rússia, a guerra foi diferente: mais dinâmica, com grandes avanços e recuos. A Rússia tinha o maior exército do mundo — mas era mal equipada, mal alimentada e mal liderada. As batalhas de Tannenberg (1914) e dos Lagos Masúrios foram catástrofes russas, com centenas de milhares de prisioneiros.</p>
+
+      <div class="curiosity" onclick="toggleCuriosity(this)">
+        <div class="curiosity-header">CURIOSIDADE — "PÉ DE TRINCHEIRA": A DOENÇA DA IMOBILIDADE <span class="toggle">▼</span></div>
+        <div class="curiosity-body">Ficar semanas com os pés imersos em lama e água fria causava uma condição chamada "pé de trincheira" — gangrena por falta de circulação. Centenas de milhares de soldados tiveram dedos ou pés amputados. A solução encontrada pelos britânicos foi obrigar cada soldado a ter três pares de meias e trocar de pé os pés diariamente — mas a ordem era difícil de cumprir sob fogo constante.</div>
+      </div>
+
+      <div class="section-nav">
+        <button class="btn-nav" onclick="goTo(1)">← ANTERIOR</button>
+        <div class="section-indicator">3 / 7</div>
+        <button class="btn-nav" onclick="goTo(3)">PRÓXIMO →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- SEÇÃO 4: TECNOLOGIA -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="section" id="sec-3">
+    <div class="paper">
+      <div class="section-header">
+        <span class="section-tag">CAPÍTULO IV</span>
+        <h2 class="section-title">A Guerra das Máquinas</h2>
+        <div class="section-date">Inovações 1914 — 1918</div>
+      </div>
+
+      <p class="lead">A Primeira Guerra foi o laboratório mais cruel da história da tecnologia militar. Pela primeira vez, a ciência industrial foi usada em escala massiva para matar. Muitas tecnologias que usamos hoje nasceram neste conflito.</p>
+
+      <div class="grid-3">
+        <div class="tech-card">
+          <span class="tech-icon">💀</span>
+          <div class="tech-name">Gás de Combate</div>
+          <div class="tech-desc">Cloro, fosgênio e gás mostarda. O gás mostarda queimava pulmões e cegava soldados. Primeiro uso em larga escala: alemães em Ypres (1915). Ambos os lados usaram. Causou 1,3 milhão de baixas.</div>
+        </div>
+        <div class="tech-card">
+          <span class="tech-icon">🛡️</span>
+          <div class="tech-name">Tanque de Guerra</div>
+          <div class="tech-desc">Inventado pelos britânicos em 1916 para cruzar trincheiras. Primeira aparição: Batalha do Somme (setembro 1916). Os alemães ficaram aterrorizados — nunca tinham visto nada parecido. Eram lentos, quebravam muito, mas mudaram a guerra.</div>
+        </div>
+        <div class="tech-card">
+          <span class="tech-icon">✈️</span>
+          <div class="tech-name">Aviação Militar</div>
+          <div class="tech-desc">Começou com reconhecimento — pilotos fotografavam posições inimigas. Logo evoluiu para combate aéreo (dogfights). Os "Ases da Aviação" como o Barão Vermelho (Richthofen) se tornaram celebridades.</div>
+        </div>
+        <div class="tech-card">
+          <span class="tech-icon">🚢</span>
+          <div class="tech-name">Submarinos (U-Boats)</div>
+          <div class="tech-desc">A Alemanha usou submarinos para bloquear o abastecimento britânico. Em 1915, o U-20 afundou o Lusitania (navio civil) matando 1.198 pessoas. O ataque foi fundamental para mudar a opinião pública americana.</div>
+        </div>
+        <div class="tech-card">
+          <span class="tech-icon">🔫</span>
+          <div class="tech-name">Metralhadora</div>
+          <div class="tech-desc">Uma metralhadora podia disparar 600 balas por minuto, varrendo ondas inteiras de soldados. Foi o principal motivo pelo qual ataques frontais às trincheiras eram suicidas. Explica a carnificina da guerra.</div>
+        </div>
+        <div class="tech-card">
+          <span class="tech-icon">🎈</span>
+          <div class="tech-name">Dirigíveis Zeppelin</div>
+          <div class="tech-desc">A Alemanha usou zeppelins para bombardear Londres — o primeiro bombardeio de civis urbanos da história. Causou pânico, mas pouco dano estratégico. Eram vulneráveis ao fogo inimigo e ao clima.</div>
+        </div>
+      </div>
+
+      <div class="sep">✦ ✦ ✦</div>
+
+      <!-- PROPAGANDA -->
+      <div style="font-family:'Special Elite',cursive; font-size:0.7rem; letter-spacing:0.2em; color:var(--sepia-dark); margin-bottom:1rem;">◆ A TECNOLOGIA DA MENTE: PROPAGANDA DE GUERRA</div>
+
+      <p>Pela primeira vez na história, os governos usaram meios de comunicação em massa — jornais, cartazes, cinema — para manipular a opinião pública e recrutar soldados. A propaganda foi tão importante quanto os canhões.</p>
+
+      <div class="grid-2">
+        <div class="poster-frame">
+          <div style="font-size:3rem; margin-bottom:0.5rem;">🫵</div>
+          <div class="poster-title">YOUR COUNTRY NEEDS YOU</div>
+          <div style="font-family:'Crimson Text',serif; font-size:0.85rem; margin-top:0.8rem; color:var(--steel);">O famoso cartaz britânico com o General Kitchener. Modelo copiado em dezenas de países, incluindo o cartaz americano do Tio Sam. A pressão social era enorme: jovens que não se alistavam recebiam penas brancas — símbolo de covardia.</div>
+        </div>
+        <div style="padding:1rem;">
+          <div style="font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--trench); margin-bottom:1rem;">Técnicas de Propaganda</div>
+          <div class="mini-timeline" style="padding-left:1.5rem;">
+            <div class="mini-event">
+              <div class="mini-event-title">Desumanização do inimigo</div>
+              <div class="mini-event-desc">Alemães eram chamados de "Huns" pelos britânicos — referência a bárbaros invasores medievais.</div>
+            </div>
+            <div class="mini-event">
+              <div class="mini-event-title">Apelos emocionais</div>
+              <div class="mini-event-desc">Imagens de mulheres e crianças ameaçadas pelo inimigo para motivar o recrutamento.</div>
+            </div>
+            <div class="mini-event">
+              <div class="mini-event-title">Censura da realidade</div>
+              <div class="mini-event-desc">Fotos de corpos e trincheiras foram censuradas. Os jornais descreviam uma guerra heroica e limpa.</div>
+            </div>
+            <div class="mini-event">
+              <div class="mini-event-title">Controle de cartas</div>
+              <div class="mini-event-desc">Cartas dos soldados eram lidas e censuradas antes de chegar às famílias.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="curiosity" onclick="toggleCuriosity(this)">
+        <div class="curiosity-header">CURIOSIDADE — TECNOLOGIAS DA WWI QUE USAMOS HOJE <span class="toggle">▼</span></div>
+        <div class="curiosity-body">
+          <strong>Fuso horário padronizado:</strong> A coordenação de ataques entre exércitos diferentes exigiu horários precisos — impulsionou a adoção global dos fusos horários.<br><br>
+          <strong>Cirurgia plástica:</strong> O número absurdo de rostos desfigurados levou ao desenvolvimento das primeiras técnicas modernas de reconstrução facial.<br><br>
+          <strong>Transfusão de sangue:</strong> Os médicos aprenderam a armazenar e transfundir sangue em escala — salvou milhões de vidas desde então.<br><br>
+          <strong>Zíper:</strong> Desenvolvido para uniformes militares que precisavam ser fechados rapidamente.<br><br>
+          <strong>Chá com leite:</strong> Soldados britânicos criaram o hábito de tomar chá com leite condensado (única forma disponível) nas trincheiras.
+        </div>
+      </div>
+
+      <div class="section-nav">
+        <button class="btn-nav" onclick="goTo(2)">← ANTERIOR</button>
+        <div class="section-indicator">4 / 7</div>
+        <button class="btn-nav" onclick="goTo(4)">PRÓXIMO →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- SEÇÃO 5: BRASIL -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="section" id="sec-4">
+    <div class="paper">
+      <div class="section-header">
+        <span class="section-tag">CAPÍTULO V</span>
+        <h2 class="section-title">O Brasil na Grande Guerra</h2>
+        <div class="section-date">1914 — 1919</div>
+      </div>
+
+      <div class="brazil-flag-strip">
+        <div style="background:#009C3B;"></div>
+        <div style="background:#FFDF00; flex:0.3;"></div>
+        <div style="background:#009C3B;"></div>
+      </div>
+
+      <p class="lead">O Brasil foi o único país da América do Sul a participar ativamente da Primeira Guerra Mundial. A história desta participação envolve tensão política interna, afundamento de navios, e uma expedição médica que poucos brasileiros conhecem.</p>
+
+      <!-- LINHA DO TEMPO BRASIL -->
+      <div style="font-family:'Special Elite',cursive; font-size:0.7rem; letter-spacing:0.2em; color:var(--sepia-dark); margin-bottom:0.8rem;">◆ CRONOLOGIA BRASILEIRA NA GUERRA</div>
+
+      <div class="mini-timeline">
+        <div class="mini-event">
+          <div class="mini-event-date">AGOSTO 1914</div>
+          <div class="mini-event-title">Brasil declara neutralidade</div>
+          <div class="mini-event-desc">Com o início da guerra, o presidente Wenceslau Brás declara a neutralidade brasileira. O Brasil tinha laços econômicos e imigratórios fortes com a Alemanha — havia uma grande comunidade alemã no Sul do país.</div>
+        </div>
+        <div class="mini-event">
+          <div class="mini-event-date">1915–1917</div>
+          <div class="mini-event-title">Guerra submarina e tensão crescente</div>
+          <div class="mini-event-desc">Alemanha declara "zona de guerra" no Atlântico. Navios de países neutros começam a ser afundados. Os interesses comerciais brasileiros, ligados ao café e ao comércio com a Europa, são diretamente ameaçados.</div>
+        </div>
+        <div class="mini-event">
+          <div class="mini-event-date">3–5 ABRIL 1917</div>
+          <div class="mini-event-title">Afundamento do Paraná — ponto de ruptura</div>
+          <div class="mini-event-desc">O navio mercante brasileiro <strong>Paraná</strong> é afundado por um submarino alemão no Canal da Mancha. Havia a bordo emigrantes que retornavam ao Brasil. O Brasil rompe relações diplomáticas com a Alemanha.</div>
+        </div>
+        <div class="mini-event">
+          <div class="mini-event-date">MAIO–OUTUBRO 1917</div>
+          <div class="mini-event-title">Mais afundamentos — pressão insustentável</div>
+          <div class="mini-event-desc">Os navios <strong>Lapa, Tijuca e Macau</strong> são afundados. A opinião pública brasileira se radicalizou. Manifestações nas ruas. Empresas alemãs no Brasil foram atacadas. O governo não tinha mais como permanecer neutro.</div>
+        </div>
+        <div class="mini-event">
+          <div class="mini-event-date">26 OUTUBRO 1917</div>
+          <div class="mini-event-title">🇧🇷 Brasil declara guerra à Alemanha</div>
+          <div class="mini-event-desc">O Brasil foi o único país da América do Sul a declarar guerra. A declaração foi recebida com manifestações nas ruas do Rio de Janeiro. Na Câmara, houve intenso debate sobre os riscos e benefícios da participação.</div>
+        </div>
+        <div class="mini-event">
+          <div class="mini-event-date">1917–1918</div>
+          <div class="mini-event-title">DNOG e Missão Médica</div>
+          <div class="mini-event-desc">A Divisão Naval em Operações de Guerra (DNOG) foi enviada ao Atlântico. A Missão Médica Brasileira (MMB) com 100 médicos e enfermeiros foi à Europa. Epidemia de gripe espanhola devastou as tropas antes de chegarem ao campo de batalha.</div>
+        </div>
+      </div>
+
+      <div class="doc-box" data-label="NAVIOS BRASILEIROS AFUNDADOS POR SUBMARINOS ALEMÃES">
+        <strong>1. Paraná</strong> — 03/04/1917 — Canal da Mancha — 3 mortos<br>
+        <strong>2. Lapa</strong> — 20/05/1917 — Costa da França<br>
+        <strong>3. Tijuca</strong> — 26/05/1917 — Costa da Espanha<br>
+        <strong>4. Macau</strong> — 22/10/1917 — Costa da França — 3 mortos<br>
+        <strong>5. Acari</strong> — 23/11/1917<br>
+        <strong>6. Guahyba</strong> — 1918<br>
+        <strong>7. Maranhão</strong> — 1918<br><br>
+        <em>Total: ao menos 26 brasileiros mortos em afundamentos.</em>
+      </div>
+
+      <div class="grid-2" style="margin-top:1.5rem;">
+        <div>
+          <div style="font-family:'Special Elite',cursive; font-size:0.7rem; letter-spacing:0.2em; color:var(--sepia-dark); margin-bottom:0.8rem;">◆ POR QUE O BRASIL ENTROU NA GUERRA?</div>
+          <div class="mini-timeline" style="padding-left:1.5rem;">
+            <div class="mini-event">
+              <div class="mini-event-title">🚢 Afundamento de navios</div>
+              <div class="mini-event-desc">Causa imediata e mais óbvia. Soberania nacional violada.</div>
+            </div>
+            <div class="mini-event">
+              <div class="mini-event-title">☕ Interesse econômico</div>
+              <div class="mini-event-desc">Alinhamento com a Inglaterra e EUA garantia mercado para o café.</div>
+            </div>
+            <div class="mini-event">
+              <div class="mini-event-title">🌍 Prestígio internacional</div>
+              <div class="mini-event-desc">Participar da guerra daria ao Brasil assento na mesa das grandes nações.</div>
+            </div>
+            <div class="mini-event">
+              <div class="mini-event-title">🏛️ Pressão interna</div>
+              <div class="mini-event-desc">Opinião pública e imprensa pressionavam após os afundamentos.</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-family:'Special Elite',cursive; font-size:0.7rem; letter-spacing:0.2em; color:var(--sepia-dark); margin-bottom:0.8rem;">◆ O QUE O BRASIL GANHOU?</div>
+          <div style="border:1px solid var(--paper-dark); padding:1rem; background:#faf5e8; margin-bottom:0.8rem;">
+            <div style="font-family:'Playfair Display',serif; font-weight:700; color:#2d5a1b; margin-bottom:0.3rem;">✓ Conferência de Paz</div>
+            <p style="font-size:0.85rem; margin:0; line-height:1.5;">O Brasil participou da Conferência de Versalhes (1919) com delegação oficial — prestígio diplomático inédito.</p>
+          </div>
+          <div style="border:1px solid var(--paper-dark); padding:1rem; background:#faf5e8; margin-bottom:0.8rem;">
+            <div style="font-family:'Playfair Display',serif; font-weight:700; color:#2d5a1b; margin-bottom:0.3rem;">✓ Liga das Nações</div>
+            <p style="font-size:0.85rem; margin:0; line-height:1.5;">O Brasil foi membro fundador da Liga das Nações (precursora da ONU), sentando ao lado das grandes potências.</p>
+          </div>
+          <div style="border:1px solid var(--paper-dark); padding:1rem; background:#faf5e8;">
+            <div style="font-family:'Playfair Display',serif; font-weight:700; color:var(--blood); margin-bottom:0.3rem;">✗ Conflito interno</div>
+            <p style="font-size:0.85rem; margin:0; line-height:1.5;">A comunidade alemã no Sul sofreu perseguições. Escolas alemãs foram fechadas por decreto. Igrejas luteranas foram pressionadas a realizar cultos em português. Empresas com nomes alemãs foram vandalizadas. Esta tensão moldaria profundamente a política gaúcha nas décadas seguintes.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="curiosity" onclick="toggleCuriosity(this)">
+        <div class="curiosity-header">CURIOSIDADE — A GRIPE ESPANHOLA DERRUBOU O BRASIL ANTES DO INIMIGO <span class="toggle">▼</span></div>
+        <div class="curiosity-body">A DNOG (esquadra brasileira enviada ao Atlântico) foi dizimada não por submarinos alemães, mas pela pandemia de gripe espanhola de 1918. Dos ~1.500 marinheiros, mais de 150 morreram de gripe e centenas ficaram incapacitados. A esquadra chegou à Europa já enfraquecida e praticamente não entrou em combate. A gripe espanhola matou mais pessoas que toda a Primeira Guerra Mundial — estima-se 50 a 100 milhões de mortes globais.</div>
+      </div>
+
+      <div class="curiosity" onclick="toggleCuriosity(this)">
+        <div class="curiosity-header">CURIOSIDADE — RIO GRANDE DO SUL: A GUERRA DENTRO DO BRASIL <span class="toggle">▼</span></div>
+        <div class="curiosity-body">O Rio Grande do Sul tinha centenas de milhares de imigrantes alemães e seus descendentes. Quando o Brasil declarou guerra à Alemanha, muitos se sentiram divididos entre duas lealdades. Escolas em língua alemã foram fechadas por decreto. Igrejas luteranas foram pressionadas a realizar cultos em português. Empresas com nomes alemãs foram vandalizadas. Esta tensão moldaria profundamente a política gaúcha nas décadas seguintes.</div>
+      </div>
+
+      <div class="section-nav">
+        <button class="btn-nav" onclick="goTo(3)">← ANTERIOR</button>
+        <div class="section-indicator">5 / 7</div>
+        <button class="btn-nav" onclick="goTo(5)">PRÓXIMO →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- SEÇÃO 6: A VIRADA -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="section" id="sec-5">
+    <div class="paper">
+      <div class="section-header">
+        <span class="section-tag">CAPÍTULO VI</span>
+        <h2 class="section-title">A Virada da Guerra</h2>
+        <div class="section-date">1917 — 1918</div>
+      </div>
+
+      <p class="lead">Em 1917, a guerra chegou a um ponto de inflexão. Dois eventos completamente opostos abalaram o equilíbrio: a Revolução Russa retirou a Rússia da guerra — e a entrada dos Estados Unidos jogou o peso de uma nação inteira do lado dos Aliados.</p>
+
+      <div class="grid-2">
+        <!-- REVOLUÇÃO RUSSA -->
+        <div style="border:2px solid #c0392b; padding:1.2rem; background:rgba(139,26,26,0.05);">
+          <div style="font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:700; color:var(--blood); margin-bottom:0.8rem;">🔴 Revolução Russa</div>
+          <p style="font-size:0.95rem; line-height:1.6;">Em fevereiro de 1917, o Czar Nicolau II foi deposto. Em outubro, os bolcheviques de Lenin tomaram o poder. Sob o slogan "Paz, Terra e Pão", Lenin tirou a Rússia da guerra em troca de enormes concessões territoriais (Tratado de Brest-Litovsk, março 1918). A Alemanha ficou livre para concentrar todas as forças no Ocidente — mas era tarde demais.</p>
+          <div class="badge" style="margin-top:0.5rem;">IMPACTO: ALIADOS PERDERAM 1/3 DO PODER NA FRENTE ORIENTAL</div>
+        </div>
+
+        <!-- EUA -->
+        <div style="border:2px solid #1a3a5c; padding:1.2rem; background:rgba(26,58,92,0.05);">
+          <div style="font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:700; color:#1a3a5c; margin-bottom:0.8rem;">🇺🇸 Entrada dos EUA</div>
+          <p style="font-size:0.95rem; line-height:1.6;">Os EUA tentaram manter neutralidade por três anos. Mas o afundamento do Lusitania (1915) e o Telegrama Zimmermann (1917) mudaram tudo. Em abril de 1917, o presidente Wilson declarou guerra. 2 milhões de soldados americanos chegaram à Europa até 1918 — frescos, bem alimentados, bem equipados.</p>
+          <div class="badge blue" style="margin-top:0.5rem;">IMPACTO: ALIADOS GANHARAM REFORÇO DECISIVO</div>
+        </div>
+      </div>
+
+      <div class="doc-box" data-label="TELEGRAMA ZIMMERMANN · INTERCEPTADO PELOS BRITÂNICOS · JANEIRO 1917">
+        <strong>DE:</strong> Ministério das Relações Exteriores alemão<br>
+        <strong>PARA:</strong> Embaixador alemão no México<br><br>
+        "Propomos aliança com o México nas seguintes condições: fazer guerra juntos, fazer paz juntos. Financiamento generoso e compreensão de que o México reconquistará Texas, Novo México e Arizona."<br><br>
+        <em>Quando os britânicos interceptaram e revelaram o telegrama ao público americano, a raiva popular foi imediata. Em semanas, Wilson pediu declaração de guerra ao Congresso.</em>
+      </div>
+
+      <!-- OFENSIVA DE 1918 -->
+      <div style="font-family:'Special Elite',cursive; font-size:0.7rem; letter-spacing:0.2em; color:var(--sepia-dark); margin: 1.5rem 0 0.8rem;">◆ A OFENSIVA FINAL DE 1918</div>
+
+      <div class="mini-timeline">
+        <div class="mini-event">
+          <div class="mini-event-date">MARÇO–JULHO 1918</div>
+          <div class="mini-event-title">Ofensiva da Primavera alemã — último fôlego</div>
+          <div class="mini-event-desc">A Alemanha, agora livre da frente leste, lançou a maior ofensiva desde o início da guerra. Avançou 60 km em poucos dias — o maior avanço desde 1914. Mas as reservas alemãs estavam esgotadas. Não havia como sustentar o avanço.</div>
+        </div>
+        <div class="mini-event">
+          <div class="mini-event-date">AGOSTO–NOVEMBRO 1918</div>
+          <div class="mini-event-title">Os Cem Dias — contraofensiva aliada decisiva</div>
+          <div class="mini-event-desc">Com os americanos chegando a 10 mil por dia, os Aliados lançaram ofensiva devastadora. A Alemanha recuava em todas as frentes. O Império Austro-Húngaro entrou em colapso. O Império Otomano se rendeu. A Bulgária se rendeu.</div>
+        </div>
+        <div class="mini-event">
+          <div class="mini-event-date">9 NOVEMBRO 1918</div>
+          <div class="mini-event-title">Kaiser Guilherme II abdica e foge para a Holanda</div>
+          <div class="mini-event-desc">O Império Alemão colapsou. Uma república foi proclamada em Berlim. O Kaiser, que havia prometido "vitória ou morte", saiu de trem para o exílio holandês onde viveu até 1941.</div>
+        </div>
+      </div>
+
+      <div class="grid-3" style="margin-top:1.5rem;">
+        <div class="stat-card">
+          <span class="stat-num">2 mi</span>
+          <span class="stat-label">SOLDADOS AMERICANOS NA EUROPA</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">3 mi</span>
+          <span class="stat-num" style="font-size:1.2rem;">km²</span>
+          <span class="stat-label">TERRITÓRIO PERDIDO PELA RÚSSIA (BREST-LITOVSK)</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">11/11</span>
+          <span class="stat-label">11H DO DIA 11/11/1918 — ARMISTÍCIO</span>
+        </div>
+      </div>
+
+      <div class="curiosity" onclick="toggleCuriosity(this)">
+        <div class="curiosity-header">CURIOSIDADE — O ÚLTIMO SOLDADO A MORRER NA WWI <span class="toggle">▼</span></div>
+        <div class="curiosity-body">O Armistício foi assinado às 5h da manhã de 11 de novembro de 1918, mas só entraria em vigor às 11h — para que fosse "a décima primeira hora do décimo primeiro dia do décimo primeiro mês". Durante essas 6 horas, os dois lados continuaram lutando. O soldado americano Henry Gunther morreu às 10h59 — um minuto antes do cessar-fogo — carregando sua baioneta contra posições alemãs. Os soldados alemães tentaram fazer sinal para ele parar, sabendo que a guerra estava praticamente acabada. Ele não parou.</div>
+      </div>
+
+      <div class="section-nav">
+        <button class="btn-nav" onclick="goTo(4)">← ANTERIOR</button>
+        <div class="section-indicator">6 / 7</div>
+        <button class="btn-nav" onclick="goTo(6)">PRÓXIMO →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- SEÇÃO 7: DESFECHO -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <section class="section" id="sec-6">
+    <div class="paper">
+      <div class="section-header">
+        <span class="section-tag">CAPÍTULO VII</span>
+        <h2 class="section-title">O Mundo Depois da Guerra</h2>
+        <div class="section-date">1918 — 1939</div>
+      </div>
+
+      <p class="lead">A guerra terminou. A paz foi ainda pior. O Tratado de Versalhes humilhou a Alemanha de maneira tão profunda que plantou as sementes de um conflito ainda mais devastador — apenas 21 anos depois.</p>
+
+      <!-- NÚMEROS FINAIS -->
+      <div style="font-family:'Special Elite',cursive; font-size:0.7rem; letter-spacing:0.2em; color:var(--sepia-dark); margin-bottom:0.8rem;">◆ O CUSTO HUMANO</div>
+      <div class="grid-3">
+        <div class="stat-card">
+          <span class="stat-num">20 mi</span>
+          <span class="stat-label">MORTOS MILITARES</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">21 mi</span>
+          <span class="stat-label">FERIDOS</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">7 mi</span>
+          <span class="stat-label">CIVIS MORTOS</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">50 mi</span>
+          <span class="stat-label">MORTOS — GRIPE ESPANHOLA (1918)</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">4</span>
+          <span class="stat-label">IMPÉRIOS EXTINTOS</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">30+</span>
+          <span class="stat-label">PAÍSES ENVOLVIDOS</span>
+        </div>
+      </div>
+
+      <!-- 4 IMPÉRIOS EXTINTOS -->
+      <div style="font-family:'Special Elite',cursive; font-size:0.7rem; letter-spacing:0.2em; color:var(--sepia-dark); margin: 1.5rem 0 0.8rem;">◆ OS 4 IMPÉRIOS QUE DESAPARECERAM</div>
+      <div class="grid-2">
+        <div style="border:1px solid var(--paper-dark); padding:1rem; background:#faf5e8;">
+          <div style="font-family:'Playfair Display',serif; font-weight:700; color:var(--trench);">🦅 Império Alemão (1871–1918)</div>
+          <p style="font-size:0.85rem; margin:0.3rem 0 0; line-height:1.5;">Transformou-se na República de Weimar — instável, humilhada, palco da ascensão de Hitler.</p>
+        </div>
+        <div style="border:1px solid var(--paper-dark); padding:1rem; background:#faf5e8;">
+          <div style="font-family:'Playfair Display',serif; font-weight:700; color:var(--trench);">👑 Império Austro-Húngaro (1867–1918)</div>
+          <p style="font-size:0.85rem; margin:0.3rem 0 0; line-height:1.5;">Fragmentou-se em Áustria, Hungria, Tchecoslováquia, Iugoslávia, e cedeu territórios à Romênia e Itália.</p>
+        </div>
+        <div style="border:1px solid var(--paper-dark); padding:1rem; background:#faf5e8;">
+          <div style="font-family:'Playfair Display',serif; font-weight:700; color:var(--trench);">☪️ Império Otomano (1299–1922)</div>
+          <p style="font-size:0.85rem; margin:0.3rem 0 0; line-height:1.5;">Desmembrado. O Oriente Médio foi repartido entre França e Inglaterra — fronteiras artificiais que causam conflitos até hoje.</p>
+        </div>
+        <div style="border:1px solid var(--paper-dark); padding:1rem; background:#faf5e8;">
+          <div style="font-family:'Playfair Display',serif; font-weight:700; color:var(--trench);">🔴 Império Russo (862–1917)</div>
+          <p style="font-size:0.85rem; margin:0.3rem 0 0; line-height:1.5;">A Revolução Bolchevique criou a URSS. O Czar Nicolau II e toda a família foram executados em 1918.</p>
+        </div>
+      </div>
+
+      <!-- VERSALHES -->
+      <div style="font-family:'Special Elite',cursive; font-size:0.7rem; letter-spacing:0.2em; color:var(--sepia-dark); margin: 1.5rem 0 0.8rem;">◆ TRATADO DE VERSALHES — 28 DE JUNHO DE 1919</div>
+      <p>Assinado exatamente 5 anos após o assassinato de Sarajevo, o Tratado de Versalhes foi uma paz punitiva que buscava destruir a Alemanha economicamente e militarmente. O presidente americano Wilson havia proposto os "14 Pontos" — uma paz sem punições, baseada em autodeterminação dos povos. França e Inglaterra ignoraram quase tudo.</p>
+
+      <div class="doc-box" data-label="AS CLÁUSULAS DO TRATADO DE VERSALHES — O QUE A ALEMANHA PERDEU">
+        <strong>TERRITORIAL:</strong> Perdeu 13% do território europeu, todas as colônias e 10% da população.<br><br>
+        <strong>MILITAR:</strong> Exército limitado a 100.000 homens. Proibida de ter aviação, submarinos e artilharia pesada.<br><br>
+        <strong>FINANCEIRO:</strong> Responsabilidade exclusiva pela guerra (Artigo 231 — "Cláusula de Culpa de Guerra"). Reparações fixadas em 132 bilhões de marcos-ouro — equivalente a décadas de produção alemã.<br><br>
+        <strong>RENÂNIA:</strong> Zona desmilitarizada. França ocupa o Saar por 15 anos.<br><br>
+        <em>"Isso não é paz. É um armistício por 20 anos." — Marechal Foch, comandante aliado, ao assinar o tratado.</em>
+      </div>
+
+      <!-- CAMINHO PARA WWII -->
+      <div style="font-family:'Special Elite',cursive; font-size:0.7rem; letter-spacing:0.2em; color:var(--sepia-dark); margin: 1.5rem 0 0.8rem;">◆ AS SEMENTES DA SEGUNDA GUERRA</div>
+      <div class="mini-timeline">
+        <div class="mini-event">
+          <div class="mini-event-date">1919–1923</div>
+          <div class="mini-event-title">Hiperinflação alemã</div>
+          <div class="mini-event-desc">As reparações destruíram a economia alemã. Em 1923, era necessário carregar malas de dinheiro para comprar pão. A classe média foi arruinada — e buscava culpados.</div>
+        </div>
+        <div class="mini-event">
+          <div class="mini-event-date">1929</div>
+          <div class="mini-event-title">Crash de 1929 — Crise econômica global</div>
+          <div class="mini-event-desc">A Alemanha, já fragilizada, foi devastada. O desemprego chegou a 30%. O terreno estava pronto para líderes populistas e extremistas.</div>
+        </div>
+        <div class="mini-event">
+          <div class="mini-event-date">1933</div>
+          <div class="mini-event-title">Hitler chega ao poder</div>
+          <div class="mini-event-desc">O nazismo cresceu prometendo reverter as humilhações de Versalhes e restaurar a grandeza alemã. A propaganda explorou a "punhalada pelas costas" — a mentira de que a Alemanha não havia sido derrotada militarmente, mas traída internamente.</div>
+        </div>
+        <div class="mini-event">
+          <div class="mini-event-date">1939</div>
+          <div class="mini-event-title">Segunda Guerra Mundial começa</div>
+          <div class="mini-event-desc">Marechal Foch havia previsto: 20 anos após Versalhes, a guerra recomeçou. A Primeira e a Segunda Guerras são hoje vistas por muitos historiadores como uma única guerra com um intervalo de 20 anos.</div>
+        </div>
+      </div>
+
+      <div class="curiosity" onclick="toggleCuriosity(this)">
+        <div class="curiosity-header">CURIOSIDADE — O ORIENTE MÉDIO QUE A WWI CRIOU <span class="toggle">▼</span></div>
+        <div class="curiosity-body">Quando o Império Otomano colapsou, França e Reino Unido dividiram o Oriente Médio entre si com régua e caneta — sem considerar etnias, religiões ou culturas locais. O Acordo Sykes-Picot (1916) criou fronteiras que até hoje causam conflitos: Síria, Iraque, Líbano, Palestina, Kuwait — todas criadas por diplomatas europeus em Paris. Muitos historiadores apontam que os conflitos atuais no Oriente Médio têm raízes diretas nessas decisões de 1919.</div>
+      </div>
+
+      <div class="curiosity" onclick="toggleCuriosity(this)">
+        <div class="curiosity-header">CURIOSIDADE — A LIGA DAS NAÇÕES E SEU FRACASSO <span class="toggle">▼</span></div>
+        <div class="curiosity-body">O presidente Wilson insistiu na criação da Liga das Nações como parte do Tratado de Versalhes — uma organização internacional para resolver disputas pacificamente. Mas o Congresso americano recusou ratificar o tratado, e os EUA nunca entraram na organização que seu próprio presidente criou. Sem os EUA, a Liga era fraca. Quando Hitler começou a rearmamento e invasões nos anos 1930, a Liga foi impotente. Ela foi substituída pela ONU após a Segunda Guerra Mundial.</div>
+      </div>
+
+      <div class="quote-box">
+        "A guerra para acabar com todas as guerras."
+        <cite>— H.G. Wells, 1914. Vinte e um anos depois, o mundo provaria que estava errado.</cite>
+      </div>
+
+      <div style="background:var(--trench); color:var(--sepia-light); padding:1.5rem; margin-top:2rem; text-align:center; border:1px solid rgba(200,169,110,0.3);">
+        <div style="font-family:'Special Elite',cursive; font-size:0.65rem; letter-spacing:0.3em; color:var(--sepia); margin-bottom:0.8rem;">FIM DA TIMELINE</div>
+        <div style="font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:700; margin-bottom:0.5rem;">Você explorou todos os 7 capítulos.</div>
+        <div style="font-family:'Crimson Text',serif; font-size:1rem; color:rgba(245,230,200,0.7); font-style:italic;">Agora use este conhecimento no Quiz — Passa ou Repassa!</div>
+      </div>
+
+      <div class="section-nav">
+        <button class="btn-nav" onclick="goTo(5)">← ANTERIOR</button>
+        <div class="section-indicator">7 / 7</div>
+        <button class="btn-nav" disabled>FIM →</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  let current = 0;
+  const total = 7;
+
+  function goTo(n) {
+    console.log('Navigating to section:', n); // Log para verificar o índice
+    document.querySelectorAll('.section').forEach((s, i) => {
+      console.log('Section', i, 'active:', i === n); // Log para verificar a aplicação da classe
+      s.classList.toggle('active', i === n);
+    });
+    document.querySelectorAll('.nav-btn').forEach((b, i) => {
+      b.classList.toggle('active', i === n);
+    });
+    current = n;
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function updateProgress() {
+    const pct = ((current + 1) / total) * 100;
+    document.getElementById('progress').style.width = pct + '%';
+  }
+
+  function toggleCuriosity(el) {
+    el.classList.toggle('open');
+  }
+
+  updateProgress();
+</script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCfN9gVHe7aPPNzDW6q5M8-u96ju_mnJVI",
+    authDomain: "bla1-fd57b.firebaseapp.com",
+    projectId: "bla1-fd57b",
+    storageBucket: "bla1-fd57b.firebasestorage.app",
+    messagingSenderId: "468715848364",
+    appId: "1:468715848364:web:8eaabcbf5c312441c49509",
+    measurementId: "G-DVG9C3M2M5"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+</script>
+</body>
+</html>

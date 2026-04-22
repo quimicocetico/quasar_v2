@@ -1,0 +1,62 @@
+{
+  "metadados": {
+    "disciplina": "Química Orgânica",
+    "modulo": "Classes Funcionais",
+    "tags": ["Química", "BNCC", "EM13CNT301", "Hidrocarbonetos", "Funções Oxigenadas"]
+  },
+  "titulo": "QUÍMICA ORGÂNICA: O JOGO DAS CLASSES 🧪",
+  "subtitulo": "Como identificar e dar nome aos 'caras' que mandam nas moléculas!",
+  "notes_professor": [
+    "Comece citando exemplos do dia a dia: vinagre, perfume, acetona e gás de cozinha.",
+    "Explique que cada 'família' de moléculas tem um sobrenome (sufixo) próprio.",
+    "Destaque bem a diferença entre Carbonila e Carboxila no quadro.",
+    "Reforce a contagem de carbonos para os alunos que têm dificuldade com os prefixos (Met, Et, Prop, But)."
+  ],
+  "paineis": [
+    {
+      "menu": "Base de Tudo",
+      "blocos": [
+        { "tipo": "titulo-secao", "cor": "p", "icone": "1", "texto": "A Receita do Nome (IUPAC)" },
+        { "tipo": "texto", "conteudo": "Para dar nome a qualquer composto, usamos 3 peças de um quebra-cabeça:", "classes": "ch txt-md" },
+        { "tipo": "tabela", 
+          "cabecalhos": ["Parte", "O que indica?", "Exemplos"], 
+          "linhas": [
+            [{"texto": "Prefixo", "cor": "y"}, {"texto": "Nº de Carbonos", "cor": "w"}, {"texto": "Met (1), Et (2), Prop (3), But (4)"}],
+            [{"texto": "Infixo", "cor": "g"}, {"texto": "Tipo de Ligação", "cor": "w"}, {"texto": "an (simples), en (dupla), in (tripla)"}],
+            [{"texto": "Sufixo", "cor": "o"}, {"texto": "A Classe Social", "cor": "w"}, {"texto": "o, ol, al, ona, oico..."}]
+          ] 
+        },
+        { "tipo": "caixa-destaque", "cor": "o", "conteudo": "⚡ MACETE DE MATEMÁTICA BÁSICA: <br>Pra decorar os 4 primeiros prefixos: <strong class='y'>M</strong>eu <strong class='y'>E</strong>tano <strong class='y'>P</strong>ropano <strong class='y'>B</strong>utano (1, 2, 3, 4). <br>Os outros (Pent, Hex...) seguem a lógica dos campeões de futebol!" }
+      ]
+    },
+    {
+      "menu": "As Classes",
+      "blocos": [
+        { "tipo": "titulo-secao", "cor": "y", "icone": "2", "texto": "Classes Oxigenadas Principais" },
+        { "tipo": "lista", "estilo": "star", "itens": [
+          "<strong class='p'>Álcool:</strong> Tem -OH (hidroxila) em carbono saturado. Termina em <strong class='p'>OL</strong>. Ex: Etanol.",
+          "<strong class='g'>Aldeído:</strong> Tem -CHO na ponta da cadeia. Termina em <strong class='g'>AL</strong>. Ex: Metanal (Formol).",
+          "<strong class='o'>Cetona:</strong> Tem C=O (carbonila) entre dois carbonos. Termina em <strong class='o'>ONA</strong>. Ex: Propanona (Acetona).",
+          "<strong class='r'>Ácido Carboxílico:</strong> Tem -COOH (carboxila). Termina em <strong class='r'>OICO</strong>. Ex: Ácido Etanoico (Vinagre)."
+        ]},
+        { "tipo": "caixa-formula", "cor": "g", "label": "Diferença Chave", "texto": "C=O na PONTA = Aldeído | C=O no MEIO = Cetona" },
+        { "tipo": "carimbo", "cor": "r", "texto": "CAI NO ENEM!" }
+      ]
+    },
+    {
+      "menu": "Praticando",
+      "blocos": [
+        { "tipo": "titulo-secao", "cor": "b", "icone": "3", "texto": "Exercício de Fixação" },
+        { 
+          "tipo": "exercicio", 
+          "pergunta": "Se uma molécula tem 3 carbonos, apenas ligações simples e o grupo -OH ligado a um deles, qual seu nome e função?", 
+          "alternativas": ["Propanal (Aldeído)", "Propanona (Cetona)", "Propanol (Álcool)", "Propano (Hidrocarboneto)"], 
+          "correta": 2, 
+          "explicacao": "3 Carbonos = Prop; Ligações simples = an; Grupo -OH = sufixo OL (Álcool). Logo, Propanol!" 
+        },
+        { "tipo": "linha" },
+        { "tipo": "caixa-destaque", "cor": "o", "conteudo": "DICA PARA O CADERNO: Sempre numere a cadeia começando do lado mais próximo do grupo funcional! A química ama organização. 😉" }
+      ]
+    }
+  ]
+}

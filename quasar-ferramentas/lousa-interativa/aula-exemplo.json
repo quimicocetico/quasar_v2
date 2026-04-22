@@ -1,0 +1,63 @@
+{
+  "metadados": {
+    "disciplina": "Química",
+    "modulo": "Química Orgânica",
+    "tags": ["revisão", "funções", "enem"]
+  },
+  "titulo": "O Guia Definitivo das Funções",
+  "subtitulo": "Template Master — Química Orgânica",
+  "notas_professor": [
+    "AÇÃO: Escreva o título centralizado no quadro usando giz amarelo.",
+    "PAUSA: Fique em silêncio por 30 segundos. Deixe os alunos abrirem os cadernos.",
+    "GATILHO: Quando a maioria focar em você, pergunte: 'Alguém já leu o rótulo do álcool 70%?'",
+    "AÇÃO: Comece a desenhar a caixa de fórmula (Painel 1) no canto esquerdo da lousa."
+  ],
+  "paineis": [
+    {
+      "menu": "Textos e Destaques",
+      "blocos": [
+        { "tipo": "titulo-secao", "cor": "y", "icone": "1", "texto": "Tipos de Títulos e Textos" },
+        { "tipo": "texto", "conteudo": "Este é o parágrafo padrão. O professor pode sublinhar uma <span class='ch-ul'>palavra importante</span>.", "classes": "ch txt-md" },
+        { "tipo": "caixa-destaque", "cor": "p", "conteudo": "Esta é uma caixa de atenção (Cor Roxa/Purple). Ótima para conceitos-chave." },
+        { "tipo": "caixa-formula", "cor": "g", "label": "A Fórmula Geral", "texto": "Aqui vai a fórmula em verde (Green), simulando o giz de destaque." }
+      ]
+    },
+    {
+      "menu": "Listas e Estruturas",
+      "blocos": [
+        { "tipo": "titulo-secao", "cor": "o", "icone": "2", "texto": "Renderizando Listas" },
+        { "tipo": "lista", "estilo": "bullet", "itens": [
+          "Item 1 com <strong class='y'>Destaque Amarelo</strong>",
+          "Item 2 com <strong class='r'>Destaque Vermelho (Atenção/Perigo)</strong>"
+        ]}
+      ]
+    },
+    {
+      "menu": "Tabelas e Colunas",
+      "blocos": [
+        { "tipo": "titulo-secao", "cor": "g", "icone": "3", "texto": "Comparativos Visuais" },
+        { "tipo": "colunas", "proporcao": "1-1",
+          "coluna1": [
+            { "tipo": "texto", "conteudo": "<strong class='y'>Lado A</strong><br>Explicação do conceito A.", "classes": "ch txt-md" }
+          ],
+          "coluna2": [
+            { "tipo": "texto", "conteudo": "<strong class='r'>Lado B</strong><br>Explicação do conceito B.", "classes": "ch txt-md" }
+          ]
+        },
+        { "tipo": "tabela", "cabecalhos": ["Conceito", "Aplicação"],
+          "linhas": [
+            [{"texto":"Hidrocarboneto", "cor":"white"}, {"texto":"Combustíveis", "cor":"y"}],
+            [{"texto":"Álcool", "cor":"white"}, {"texto":"Desinfetantes", "cor":"y"}]
+          ]
+        }
+      ]
+    },
+    {
+      "menu": "Interação Final",
+      "blocos": [
+        { "tipo": "titulo-secao", "cor": "r", "icone": "4", "texto": "Hora do Teste" },
+        { "tipo": "exercicio", "pergunta": "Qual é a cor do cavalo branco de Napoleão?", "alternativas": ["Preto", "Branco", "Marrom"], "correta": 1, "explicacao": "O professor lê esta explicação apenas se a turma errar. Resposta óbvia: Branco." }
+      ]
+    }
+  ]
+}

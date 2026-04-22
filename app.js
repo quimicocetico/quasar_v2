@@ -66,7 +66,6 @@ function renderizarHeader() {
     <div class="h-16"></div>
   `);
 
-  // Lucide já está disponível (carregado no <head> da página)
   lucide.createIcons();
   setupEvents();
 }
@@ -93,20 +92,24 @@ function setupEvents() {
 
 // ─── 4. Atualiza header com dados do usuário ──────────────────────────────────
 function atualizarHeaderUsuario(user) {
-  const headerName = document.getElementById('header-name');
+  const headerName  = document.getElementById('header-name');
   const headerAvatar = document.getElementById('header-avatar');
-  const cardName  = document.getElementById('card-name');
-  const cardEmail = document.getElementById('card-email');
-  const cardAvatar = document.getElementById('card-avatar');
-  const authBtn   = document.getElementById('auth-action-btn');
+  const cardName    = document.getElementById('card-name');
+  const cardEmail   = document.getElementById('card-email');
+  const cardAvatar  = document.getElementById('card-avatar');
+  const authBtn     = document.getElementById('auth-action-btn');
 
-  if (!headerName) return; // header ainda não montado (login page pode não ter)
+  if (!headerName) return;
 
   if (user) {
     const firstName = user.displayName ? user.displayName.split(' ')[0] : 'Aluno';
     headerName.textContent = firstName;
     cardName.textContent   = user.displayName || 'Aluno Quasar';
     cardEmail.textContent  = user.email;
+
+    // ─── Papel do usuário exposto no body ─────────────────────────────
+    const isProfessor = user.email.endsWith('@educar.rn.gov.br');
+    document.body.dataset.role = isProfessor ? 'professor' : 'aluno';
 
     if (user.photoURL) {
       headerAvatar.innerHTML = `<img src="${user.photoURL}" class="w-full h-full object-cover rounded-full">`;
@@ -117,7 +120,7 @@ function atualizarHeaderUsuario(user) {
       <i data-lucide="log-out" class="w-4 h-4 text-red-400"></i>
       <span class="text-red-400 font-medium">Sair da Conta</span>
     `;
-    lucide.createIcons(); // re-renderiza só os novos ícones injetados
+    lucide.createIcons();
   } else {
     headerName.textContent = 'Entrar';
   }

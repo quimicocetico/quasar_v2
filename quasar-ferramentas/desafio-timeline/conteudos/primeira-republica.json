@@ -1,0 +1,347 @@
+{
+  "titulo": "A Engrenagem da República: Da Espada ao Café (1889-1930)",
+  "descricao": "Uma jornada interativa pelos bastidores do poder, fraudes eleitorais, revoltas populares e crises globais que moldaram o Brasil moderno.",
+  "events": [
+    {
+      "id": "pres_deodoro",
+      "tipo": "contexto",
+      "era": "República da Espada",
+      "ano": "1889-1891",
+      "titulo": "Marechal Deodoro da Fonseca",
+      "icone": "🎖️",
+      "conteudo": "O proclamador hesitante. Era monarquista e amigo de D. Pedro II, mas liderou o golpe militar. Primeiro presidente do Brasil, renunciou após fechar o Congresso e sofrer a Primeira Revolta da Armada."
+    },
+    {
+      "id": "q1_simbolos",
+      "tipo": "detalhe",
+      "era": "República da Espada",
+      "ano": "1889",
+      "titulo": "A Física dos Símbolos Nacionais",
+      "icone": "🇧🇷",
+      "conteudo": "A troca de regime político exigiu a criação de novos símbolos para legitimar a República. A nova bandeira nacional, com seu lema 'Ordem e Progresso', foi inspirada na filosofia Positivista de Auguste Comte.",
+      "questao": {
+        "pergunta": "Qual o objetivo principal do Estado republicano recém-nascido ao investir fortemente na criação de símbolos e heróis como Tiradentes?",
+        "opcoes": [
+          "Garantir que a população esquecesse os problemas econômicos imediatos causados pela abolição da escravatura.",
+          "Construir uma identidade nacional artificial que gerasse sentimento de pertencimento e legitimasse o regime militar instaurado.",
+          "Preparar a população para a iminente guerra contra a Argentina pela bacia do Rio da Prata.",
+          "Demonstrar aos países europeus que o Brasil possuía um programa espacial e astronômico avançado.",
+          "Restabelecer a ordem aristocrática, utilizando símbolos que remetessem à realeza de Portugal."
+        ],
+        "correta": 1,
+        "feedback_correto": "Na mosca! Tal como na Física, onde toda ação gera uma reação, o golpe militar (ação) precisava de uma justificativa visual e emocional (reação) para o povo.",
+        "feedback_errado": "Repense as forças em jogo. O povo não participou do golpe republicano. O novo governo precisava inventar heróis (Tiradentes) e símbolos para que a população aceitasse o novo regime."
+      }
+    },
+    {
+      "id": "q2_encilhamento",
+      "tipo": "detalhe",
+      "era": "República da Espada",
+      "ano": "1890-1891",
+      "titulo": "A Matemática do Desastre: O Encilhamento",
+      "icone": "📉",
+      "conteudo": "O Ministro da Fazenda Rui Barbosa implementou uma política de emissão de papel-moeda para estimular a industrialização. O resultado foi a criação de empresas fantasmas, especulação na bolsa de valores e uma gigantesca inflação.",
+      "questao": {
+        "pergunta": "Do ponto de vista da matemática financeira e da economia, o que ocorre quando se emite moeda sem o devido 'lastro' (garantia em riqueza real)?",
+        "opcoes": [
+          "A moeda se valoriza no mercado internacional, facilitando a importação de máquinas.",
+          "Aumenta-se o poder de compra dos trabalhadores rurais, reduzindo a desigualdade.",
+          "Gera-se hiperinflação, pois há mais dinheiro circulando para a mesma quantidade de bens, reduzindo o valor real da moeda.",
+          "Ocorre a deflação, fazendo com que as indústrias nacionais quebrem por falta de consumidores.",
+          "O Estado consegue pagar a dívida externa usando o novo dinheiro impresso."
+        ],
+        "correta": 2,
+        "feedback_correto": "Exato! É matemática pura: se você dobra a quantidade de notas na praça, mas o país continua produzindo a mesma quantidade de pães, o preço do pão dobra.",
+        "feedback_errado": "Cuidado com a ilusão do dinheiro fácil. Se imprimir dinheiro resolvesse a pobreza, todo país seria rico. Sem lastro (riqueza real gerada), a moeda vira apenas papel pintado."
+      }
+    },
+    {
+      "id": "pres_floriano",
+      "tipo": "contexto",
+      "era": "República da Espada",
+      "ano": "1891-1894",
+      "titulo": "Marechal Floriano Peixoto",
+      "icone": "⚔️",
+      "conteudo": "O 'Marechal de Ferro'. Assumiu após a renúncia de Deodoro (o que a Constituição não permitia sem novas eleições). Esmagou a Revolta da Armada (RJ) e a Revolução Federalista (RS), consolidando a República na força."
+    },
+    {
+      "id": "pres_prudente",
+      "tipo": "contexto",
+      "era": "República Oligárquica",
+      "ano": "1894-1898",
+      "titulo": "Prudente de Morais",
+      "icone": "🏛️",
+      "conteudo": "O primeiro presidente civil. Marcou a transição do poder dos militares (Espadas) para as oligarquias cafeeiras. Seu governo foi assombrado e marcado pela violenta destruição do Arraial de Canudos."
+    },
+    {
+      "id": "q3_canudos",
+      "tipo": "detalhe",
+      "era": "República Oligárquica",
+      "ano": "1897",
+      "titulo": "A Força-G do Sertão: Canudos",
+      "icone": "🌵",
+      "conteudo": "No sertão da Bahia, uma comunidade liderada por Antônio Conselheiro atraiu milhares de sertanejos fugindo da fome, da seca e dos altos impostos da República. O arraial de Canudos foi visto como uma ameaça monarquista.",
+      "questao": {
+        "pergunta": "Qual o fator geográfico e social que mais impulsionava a migração para Canudos?",
+        "opcoes": [
+          "O clima temperado da região que facilitava o plantio de café.",
+          "A seca severa (fenômeno climático) aliada à concentração de terras nas mãos dos coronéis (fator social).",
+          "A descoberta de grandes minas de ouro no leito do rio Vaza-Barris.",
+          "O incentivo do governo republicano para povoar o interior do Nordeste.",
+          "A presença de indústrias têxteis financiadas por capital britânico."
+        ],
+        "correta": 1,
+        "feedback_correto": "Perfeito! A Geografia explica: o clima semiárido castigava, e a Sociologia completa: o latifúndio não deixava espaço para o camponês.",
+        "feedback_errado": "Lembre-se da Caatinga! Canudos ficava no polígono das secas. O povo fugia da natureza inclemente e da crueldade dos coronéis."
+      }
+    },
+    {
+      "id": "pres_campos",
+      "tipo": "contexto",
+      "era": "República Oligárquica",
+      "ano": "1898-1902",
+      "titulo": "Campos Sales",
+      "icone": "🤝",
+      "conteudo": "O arquiteto do sistema. Criou a 'Política dos Governadores', um acordo de troca de favores entre o Presidente e os governadores estaduais que blindou o poder das oligarquias por 30 anos."
+    },
+    {
+      "id": "q4_coronelismo",
+      "tipo": "detalhe",
+      "era": "República Oligárquica",
+      "ano": "1898",
+      "titulo": "A Engenharia das Fraudes: Coronelismo",
+      "icone": "🗳️",
+      "conteudo": "A 'Política dos Governadores' dependia do Coronelismo na base do sistema. O coronel, grande latifundiário, controlava os votos de sua região de influência por meio do 'voto de cabresto'.",
+      "questao": {
+        "pergunta": "Considerando a Constituição de 1891, qual mecanismo legal facilitava enormemente a prática do voto de cabresto?",
+        "opcoes": [
+          "A urna eletrônica, que era facilmente hackeada pelos mesários locais.",
+          "O voto secreto, que permitia ao coronel infiltrar fiscais nas cabines.",
+          "O voto a descoberto (aberto), que permitia aos capangas do coronel verem em quem o eleitor estava votando.",
+          "A permissão do voto feminino, que era controlado pelos maridos ligados aos coronéis.",
+          "A exclusão de analfabetos, que forçava os eleitores a pedirem aos coronéis que escrevessem as cédulas."
+        ],
+        "correta": 2,
+        "feedback_correto": "Isso aí! Imagine o constrangimento: você tinha que declarar seu voto em voz alta ou entregar a cédula aberta. A mecânica do voto aberto era a engrenagem do curral eleitoral.",
+        "feedback_errado": "Analise a engenharia social da época. O voto secreto só surgiu em 1932! Na Primeira República, o voto era ABERTO."
+      }
+    },
+    {
+      "id": "pres_rodrigues",
+      "tipo": "contexto",
+      "era": "República Oligárquica",
+      "ano": "1902-1906",
+      "titulo": "Rodrigues Alves",
+      "icone": "🏗️",
+      "conteudo": "O modernizador. Promoveu a reforma urbana do Rio de Janeiro ('Bota-Abaixo'), modernizou o porto e saneou a cidade, o que gerou profunda revolta nas classes mais pobres."
+    },
+    {
+      "id": "q5_vacina",
+      "tipo": "detalhe",
+      "era": "República Oligárquica",
+      "ano": "1904",
+      "titulo": "A Biologia da Revolta: A Vacina Obrigatória",
+      "icone": "💉",
+      "conteudo": "Em 1904, o Rio de Janeiro parecia uma zona de guerra. A população se rebelou contra a lei da vacinação obrigatória contra a varíola, proposta pelo sanitarista Oswaldo Cruz.",
+      "questao": {
+        "pergunta": "Do ponto de vista imunológico, a vacina é essencial, mas sociologicamente, a revolta ocorreu porque:",
+        "opcoes": [
+          "A vacina continha o vírus vivo e causava mutações nas pessoas infectadas.",
+          "A população já estava imune à varíola graças ao uso de plantas medicinais endêmicas.",
+          "O governo não informou a população sobre como a vacina funcionava, aplicando a medida de forma autoritária em um povo já marginalizado.",
+          "Os médicos da época comprovaram que a varíola era transmitida apenas por mosquitos.",
+          "Foi uma conspiração financiada pela indústria farmacêutica europeia para testar cobaias humanas."
+        ],
+        "correta": 2,
+        "feedback_correto": "Exato! A vacina introduz um antígeno para o sistema imunológico criar defesa, mas não se injeta medidas de saúde à força militar numa população já fragilizada.",
+        "feedback_errado": "O problema não estava na vacina em si. Oswaldo Cruz estava cientificamente correto. O estopim foi o AUTORITARISMO."
+      }
+    },
+    {
+      "id": "pres_afonso",
+      "tipo": "contexto",
+      "era": "República Oligárquica",
+      "ano": "1906-1909",
+      "titulo": "Afonso Pena",
+      "icone": "🚂",
+      "conteudo": "O homem do interior. Ampliou ferrovias, ligou o país por telégrafo e incentivou a imigração. Morreu no cargo."
+    },
+    {
+      "id": "q6_taubate",
+      "tipo": "detalhe",
+      "era": "República Oligárquica",
+      "ano": "1906",
+      "titulo": "O Monopólio Gravitacional: Convênio de Taubaté",
+      "icone": "☕",
+      "conteudo": "O Brasil produzia muito mais café do que o mundo conseguia beber. Para o preço não despencar, os cafeicultores criaram o Convênio de Taubaté (1906).",
+      "questao": {
+        "pergunta": "Qual era a estratégia central desse acordo e quem pagava a conta?",
+        "opcoes": [
+          "O Estado reduzia impostos para os pobres comprarem mais café, gerando déficit público.",
+          "O governo comprava o excedente de café para manter o preço alto artificialmente, socializando as dívidas com toda a população.",
+          "Os coronéis queimavam o café por conta própria, assumindo o prejuízo para salvar a economia nacional.",
+          "O Brasil trocava todo o café excedente por maquinário industrial da Inglaterra.",
+          "O governo proibiu o plantio de novos cafezais, punindo com prisão quem descumprisse."
+        ],
+        "correta": 1,
+        "feedback_correto": "Bingo! O Convênio de Taubaté é a prova de que o Estado servia às fazendas de café. Os lucros eram privados, mas os prejuízos eram públicos.",
+        "feedback_errado": "Pense no conceito de 'lucros privados, prejuízos públicos'. Os governos estaduais pegavam dinheiro emprestado para comprar o café que estava sobrando."
+      }
+    },
+    {
+      "id": "pres_nilo",
+      "tipo": "contexto",
+      "era": "República Oligárquica",
+      "ano": "1909-1910",
+      "titulo": "Nilo Peçanha",
+      "icone": "🎓",
+      "conteudo": "Vice que assumiu após a morte de Afonso Pena. Criou o Serviço de Proteção aos Índios (SPI) e as primeiras Escolas de Aprendizes Artífices."
+    },
+    {
+      "id": "pres_hermes",
+      "tipo": "contexto",
+      "era": "República Oligárquica",
+      "ano": "1910-1914",
+      "titulo": "Marechal Hermes da Fonseca",
+      "icone": "🪖",
+      "conteudo": "Sobrinho de Deodoro. Seu governo interveio duramente nos estados (Política das Salvações) e enfrentou a Revolta da Chibata e a Guerra do Contestado."
+    },
+    {
+      "id": "q7_chibata",
+      "tipo": "detalhe",
+      "era": "República Oligárquica",
+      "ano": "1910",
+      "titulo": "A Inércia da Escravidão: Revolta da Chibata",
+      "icone": "🚢",
+      "conteudo": "A República comprou navios moderníssimos, mas o tratamento dado aos marinheiros nos porões continuava igual ao colonial: castigos físicos com chibata.",
+      "questao": {
+        "pergunta": "O que essa revolta revela sobre a sociedade republicana?",
+        "opcoes": [
+          "A Marinha brasileira estava tomada por ideais comunistas soviéticos.",
+          "Havia um descompasso tecnológico: os canhões não funcionavam por falta de instrução técnica.",
+          "A abolição da escravatura (1888) foi apenas legal, pois a mentalidade escravocrata e o racismo estrutural persistiam.",
+          "João Cândido queria depor o presidente Hermes da Fonseca para instaurar uma ditadura naval.",
+          "As revoltas populares na Primeira República eram sempre financiadas por potências estrangeiras."
+        ],
+        "correta": 2,
+        "feedback_correto": "Perfeitamente lido! Era a 'inércia' histórica: a lei mudou, mas o comportamento da elite branca militar continuou o mesmo.",
+        "feedback_errado": "João Cândido não queria o poder político. Os marujos queriam algo básico: ser tratados como cidadãos e não como escravos."
+      }
+    },
+    {
+      "id": "pres_venceslau",
+      "tipo": "contexto",
+      "era": "República Oligárquica",
+      "ano": "1914-1918",
+      "titulo": "Venceslau Brás",
+      "icone": "🌍",
+      "conteudo": "O presidente durante a Primeira Guerra Mundial. Declarou guerra à Alemanha em 1917 após navios brasileiros serem torpedeados."
+    },
+    {
+      "id": "q8_greve",
+      "tipo": "detalhe",
+      "era": "República Oligárquica",
+      "ano": "1917",
+      "titulo": "A Energia Cinética do Povo: A Greve Geral",
+      "icone": "🏭",
+      "conteudo": "A eclosão da Primeira Guerra e o surto industrial no Brasil levaram ao crescimento das fábricas. Em 1917, os trabalhadores paralisaram São Paulo na primeira Greve Geral.",
+      "questao": {
+        "pergunta": "Qual era a principal reivindicação que uniu essa massa de operários?",
+        "opcoes": [
+          "A estatização de todas as indústrias cafeeiras paulistas.",
+          "Condições mínimas de trabalho, como jornada de 8 horas, proibição do trabalho infantil e aumento salarial.",
+          "O apoio do Brasil ao Império Austro-Húngaro na Primeira Guerra Mundial.",
+          "O direito de voto exclusivo para os operários, tirando o poder dos fazendeiros.",
+          "A deportação dos imigrantes italianos e espanhóis, vistos como traidores."
+        ],
+        "correta": 1,
+        "feedback_correto": "Correto! O Brasil tratava a 'questão social' como caso de polícia. A greve de 1917 foi o despertar da classe trabalhadora.",
+        "feedback_errado": "Lembre-se: o Brasil não tinha legislação trabalhista. A greve buscava sobrevivência e o fim da exploração infantil."
+      }
+    },
+    {
+      "id": "pres_artur",
+      "tipo": "contexto",
+      "era": "O Fim da Velha República",
+      "ano": "1922-1926",
+      "titulo": "Artur Bernardes",
+      "icone": "🛡️",
+      "conteudo": "Governou quase inteiramente sob estado de sítio. Enfrentou a Revolução de 1924 em SP e a marcha da Coluna Prestes pelo interior do Brasil."
+    },
+    {
+      "id": "q9_tenentismo",
+      "tipo": "detalhe",
+      "era": "O Fim da Velha República",
+      "ano": "1922",
+      "titulo": "A Reação em Cadeia: O Tenentismo",
+      "icone": "🎖️",
+      "conteudo": "Jovens oficiais do Exército, os 'Tenentes', iniciaram revoltas armadas exigindo a moralização política e o fim do monopólio do Café com Leite.",
+      "questao": {
+        "pergunta": "Qual era a principal pauta eleitoral desse movimento?",
+        "opcoes": [
+          "O retorno da Monarquia sob a figura da Família Imperial.",
+          "A instauração imediata do comunismo no modelo soviético.",
+          "O fim das fraudes por meio da adoção do Voto Secreto.",
+          "O fortalecimento do Convênio de Taubaté e do poder dos governadores.",
+          "A extinção das Forças Armadas e a criação de milícias civis."
+        ],
+        "correta": 2,
+        "feedback_correto": "Exatamente. O Tenentismo queria 'curar' a república, e o alvo número um era a fraude eleitoral. O voto secreto era a vacina contra o coronelismo.",
+        "feedback_errado": "Os tenentes eram militares nacionalistas que odiavam a corrupção. A principal arma contra os coronéis seria o voto secreto."
+      }
+    },
+    {
+      "id": "pres_washington",
+      "tipo": "contexto",
+      "era": "O Fim da Velha República",
+      "ano": "1926-1930",
+      "titulo": "Washington Luís",
+      "icone": "🛣️",
+      "conteudo": "O último presidente da Primeira República. Rompeu o pacto do Café com Leite ao indicar um paulista para a sucessão, em vez de um mineiro."
+    },
+    {
+      "id": "q10_crise29",
+      "tipo": "detalhe",
+      "era": "O Fim da Velha República",
+      "ano": "1929",
+      "titulo": "O Efeito Borboleta Econômico",
+      "icone": "📉",
+      "conteudo": "Em 1929, Wall Street quebrou. Como esse evento catalisou o fim da República Oligárquica no Brasil?",
+      "questao": {
+        "pergunta": "Como o Crash de 1929 afetou a política brasileira?",
+        "opcoes": [
+          "O Brasil perdeu todas as suas reservas de ouro depositadas em bancos americanos.",
+          "A quebra reduziu drasticamente as exportações de café, arruinando a economia dos coronéis paulistas que sustentavam o regime.",
+          "Os EUA exigiram que o Brasil pagasse sua dívida externa entregando territórios.",
+          "O partido comunista brasileiro iniciou guerrilhas financiadas por americanos falidos.",
+          "As indústrias de Nova York se mudaram para São Paulo, acabando com a agricultura."
+        ],
+        "correta": 1,
+        "feedback_correto": "Bingo! O Brasil era monoexportador. Se o mundo não compra café, o sistema entra em colapso. Com as oligarquias falidas, o pacto de poder rachou.",
+        "feedback_errado": "Pense no café! Com a crise de 29, o preço despencou. Sem dinheiro, os coronéis perderam a força política."
+      }
+    },
+    {
+      "id": "q11_revolucao30",
+      "tipo": "detalhe",
+      "era": "O Fim da Velha República",
+      "ano": "1930",
+      "titulo": "A Entropia Final: A Revolução de 1930",
+      "icone": "🚩",
+      "conteudo": "A Aliança Liberal, liderada por Getúlio Vargas, contestou as eleições fraudulentas. O assassinato de João Pessoa foi o estopim para o golpe que encerrou a Primeira República.",
+      "questao": {
+        "pergunta": "Qual foi o desfecho da crise política de 1930?",
+        "opcoes": [
+          "Getúlio Vargas aceitou pacificamente o resultado e se exila na Argentina.",
+          "Os cafeicultores paulistas se separaram do Brasil formando uma nação independente.",
+          "Ocorreu uma revolta civil sem apoio militar que foi rapidamente contida.",
+          "Um golpe militar amparado pelos Tenentes e oligarquias dissidentes colocou Vargas no poder.",
+          "O Congresso anula as eleições e aprova imediatamente o parlamentarismo."
+        ],
+        "correta": 3,
+        "feedback_correto": "Isso mesmo! Vargas entra no Rio de Janeiro e uma nova era começa, pondo fim ao domínio das oligarquias cafeeiras.",
+        "feedback_errado": "A revolta foi armada e vitoriosa. Vargas e seus aliados depuseram o presidente e instauraram um governo provisório."
+      }
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "metadados": {
+    "disciplina": "Química",
+    "modulo": "Classes Funcionais Orgânicas",
+    "tags": ["Aldeídos", "Cetonas", "Carbonila", "Isomeria"]
+  },
+  "titulo": "CLASSES FUNCIONAIS ORGÂNICAS",
+  "subtitulo": "Aula 3 — Aldeídos e Cetonas",
+  "notas_professor": [
+    "AÇÃO: Desenhe a Carbonila (C=O) gigante com o marcador laranja no topo da lousa.",
+    "GATILHO: 'Vocês sabiam que o cheiro gostoso da canela e o cheiro forte do removedor de esmalte (acetona) vêm de compostos quase gêmeos?'",
+    "DICA MATH: Mostre na lousa a soma de átomos (Carbono, Hidrogênio, Oxigênio) do Propanal e da Propanona. Revise adição simples para comprovar visualmente que a quantidade de átomos é a mesma (C3H6O).",
+    "PAUSA: 1 minuto e meio para copiarem o painel das diferenças."
+  ],
+  "paineis": [
+    {
+      "menu": "Aldeídos",
+      "blocos": [
+        { "tipo": "titulo-secao", "cor": "y", "icone": "1", "texto": "Aldeídos: A Ponta do Fio" },
+        { "tipo": "texto", "conteudo": "Apresentam o grupo <strong class='p'>Carbonila (C=O)</strong> sempre numa das <span class='ch-ul'>extremidades</span> (pontas) da cadeia carbônica.", "classes": "ch txt-md" },
+        { "tipo": "caixa-formula", "cor": "p", "label": "Identificação", "texto": "Fórmula: R - CHO | Sufixo: -AL" },
+        { "tipo": "texto", "conteudo": "Exemplos do livro: Cinamaldeído (canela), Metanal (formol) e Citral (limão).", "classes": "ch txt-md" }
+      ]
+    },
+    {
+      "menu": "Cetonas",
+      "blocos": [
+        { "tipo": "titulo-secao", "cor": "o", "icone": "2", "texto": "Cetonas: Sempre no Meio" },
+        { "tipo": "texto", "conteudo": "Apresentam o grupo <strong class='p'>Carbonila (C=O)</strong> posicionado estritamente <span class='ch-ul'>entre dois átomos de carbono</span>.", "classes": "ch txt-md" },
+        { "tipo": "caixa-formula", "cor": "o", "label": "Identificação", "texto": "Fórmula: C - C(=O) - C | Sufixo: -ONA" },
+        { "tipo": "texto", "conteudo": "Exemplos do livro: Propanona (acetona comum) e Jasmona (odor de jasmim).", "classes": "ch txt-md" }
+      ]
+    },
+    {
+      "menu": "A Pegadinha",
+      "blocos": [
+        { "tipo": "titulo-secao", "cor": "g", "icone": "3", "texto": "Gêmeos Químicos (Isomeria)" },
+        { "tipo": "caixa-destaque", "cor": "g", "conteudo": "💡 MACETE MATH: O Propanal (aldeído) e a Propanona (cetona) têm a MESMA fórmula molecular: C₃H₆O. Somem comigo na lousa: 3 Carbonos + 6 Hidrogênios + 1 Oxigênio. Eles só mudam o lugar da ligação!" },
+        { "tipo": "exercicio", 
+          "pergunta": "Se um composto tiver o grupo carbonila (C=O) no MEIO da sua cadeia carbônica principal, como ele é classificado?", 
+          "alternativas": ["Álcool", "Aldeído", "Cetona", "Hidrocarboneto"], 
+          "correta": 2, 
+          "explicacao": "A carbonila entre dois carbonos, e não na ponta, é a característica principal das Cetonas." 
+        }
+      ]
+    }
+  ]
+}

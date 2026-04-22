@@ -32,54 +32,32 @@ service cloud.firestore {
         request.auth.token.email == request.resource.data.professor_email;
     }
 
-    // ─── ATIVIDADES DOS ALUNOS ───────────────────────────────────────
-    // Regra existente — não alterada
 
-    match /atividades_alunos/{document=**} {
-      allow read:   if isInstitucional();
-      allow create: if isInstitucional() &&
-                       request.resource.data.aluno_email == request.auth.token.email;
-      allow update, delete: if false;
+
+    // ─── OBJETOS EDUCACIONAIS ───────────────────────────────────────
+
+    // Desafios (Timeline, Quizzes, etc)
+    match /challenges/{challengeId} {
+      allow read: if isAutenticado();
+      allow write: if isProfessor();
+      
+      // Subcoleção de scores (se usada)
+      match /scores/{scoreId} {
+        allow read: if isAutenticado();
+        allow write: if isAutenticado();
+      }
     }
 
-    // ─── AULAS ───────────────────────────────────────────────────────
+    // Configurações Globais (Ativação de desafios)
+    match /config/{configId} {
+      allow read: if isAutenticado();
+      allow write: if isProfessor();
+    }
 
-    match /aulas/{aulaId} {
-      // Aluno lê apenas aulas publicadas
-      allow read: if isAluno() && resource.data.status == 'publicado';
-
-      // Professor lê as próprias aulas (qualquer status)
-      allow read: if isDonoDaAula();
-
-      // Professor cria — professor_email deve ser o próprio email
-      allow create: if isDonoDaAulaEscrita();
-
-      // Professor atualiza as próprias aulas
-      // professor_email é imutável após criação
-      allow update: if isDonoDaAula() &&
-                       request.resource.data.professor_email == resource.data.professor_email;
-
-      // Nunca deleta — só despublica (status: rascunho)
-      allow delete: if false;
-
-      // ─── MÍDIAS (subcoleção) ─────────────────────────────────────
-
-      match /midias/{midiaId} {
-        // Aluno lê mídias de aulas publicadas
-        allow read: if isAluno() &&
-                       get(/databases/$(database)/documents/aulas/$(aulaId)).data.status == 'publicado';
-
-        // Professor lê e escreve mídias das próprias aulas
-        allow read:   if isProfessor() &&
-                         get(/databases/$(database)/documents/aulas/$(aulaId)).data.professor_email
-                         == request.auth.token.email;
-
-        allow create, update: if isProfessor() &&
-                                  get(/databases/$(database)/documents/aulas/$(aulaId)).data.professor_email
-                                  == request.auth.token.email;
-
-        allow delete: if false;
-      }
+    // Sessões de Jogo e Ranking em Tempo Real
+    match /sessoes_timeline/{sessionId} {
+      allow read: if isAutenticado();
+      allow write: if isAutenticado();
     }
 
   }

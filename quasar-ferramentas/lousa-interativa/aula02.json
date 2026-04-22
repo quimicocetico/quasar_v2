@@ -1,0 +1,136 @@
+{
+  "metadados": {
+    "disciplina": "Química",
+    "tema": "Classes Funcionais Orgânicas",
+    "nivel": "Ensino Médio"
+  },
+  "titulo": "Classes Funcionais Orgânicas",
+  "subtitulo": "Hidrocarbonetos, Álcoois, Aldeídos e Cetonas",
+  "notas_professor": [
+    "GATILHO: 'Por que embrulhamos frutas verdes no jornal?' (R: Reter o gás eteno para acelerar o amadurecimento).",
+    "AÇÃO: Desenhar a estrutura do etanol na lousa e destacar o grupo -OH com outra cor.",
+    "PAUSA: Dar 2 minutos para os alunos copiarem a tabela de prefixos e infixos orgânicos.",
+    "AÇÃO: Desenhar um aldeído e uma cetona lado a lado, apontando a diferença na posição da carbonila (ponta vs. meio)."
+  ],
+  "paineis": [
+    {
+      "blocos": [
+        {
+          "tipo": "titulo-secao",
+          "conteudo": "1. Hidrocarbonetos",
+          "cor": "p"
+        },
+        {
+          "tipo": "texto",
+          "conteudo": "Compostos formados **exclusivamente** por Carbono (C) e Hidrogênio (H)."
+        },
+        {
+          "tipo": "tabela",
+          "cabecalho": [
+            "Prefixo (C)",
+            "Infixo (Ligação)",
+            "Sufixo"
+          ],
+          "linhas": [
+            [
+              "Met- (1), Et- (2)",
+              "-an- (simples)",
+              "-o"
+            ],
+            [
+              "Prop- (3), But- (4)",
+              "-en- (dupla)",
+              "-o"
+            ],
+            [
+              "Pent- (5), Hex- (6)",
+              "-in- (tripla)",
+              "-o"
+            ]
+          ]
+        },
+        {
+          "tipo": "lista",
+          "itens": [
+            "**Metano:** Gás dos pântanos / natural",
+            "**Eteno:** Hormônio vegetal (amadurece frutos)",
+            "**Etino:** Combustível de maçaricos industriais"
+          ],
+          "cor": "o"
+        }
+      ]
+    },
+    {
+      "blocos": [
+        {
+          "tipo": "titulo-secao",
+          "conteudo": "2. Álcoois",
+          "cor": "y"
+        },
+        {
+          "tipo": "texto",
+          "conteudo": "Possuem o grupo **hidroxila (-OH)** ligado a um carbono **saturado** (só ligações simples)."
+        },
+        {
+          "tipo": "caixa-formula",
+          "conteudo": "Sufixo: -ol (Ex: Etanol -> H3C-CH2-OH)",
+          "cor": "g"
+        },
+        {
+          "tipo": "colunas",
+          "esquerda": "**Metanol:** Altamente tóxico. Pode causar cegueira ou morte.",
+          "direita": "**Etanol:** Combustível automotivo e presente em bebidas. Risco de cirrose."
+        },
+        {
+          "tipo": "caixa-destaque",
+          "conteudo": "CUIDADO: Se o grupo -OH estiver ligado a um carbono com ligação dupla ou tripla, NÃO é considerado álcool!",
+          "cor": "r"
+        }
+      ]
+    },
+    {
+      "blocos": [
+        {
+          "tipo": "titulo-secao",
+          "conteudo": "3. Aldeídos e Cetonas",
+          "cor": "o"
+        },
+        {
+          "tipo": "texto",
+          "conteudo": "Ambos contêm o grupo **carbonila (C=O)**, mas em localizações diferentes na cadeia."
+        },
+        {
+          "tipo": "caixa-formula",
+          "conteudo": "Aldeído: R-CHO | Cetona: R-CO-R'",
+          "cor": "p"
+        },
+        {
+          "tipo": "colunas",
+          "esquerda": "**Aldeídos:** Carbonila na extremidade. Sufixo **-al**. Ex: Metanal (formol).",
+          "direita": "**Cetonas:** Carbonila entre dois carbonos. Sufixo **-ona**. Ex: Propanona (acetona)."
+        }
+      ]
+    },
+    {
+      "blocos": [
+        {
+          "tipo": "titulo-secao",
+          "conteudo": "4. Fixação",
+          "cor": "g"
+        },
+        {
+          "tipo": "exercicio",
+          "pergunta": "A propanona (acetona) e o etanal pertencem, respectivamente, a quais classes funcionais?",
+          "opcoes": [
+            "A) Cetona e Aldeído",
+            "B) Aldeído e Cetona",
+            "C) Álcool e Hidrocarboneto",
+            "D) Hidrocarboneto e Álcool"
+          ],
+          "resposta": "A",
+          "cor": "g"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+.barra-lateral {
+    width: 300px;
+    background-color: #f0f0f0;
+    padding: 20px;
+}
+
+.area-principal {
+    flex: 1;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    padding: 20px;
+}

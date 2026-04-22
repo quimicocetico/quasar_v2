@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quadro Interativo — Reprodutor</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Caveat+Brush&family=Kalam:wght@300;400;700&display=swap');
+
+:root {
+  --board: #1a472a;
+  --board2: #163d24;
+  --chalk: #f0ece0;
+  --chalk-y: #fde68a;
+  --chalk-b: #93c5fd;
+  --chalk-r: #fca5a5;
+  --chalk-g: #86efac;
+  --chalk-o: #fdba74;
+  --chalk-p: #c4b5fd;
+  --chalk-dim: #c8c4b4;
+  --hand: 'Kalam', cursive;
+  --title: 'Caveat Brush', cursive;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: #0d0d0d;
+  min-height: 100vh;
+  font-family: var(--hand);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 16px 60px;
+}
+
+/* ── BARRA DE UPLOAD (NOVO) ── */
+.upload-bar {
+  margin-bottom: 20px;
+  text-align: center;
+}
+.upload-btn {
+  padding: 10px 20px;
+  background: #2d6a40;
+  color: #fff;
+  border: 2px dashed #86efac;
+  border-radius: 8px;
+  font-family: var(--hand);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.upload-btn:hover { background: #1a472a; transform: scale(1.05); }
+
+/* ── CONTROLES ── */
+.controls {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 16px;
+  max-width: 1100px;
+  width: 100%;
+}
+.ctrl-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #1a1a1a;
+  color: #ccc;
+  font-family: 'Kalam', cursive;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all .2s;
+}
+.ctrl-btn:hover { background: #2a2a2a; color: #fff; }
+.ctrl-btn.active { background: var(--board); color: var(--chalk); border-color: #2d6a40; }
+
+/* ── MOLDURA DO QUADRO ── */
+.board-frame {
+  width: 100%;
+  max-width: 1100px;
+  background: #4a2800;
+  border-radius: 8px;
+  padding: 14px;
+  box-shadow: 0 20px 60px #00000088, inset 0 2px 4px #00000044;
+  position: relative;
+  display: none; /* Escondido até carregar o JSON */
+}
+.board-frame::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 3px solid #6b3a00;
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* ── QUADRO VERDE ── */
+.board {
+  background: var(--board);
+  border-radius: 2px;
+  min-height: 600px;
+  padding: 28px 32px 36px;
+  position: relative;
+  overflow: hidden;
+}
+
+.board::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 48px, rgba(0,0,0,0.04) 48px, rgba(0,0,0,0.04) 50px),
+    repeating-linear-gradient(90deg, transparent, transparent 48px, rgba(0,0,0,0.02) 48px, rgba(0,0,0,0.02) 50px);
+  pointer-events: none;
+}
+.board::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 30% 40%, rgba(255,255,255,0.02) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* ── PAINÉIS ── */
+.board-panel { display: none; }
+.board-panel.active { display: block; animation: chalkIn .5s ease; }
+@keyframes chalkIn { from { opacity:0; } to { opacity:1; } }
+
+/* ── TIPOGRAFIA DO QUADRO ── */
+.ch { font-family: var(--hand); color: var(--chalk); line-height: 1.6; text-shadow: 0 0 8px rgba(240,236,224,0.15); position: relative; }
+.title-main { font-family: var(--title); font-size: clamp(1.8rem, 4vw, 2.8rem); color: var(--chalk); text-align: center; letter-spacing: 1px; text-shadow: 2px 2px 0 rgba(0,0,0,0.3), 0 0 20px rgba(240,236,224,0.2); margin-bottom: 6px; }
+.subtitle { font-family: var(--hand); font-size: 1rem; color: var(--chalk-dim); text-align: center; margin-bottom: 22px; font-style: italic; }
+.ch-ul { display: inline-block; border-bottom: 2px solid currentColor; padding-bottom: 1px; }
+.section-title { font-family: var(--title); font-size: clamp(1.2rem, 2.5vw, 1.6rem); margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+.section-num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border: 2px solid currentColor; border-radius: 50%; font-size: 0.9rem; font-family: var(--hand); flex-shrink: 0; }
+.ch-line { border: none; border-top: 1.5px solid rgba(240,236,224,0.25); margin: 18px 0; }
+
+/* grids */
+.board-cols { display: grid; gap: 24px; margin-bottom: 18px; }
+.cols2 { grid-template-columns: 1fr 1fr; }
+.cols3 { grid-template-columns: 1fr 1fr 1fr; }
+@media (max-width: 640px) { .cols2, .cols3 { grid-template-columns: 1fr; } }
+
+/* item list */
+.ch-list { list-style: none; }
+.ch-list li { font-family: var(--hand); font-size: clamp(0.88rem, 1.8vw, 1rem); color: var(--chalk); padding: 3px 0 3px 20px; position: relative; line-height: 1.55; }
+.ch-list li::before { content: '→'; position: absolute; left: 0; color: var(--chalk-dim); font-size: 0.85rem; }
+.ch-list li.bullet::before { content: '•'; }
+.ch-list li.star::before { content: '★'; color: var(--chalk-y); }
+.ch-list li.check::before { content: '✓'; color: var(--chalk-g); }
+
+/* formula box */
+.formula-box { border: 2px solid currentColor; border-radius: 6px; padding: 12px 18px; text-align: center; margin: 10px 0; position: relative; }
+.formula-box::before { content: attr(data-label); position: absolute; top: -11px; left: 14px; background: var(--board); padding: 0 6px; font-size: 0.72rem; font-family: var(--hand); color: inherit; letter-spacing: 1px; }
+.formula-text { font-family: var(--title); font-size: clamp(1.1rem, 2.5vw, 1.6rem); letter-spacing: 2px; }
+
+/* highlight box & tables */
+.hl-box { border-left: 4px solid currentColor; padding: 10px 14px; margin: 10px 0; font-family: var(--hand); font-size: clamp(0.85rem, 1.7vw, 0.98rem); line-height: 1.65; background: rgba(255,255,255,0.04); border-radius: 0 6px 6px 0; }
+.ch-table { width: 100%; border-collapse: collapse; font-family: var(--hand); font-size: clamp(0.78rem, 1.5vw, 0.9rem); }
+.ch-table th { color: var(--chalk-y); border-bottom: 1.5px solid rgba(253,230,138,0.4); padding: 6px 8px; text-align: left; font-weight: 700; }
+.ch-table td { color: var(--chalk); padding: 5px 8px; border-bottom: 1px solid rgba(240,236,224,0.1); }
+.ch-table tr:last-child td { border-bottom: none; }
+
+/* text sizes & colors */
+.txt-sm { font-size: clamp(0.78rem, 1.5vw, 0.9rem); }
+.txt-md { font-size: clamp(0.88rem, 1.8vw, 1rem); }
+.txt-lg { font-size: clamp(1rem, 2vw, 1.15rem); }
+.y { color: var(--chalk-y); } .b { color: var(--chalk-b); } .r { color: var(--chalk-r); } .g { color: var(--chalk-g); } .o { color: var(--chalk-o); } .p { color: var(--chalk-p); } .w { color: var(--chalk); } .d { color: var(--chalk-dim); }
+
+/* GRAPH */
+.graph-wrap { position: relative; width: 100%; padding-bottom: 56%; }
+.graph-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* chalk tray */
+.chalk-tray { background: #3a1e00; height: 12px; border-radius: 0 0 4px 4px; display: flex; align-items: center; padding: 0 16px; gap: 8px; }
+.chalk-piece { height: 7px; border-radius: 3px; opacity: 0.8; }
+
+/* nav */
+.nav-row { display: none; justify-content: space-between; align-items: center; max-width: 1100px; width: 100%; margin-top: 12px; }
+.nav-btn { padding: 10px 24px; border-radius: 8px; border: 1px solid #333; background: #1a1a1a; color: #ccc; font-family: 'Kalam', cursive; font-size: 0.9rem; cursor: pointer; transition: all .2s; }
+.nav-btn:hover { background: var(--board); color: var(--chalk); border-color: #2d6a40; }
+.nav-btn:disabled { opacity: 0.3; cursor: default; }
+.page-indicator { font-family: 'Kalam', cursive; color: #555; font-size: 0.85rem; }
+.stamp { border: 2px solid currentColor; border-radius: 4px; padding: 3px 10px; display: inline-block; font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; font-family: var(--hand); opacity: 0.7; }
+.eraser-mark { position: absolute; background: rgba(200,196,180,0.06); border-radius: 50%; pointer-events: none; }
+</style>
+</head>
+<body>
+
+<div class="upload-bar" id="uploadBar">
+  <input type="file" id="jsonInput" accept=".json" style="display: none;">
+  <button class="upload-btn" onclick="document.getElementById('jsonInput').click()">📂 Carregar Aula (.json)</button>
+</div>
+
+<div class="controls" id="controls"></div>
+
+<div class="board-frame" id="frame">
+  <div class="board" id="board">
+    <div class="eraser-mark" style="width:120px;height:60px;top:8%;left:5%;transform:rotate(-3deg)"></div>
+    <div class="eraser-mark" style="width:80px;height:40px;top:60%;right:8%;transform:rotate(5deg)"></div>
+    
+    <div id="board-content"></div>
+  </div>
+
+  <div class="chalk-tray">
+    <div class="chalk-piece" style="width:60px;background:#f0ece0"></div>
+    <div class="chalk-piece" style="width:40px;background:#fde68a"></div>
+    <div class="chalk-piece" style="width:50px;background:#93c5fd"></div>
+    <div class="chalk-piece" style="width:35px;background:#fca5a5"></div>
+    <div class="chalk-piece" style="width:45px;background:#86efac"></div>
+    <div class="chalk-piece" style="width:30px;background:#c4b5fd"></div>
+    <div class="chalk-piece" style="width:38px;background:#fdba74"></div>
+    <div style="margin-left:auto"><div class="chalk-piece" style="width:28px;height:5px;background:#a16207;border-radius:3px"></div></div>
+  </div>
+</div>
+
+<div class="nav-row" id="navRow">
+  <button class="nav-btn" id="btn-prev" onclick="stepPanel(-1)">← Anterior</button>
+  <span class="page-indicator" id="page-ind">Quadro 1</span>
+  <button class="nav-btn" id="btn-next" onclick="stepPanel(1)">Próximo →</button>
+</div>
+
+<script>
+let current = 0;
+let total = 0;
+let aulaData = null;
+
+// Leitor do Ficheiro JSON
+document.getElementById('jsonInput').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    try {
+      aulaData = JSON.parse(evt.target.result);
+      gerarAula(aulaData);
+      document.getElementById('uploadBar').style.display = 'none'; // Esconde botão após carregar
+      document.getElementById('frame').style.display = 'block';
+      document.getElementById('navRow').style.display = 'flex';
+    } catch(err) {
+      alert("Erro ao ler o ficheiro JSON. Verifique a formatação.");
+      console.error(err);
+    }
+  };
+  reader.readAsText(file);
+});
+
+// Construtor do HTML com base no JSON
+function gerarAula(dados) {
+  total = dados.paineis.length;
+  current = 0;
+  
+  const controlsDiv = document.getElementById('controls');
+  const boardDiv = document.getElementById('board-content');
+  
+  controlsDiv.innerHTML = '';
+  boardDiv.innerHTML = '';
+
+  dados.paineis.forEach((painel, index) => {
+    // Botão de Controlo
+    const btn = document.createElement('button');
+    btn.className = `ctrl-btn ${index === 0 ? 'active' : ''}`;
+    btn.innerHTML = painel.menu;
+    btn.onclick = (e) => goPanel(index, e.target);
+    controlsDiv.appendChild(btn);
+
+    // Painel
+    const divPainel = document.createElement('div');
+    divPainel.className = `board-panel ${index === 0 ? 'active' : ''}`;
+    divPainel.id = `panel-${index}`;
+    
+    // Se for o painel 0 e existirem títulos globais
+    if(index === 0 && dados.titulo) {
+       divPainel.innerHTML += `<div class="title-main">${dados.titulo}</div>`;
+       if(dados.subtitulo) divPainel.innerHTML += `<div class="subtitle">${dados.subtitulo}</div><hr class="ch-line">`;
+    }
+
+    divPainel.innerHTML += renderBlocos(painel.blocos);
+    boardDiv.appendChild(divPainel);
+  });
+
+  updateNav();
+}
+
+// Renderizador recursivo de Blocos
+function renderBlocos(blocos) {
+  if(!blocos) return '';
+  let html = '';
+  blocos.forEach(b => {
+    switch(b.tipo) {
+      case 'linha':
+        html += `<hr class="ch-line">`;
+        break;
+      case 'texto':
+        html += `<div class="${b.classes || 'ch txt-md'}" style="${b.estilo || ''}">${b.conteudo}</div>`;
+        break;
+      case 'titulo-secao':
+        let numHtml = b.icone ? `<span class="section-num ${b.cor || 'w'}" style="${b.estiloIcone||''}">${b.icone}</span>` : '';
+        html += `<div class="section-title ${b.cor || 'w'}" style="${b.estilo||''}">${numHtml}<span class="${b.cor || 'w'}">${b.texto}</span></div>`;
+        break;
+      case 'lista':
+        html += `<ul class="ch-list ${b.classes || 'txt-md'}">`;
+        b.itens.forEach(item => html += `<li class="${b.estilo || 'bullet'} ch">${item}</li>`);
+        html += `</ul>`;
+        break;
+      case 'colunas':
+        html += `<div class="board-cols ${b.layout || 'cols2'}" style="${b.estilo||''}">`;
+        if(b.col1) html += `<div>${renderBlocos(b.col1)}</div>`;
+        if(b.col2) html += `<div>${renderBlocos(b.col2)}</div>`;
+        if(b.col3) html += `<div>${renderBlocos(b.col3)}</div>`;
+        html += `</div>`;
+        break;
+      case 'caixa-formula':
+        let txtEstilo = b.tamanhoTexto ? `font-size:${b.tamanhoTexto}` : '';
+        let subHtml = b.subtexto ? `<div class="txt-sm ch" style="margin-top:6px">${b.subtexto}</div>` : '';
+        html += `<div class="formula-box ${b.cor || 'w'}" data-label="${b.label}" style="${b.estilo||''}"><div class="formula-text ${b.cor || 'w'}" style="${txtEstilo}">${b.texto}</div>${subHtml}</div>`;
+        break;
+      case 'caixa-destaque':
+        html += `<div class="hl-box ${b.cor || 'w'} ${b.classes || 'txt-sm'}" style="${b.estilo||''}">${b.conteudo}</div>`;
+        break;
+      case 'tabela':
+        html += `<table class="ch-table"><thead><tr>`;
+        b.cabecalhos.forEach(th => html += `<th>${th}</th>`);
+        html += `</tr></thead><tbody>`;
+        b.linhas.forEach(linha => {
+          html += `<tr>`;
+          linha.forEach(celula => html += `<td class="${celula.cor || 'w'}">${celula.texto}</td>`);
+          html += `</tr>`;
+        });
+        html += `</tbody></table>`;
+        break;
+      case 'canvas':
+        html += `<div class="graph-wrap" style="${b.estilo || 'padding-bottom:60%'}"><canvas id="${b.id}"></canvas></div>`;
+        break;
+      case 'carimbo':
+        html += `<div style="text-align:${b.alinhamento||'right'}; margin-top:14px"><span class="stamp ${b.cor||'d'}">${b.texto}</span></div>`;
+        break;
+    }
+  });
+  return html;
+}
+
+// Navegação
+function goPanel(idx, btn) {
+  document.querySelectorAll('.board-panel').forEach((p,i) => p.classList.toggle('active', i===idx));
+  document.querySelectorAll('.ctrl-btn').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  else document.querySelectorAll('.ctrl-btn')[idx].classList.add('active');
+  current = idx;
+  updateNav();
+  
+  // Gatilhos de Canvas (Verifica se existem no painel atual)
+  const panelHtml = document.getElementById(`panel-${idx}`).innerHTML;
+  if(panelHtml.includes('cv-heat')) setTimeout(() => { drawHeat(); drawCool(); }, 80);
+  if(panelHtml.includes('cv-latent')) setTimeout(drawLatent, 80);
+}
+
+function stepPanel(dir) {
+  const next = Math.max(0, Math.min(total-1, current + dir));
+  const btns = document.querySelectorAll('.ctrl-btn');
+  goPanel(next, btns[next]);
+  btns[next].scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = current === 0;
+  document.getElementById('btn-next').disabled = current === total-1;
+  document.getElementById('page-ind').textContent = `Quadro ${current+1} de ${total}`;
+}
+
+// ══════════════════════════════════
+// FUNÇÕES DE CANVAS MANTIDAS INTACTAS
+// ══════════════════════════════════
+function setupCanvas(id) {
+  const cv = document.getElementById(id);
+  if(!cv) return null;
+  const rect = cv.parentElement.getBoundingClientRect();
+  cv.width = rect.width * 1.5 || 500;
+  cv.height = rect.height * 1.5 || 300;
+  const ctx = cv.getContext('2d');
+  ctx.scale(1.5, 1.5);
+  return {ctx, W: rect.width || 333, H: rect.height || 200};
+}
+
+function chalkLine(ctx, x1, y1, x2, y2, col='#f0ece0', lw=2) {
+  ctx.save(); ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.lineCap = 'round';
+  ctx.shadowColor = col; ctx.shadowBlur = 3;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+
+function chalkText(ctx, txt, x, y, col='#f0ece0', sz=13, align='left') {
+  ctx.save(); ctx.fillStyle = col; ctx.font = `${sz}px Kalam, cursive`;
+  ctx.textAlign = align; ctx.shadowColor = col; ctx.shadowBlur = 4;
+  ctx.fillText(txt, x, y); ctx.restore();
+}
+
+function drawHeat() { /* CÓDIGO ORIGINAL AQUI (Encurtado para exemplo, copie a sua função drawHeat inteira) */ 
+  const d = setupCanvas('cv-heat'); if(!d) return; const {ctx, W, H} = d;
+  chalkLine(ctx, 44, 18, 44, H-36, '#c8c4b4', 1.5);
+  chalkLine(ctx, 44, H-36, W-14, H-36, '#c8c4b4', 1.5);
+  chalkText(ctx, 'Curva Aquecimento', 50, 40, '#fde68a', 14);
+}
+function drawCool() { /* Copie a sua função drawCool inteira aqui */ }
+function drawLatent() { /* Copie a sua função drawLatent inteira aqui */ }
+
+window.addEventListener('resize', () => { goPanel(current); });
+</script>
+</body>
+</html>

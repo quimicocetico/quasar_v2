@@ -42,24 +42,4 @@ export async function loginComGoogle() {
     }
 }
 
-export async function enviarAtividade(idAula, respostas) {
-    if (!auth.currentUser) {
-        throw new Error("Usuário não autenticado.");
-    }
-
-    const usuario = auth.currentUser;
-    // Puxa a escola e turma se houver, senão usa um fallback
-    const perfil = JSON.parse(localStorage.getItem('perfil_aluno')) || { escola: 'EESPA', turma: 'Não definida' };
-
-    return addDoc(collection(db, "atividades_alunos"), {
-        id_atividade: idAula,
-        aluno_nome: usuario.displayName,
-        aluno_email: usuario.email,
-        escola: perfil.escola,
-        turma: perfil.turma,
-        respostas: respostas,
-        data_envio: serverTimestamp()
-    });
-}
-
 export { serverTimestamp };

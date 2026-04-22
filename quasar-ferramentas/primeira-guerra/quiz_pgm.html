@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Passa ou Repassa — Grande Guerra · CONTROLE</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Special+Elite&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+<!-- ════════════════════════════════════════════════════
+     SUBSTITUA O BLOCO ABAIXO PELAS CREDENCIAIS REAIS
+     do seu projeto Firebase da Academia Arcana
+     ════════════════════════════════════════════════════ -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, doc, setDoc, onSnapshot, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  // ⚠️ SUBSTITUA COM SEU firebaseConfig REAL
+  const firebaseConfig = {
+    apiKey: "AIzaSyCfN9gVHe7aPPNzDW6q5M8-u96ju_mnJVI",
+    authDomain: "bla1-fd57b.firebaseapp.com",
+    projectId: "bla1-fd57b",
+    storageBucket: "bla1-fd57b.firebasestorage.app",
+    messagingSenderId: "468715848364",
+    appId: "1:468715848364:web:8eaabcbf5c312441c49509",
+    measurementId: "G-DVG9C3M2M5"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // ─── BANCO DE PERGUNTAS ───────────────────────────────────────────────────
+  const PERGUNTAS = [
+    // RODADA 1 — AQUECIMENTO
+    { id:1, rodada:1, categoria:"AQUECIMENTO", pergunta:"Quais eram as duas grandes alianças militares da Primeira Guerra Mundial?", resposta:"Tríplice Entente (França, UK, Rússia) e Potências Centrais (Alemanha, Áustria-Hungria)", dica:"Pense em 'aliança tripla' dos dois lados" },
+    { id:2, rodada:1, categoria:"AQUECIMENTO", pergunta:"Qual arquiduque foi assassinado em Sarajevo em 1914, desencadeando a guerra?", resposta:"Francisco Ferdinando (herdeiro do trono austro-húngaro)", dica:"Era herdeiro do trono de qual império?" },
+    { id:3, rodada:1, categoria:"AQUECIMENTO", pergunta:"O que significa a sigla M.A.I.N. nas causas da Primeira Guerra?", resposta:"Militarismo, Alianças, Imperialismo, Nacionalismo", dica:"Cada letra é uma causa estrutural" },
+    { id:4, rodada:1, categoria:"AQUECIMENTO", pergunta:"Em que data exata foi assinado o Armistício que encerrou a Primeira Guerra?", resposta:"11 de novembro de 1918 — às 11 horas", dica:"O número 11 se repete três vezes" },
+    { id:5, rodada:1, categoria:"AQUECIMENTO", pergunta:"Qual tratado de paz encerrou oficialmente a guerra com a Alemanha?", resposta:"Tratado de Versalhes (1919)", dica:"Palácio famoso perto de Paris" },
+
+    // RODADA 2 — PERSPECTIVA (por grupo)
+    { id:6, rodada:2, categoria:"POTÊNCIAS CENTRAIS", grupo:"centrais", pergunta:"Qual era o Plano Schlieffen e por que ele falhou?", resposta:"Estratégia alemã de vencer a França rapidamente pelo oeste (via Bélgica) para depois virar para a Rússia. Falhou porque a Bélgica resistiu, o UK entrou na guerra e a França não foi derrotada em 6 semanas.", dica:"Dois frentes + uma única estratégia" },
+    { id:7, rodada:2, categoria:"TRÍPLICE ENTENTE", grupo:"entente", pergunta:"Por que a Bélgica neutra foi tão importante para a entrada do Reino Unido na guerra?", resposta:"O UK garantia a neutralidade belga por tratado. Quando a Alemanha invadiu a Bélgica, o UK foi obrigado a honrar o tratado e declarar guerra.", dica:"Tratado + honra + obrigação" },
+    { id:8, rodada:2, categoria:"BRASIL", grupo:"brasil", pergunta:"Quais foram os principais motivos que levaram o Brasil a declarar guerra à Alemanha em 1917?", resposta:"Afundamento de navios mercantes brasileiros por submarinos alemães, interesse econômico (alinhamento com UK e EUA, mercado do café), busca por prestígio internacional.", dica:"Pense em navios, café e prestígio" },
+    { id:9, rodada:2, categoria:"SOLDADO", grupo:"soldado", pergunta:"Descreva as condições de vida nas trincheiras da Frente Ocidental.", resposta:"Lama, ratos, doenças (pé de trincheira, tifo), rações precárias, bombas constantes, gases tóxicos, trauma psicológico. Sem higiene, sem abrigo adequado, semanas sem banho.", dica:"Pense no físico E no psicológico" },
+    { id:10, rodada:2, categoria:"IMPRENSA", grupo:"imprensa", pergunta:"Quais técnicas de propaganda foram usadas pelos governos durante a guerra?", resposta:"Desumanização do inimigo, apelos emocionais (família em perigo), censura de fotos e cartas, cartazes de recrutamento, cinema de propaganda, controle de imprensa.", dica:"Como convencer alguém a ir à guerra?" },
+
+    // RODADA 3 — DOCUMENTO SECRETO
+    { id:11, rodada:3, categoria:"DOCUMENTO", pergunta:"[Mostre o mapa das alianças] Identifique as duas alianças e cite 2 países de cada.", resposta:"Entente: França, UK, Rússia / Centrais: Alemanha, Áustria-Hungria, Império Otomano", dica:"Azul vs vermelho no mapa" },
+    { id:12, rodada:3, categoria:"DOCUMENTO", pergunta:"[Leia o telegrama Zimmermann] Que país a Alemanha tentou recrutar como aliado? O que ofereceu?", resposta:"México. Ofereceu financiamento e a reconquista do Texas, Novo México e Arizona.", dica:"País vizinho dos EUA ao sul" },
+    { id:13, rodada:3, categoria:"DOCUMENTO", pergunta:"[Cláusula do Artigo 231 de Versalhes] O que a 'Cláusula de Culpa de Guerra' impunha à Alemanha?", resposta:"Responsabilizava a Alemanha exclusivamente pela guerra, justificando as reparações financeiras enormes — 132 bilhões de marcos-ouro.", dica:"Culpa = dinheiro" },
+
+    // RODADA 4 — CONFRONTO
+    { id:14, rodada:4, categoria:"CONFRONTO", pergunta:"DEBATE (60s): 'O Tratado de Versalhes foi a principal causa da Segunda Guerra Mundial.' Um grupo defende, outro refuta.", resposta:"Pró: humilhação alemã, hiperinflação, ascensão do nazismo. Contra: crise de 1929, ideologia nazista, falha democrática alemã também contribuíram.", dica:"Ambos os lados têm argumentos válidos" },
+    { id:15, rodada:4, categoria:"CONFRONTO", pergunta:"DEBATE (60s): 'Gavrilo Princip foi o verdadeiro causador da guerra.' Concordam ou discordam?", resposta:"Discordar: ele foi o estopim, não a causa. As causas estruturais (MAIN) já existiam há décadas. Se não fosse Princip, outro evento teria desencadeado a guerra.", dica:"Diferença entre causa e estopim" },
+
+    // RODADA 5 — FINAL
+    { id:16, rodada:5, categoria:"FINAL ⭐", pergunta:"[VALE DOBRADO] Explique como a Primeira Guerra Mundial abriu caminho para a Segunda. Cite pelo menos 3 conexões.", resposta:"(1) Tratado de Versalhes humilhou a Alemanha → raiva popular; (2) reparações causaram hiperinflação e crise econômica; (3) Crise de 1929 aprofundou a miséria; (4) Esse ambiente permitiu a ascensão do nazismo; (5) Hitler prometeu reverter Versalhes → expansionismo → WWII.", dica:"Versalhes → crise → nazismo → guerra" },
+    { id:17, rodada:5, categoria:"FINAL ⭐", pergunta:"[VALE DOBRADO] Por que a Primeira Guerra é chamada de 'guerra industrial'? Cite 4 tecnologias usadas pela primeira vez.", resposta:"Porque foi a primeira a usar a indústria em escala para matar: gás de combate (cloro, mostarda), tanques, aviação militar, submarinos, metralhadora, artilharia pesada em massa, zeppelins.", dica:"Pense em cada novo setor industrial" },
+  ];
+
+  // ─── ESTADO DO QUIZ ──────────────────────────────────────────────────────
+  const GRUPOS = [
+    { id:"centrais", nome:"⚔️ Potências Centrais", cor:"#8b1a1a" },
+    { id:"entente",  nome:"🛡️ Tríplice Entente",  cor:"#1a3a5c" },
+    { id:"brasil",   nome:"🇧🇷 Brasil",             cor:"#2d5a1b" },
+    { id:"soldado",  nome:"🪖 Trincheira",          cor:"#5a4a1a" },
+    { id:"imprensa", nome:"📰 Imprensa",            cor:"#4a2d5a" },
+  ];
+
+  let estado = {
+    rodadaAtual: 1,
+    perguntaIdx: 0,
+    perguntaAtiva: null,
+    mostrarResposta: false,
+    mostrarDica: false,
+    pontos: { centrais:0, entente:0, brasil:0, soldado:0, imprensa:0 },
+    historico: [],
+    multiplicador: 1,
+  };
+
+  // ─── FIREBASE SYNC ───────────────────────────────────────────────────────
+  async function syncFirebase() {
+    try {
+      await setDoc(doc(db, "pgm_ww1_quiz", "estado_atual"), {
+        pontos: estado.pontos,
+        rodadaAtual: estado.rodadaAtual,
+        perguntaAtiva: estado.perguntaAtiva ? {
+          pergunta: estado.perguntaAtiva.pergunta,
+          categoria: estado.perguntaAtiva.categoria,
+          rodada: estado.perguntaAtiva.rodada,
+        } : null,
+        mostrarResposta: estado.mostrarResposta,
+        timestamp: new Date().toISOString()
+      });
+    } catch(e) {
+      console.warn("Firebase sync falhou (verifique as credenciais):", e.message);
+    }
+  }
+
+  async function resetarFirebase() {
+    try {
+      await setDoc(doc(db, "pgm_ww1_quiz", "estado_atual"), {
+        pontos: { centrais:0, entente:0, brasil:0, soldado:0, imprensa:0 },
+        rodadaAtual: 1,
+        perguntaAtiva: null,
+        mostrarResposta: false,
+        timestamp: new Date().toISOString()
+      });
+    } catch(e) { console.warn("Reset Firebase falhou:", e.message); }
+  }
+
+  // ─── LÓGICA ──────────────────────────────────────────────────────────────
+  function getPerguntasRodada(n) {
+    return PERGUNTAS.filter(p => p.rodada === n);
+  }
+
+  function proximaPergunta() {
+    const lista = getPerguntasRodada(estado.rodadaAtual);
+    if (estado.perguntaIdx >= lista.length) {
+      if (estado.rodadaAtual < 5) {
+        estado.rodadaAtual++;
+        estado.perguntaIdx = 0;
+      } else {
+        finalizarQuiz();
+        return;
+      }
+    }
+    const lista2 = getPerguntasRodada(estado.rodadaAtual);
+    estado.perguntaAtiva = lista2[estado.perguntaIdx];
+    estado.mostrarResposta = false;
+    estado.mostrarDica = false;
+    estado.multiplicador = estado.rodadaAtual === 5 ? 2 : 1;
+    estado.perguntaIdx++;
+    render();
+    syncFirebase();
+  }
+
+  function revelarResposta() {
+    estado.mostrarResposta = true;
+    render();
+    syncFirebase();
+  }
+
+  function revelarDica() {
+    estado.mostrarDica = true;
+    render();
+  }
+
+  function pontuar(grupoId, passou) {
+    const pts = passou ? 0 : (1 * estado.multiplicador);
+    const msg = passou
+      ? `PASSOU para outra equipe`
+      : `+${pts} pt${pts>1?"s":""} para ${GRUPOS.find(g=>g.id===grupoId).nome}`;
+
+    if (!passou) {
+      estado.pontos[grupoId] += pts;
+      estado.historico.push({ grupo: grupoId, pts, perguntaId: estado.perguntaAtiva?.id });
+    }
+
+    mostrarFeedback(msg, !passou ? "success" : "neutral");
+    render();
+    syncFirebase();
+  }
+
+  function finalizarQuiz() {
+    estado.perguntaAtiva = null;
+    estado.mostrarResposta = false;
+    render();
+    syncFirebase();
+  }
+
+  function resetarJogo() {
+    if (!confirm("Zerar todos os pontos e reiniciar o quiz?")) return;
+    estado = {
+      rodadaAtual: 1,
+      perguntaIdx: 0,
+      perguntaAtiva: null,
+      mostrarResposta: false,
+      mostrarDica: false,
+      pontos: { centrais:0, entente:0, brasil:0, soldado:0, imprensa:0 },
+      historico: [],
+      multiplicador: 1,
+    };
+    render();
+    resetarFirebase();
+  }
+
+  // ─── FEEDBACK VISUAL ─────────────────────────────────────────────────────
+  function mostrarFeedback(msg, tipo) {
+    const el = document.getElementById("feedback");
+    el.textContent = msg;
+    el.className = "feedback-toast show " + tipo;
+    setTimeout(() => el.classList.remove("show"), 2500);
+  }
+
+  // ─── RENDER ──────────────────────────────────────────────────────────────
+  function render() {
+    // Placar
+    GRUPOS.forEach(g => {
+      const el = document.getElementById("pts-" + g.id);
+      if (el) el.textContent = estado.pontos[g.id];
+    });
+
+    // Vencedor highlight
+    const maxPts = Math.max(...Object.values(estado.pontos));
+    GRUPOS.forEach(g => {
+      const card = document.getElementById("card-" + g.id);
+      if (card) card.classList.toggle("winning", estado.pontos[g.id] === maxPts && maxPts > 0);
+    });
+
+    // Rodada indicator
+    for (let i = 1; i <= 5; i++) {
+      const el = document.getElementById("r" + i);
+      if (el) {
+        el.classList.toggle("done", i < estado.rodadaAtual);
+        el.classList.toggle("current", i === estado.rodadaAtual);
+      }
+    }
+
+    // Área da pergunta
+    const area = document.getElementById("pergunta-area");
+    if (!area) return;
+
+    if (!estado.perguntaAtiva) {
+      const vencedor = GRUPOS.reduce((a, b) => estado.pontos[a.id] >= estado.pontos[b.id] ? a : b);
+      area.innerHTML = `
+        <div class="tela-inicio">
+          <div class="tela-icon">🏆</div>
+          <div class="tela-titulo">${estado.historico.length > 0 ? "QUIZ ENCERRADO!" : "PRONTO PARA COMEÇAR"}</div>
+          ${estado.historico.length > 0 ? `
+            <div class="vencedor-banner" style="background:${vencedor.cor}20; border:2px solid ${vencedor.cor}; padding:1rem; margin:1rem 0; border-radius:4px;">
+              <div style="font-size:0.65rem; letter-spacing:0.2em; margin-bottom:0.3rem; color:${vencedor.cor};">VENCEDOR</div>
+              <div style="font-size:1.5rem; font-family:'Playfair Display',serif; font-weight:900;">${vencedor.nome}</div>
+              <div style="font-size:2rem; font-family:'Playfair Display',serif; color:${vencedor.cor};">${estado.pontos[vencedor.id]} pts</div>
+            </div>
+          ` : `<p style="color:#666; font-style:italic; margin:1rem 0;">Clique em "Próxima Pergunta" para iniciar a Rodada 1</p>`}
+          <button class="btn-action" onclick="proximaPergunta()">
+            ${estado.historico.length > 0 ? "NOVA RODADA" : "INICIAR QUIZ"}
+          </button>
+        </div>`;
+      return;
+    }
+
+    const p = estado.perguntaAtiva;
+    const categoriaClass = p.rodada === 5 ? "cat-final" : p.rodada === 4 ? "cat-confronto" : "cat-normal";
+
+    area.innerHTML = `
+      <div class="pergunta-card">
+        <div class="pergunta-header">
+          <span class="cat-badge ${categoriaClass}">${p.categoria}</span>
+          ${p.grupo ? `<span class="grupo-badge">→ ${GRUPOS.find(g=>g.id===p.grupo)?.nome}</span>` : ""}
+          ${estado.multiplicador > 1 ? `<span class="mult-badge">✦ PONTOS DUPLOS</span>` : ""}
+        </div>
+
+        <div class="pergunta-texto">${p.pergunta}</div>
+
+        ${!estado.mostrarResposta ? `
+          <div class="btn-row">
+            <button class="btn-dica" onclick="revelarDica()">💡 DICA</button>
+            <button class="btn-resposta" onclick="revelarResposta()">REVELAR RESPOSTA</button>
+          </div>
+          ${estado.mostrarDica ? `<div class="dica-box">💡 ${p.dica}</div>` : ""}
+        ` : `
+          <div class="resposta-box">
+            <div class="resposta-label">RESPOSTA</div>
+            <div class="resposta-texto">${p.resposta}</div>
+          </div>
+
+          <div class="pontuacao-section">
+            <div class="pontuacao-titulo">PONTUAR QUAL GRUPO?</div>
+            <div class="grupos-grid">
+              ${GRUPOS.map(g => `
+                <button class="btn-grupo" style="--cor:${g.cor}" onclick="pontuar('${g.id}', false)">
+                  ${g.nome}<br><small>+${estado.multiplicador} pt${estado.multiplicador>1?"s":""}</small>
+                </button>
+              `).join("")}
+            </div>
+            <button class="btn-passou" onclick="pontuar(null, true)">PASSOU (sem pontos)</button>
+          </div>
+        `}
+      </div>
+    `;
+  }
+
+  // Expõe ao window para os onclick inline
+  window.proximaPergunta = proximaPergunta;
+  window.revelarResposta = revelarResposta;
+  window.revelarDica = revelarDica;
+  window.pontuar = pontuar;
+  window.resetarJogo = resetarJogo;
+
+  // Init
+  document.addEventListener("DOMContentLoaded", render);
+</script>
+
+<style>
+  :root {
+    --ink: #1a1208;
+    --paper: #f0e6d0;
+    --sepia: #c8a96e;
+    --sepia-dark: #8b6914;
+    --blood: #8b1a1a;
+    --trench: #2d2d20;
+    --bg: #1a1a12;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    font-family: 'Crimson Text', serif;
+    color: var(--paper);
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    grid-template-columns: 1fr;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(180deg, #0a0a06 0%, var(--trench) 100%);
+    border-bottom: 2px solid var(--sepia-dark);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--sepia);
+  }
+
+  .header-sub {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: rgba(200,169,110,0.6);
+    margin-top: 0.2rem;
+  }
+
+  .btn-reset {
+    background: rgba(139,26,26,0.3);
+    border: 1px solid var(--blood);
+    color: #e08080;
+    font-family: 'Special Elite', cursive;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-reset:hover { background: rgba(139,26,26,0.5); }
+
+  /* RODADAS */
+  .rodadas-bar {
+    background: rgba(0,0,0,0.3);
+    border-bottom: 1px solid rgba(200,169,110,0.15);
+    padding: 0.6rem 2rem;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .rodada-label {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--sepia);
+    margin-right: 0.5rem;
+  }
+
+  .rodada-pill {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    padding: 0.25rem 0.7rem;
+    border: 1px solid rgba(200,169,110,0.2);
+    color: rgba(200,169,110,0.4);
+    background: transparent;
+    border-radius: 20px;
+    transition: all 0.2s;
+  }
+
+  .rodada-pill.current {
+    background: var(--sepia-dark);
+    color: var(--paper);
+    border-color: var(--sepia);
+  }
+
+  .rodada-pill.done {
+    background: rgba(200,169,110,0.1);
+    color: rgba(200,169,110,0.5);
+    border-color: rgba(200,169,110,0.2);
+    text-decoration: line-through;
+  }
+
+  /* MAIN GRID */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 0;
+    min-height: 0;
+  }
+
+  @media (max-width: 768px) {
+    .main-grid { grid-template-columns: 1fr; }
+  }
+
+  /* PLACAR */
+  .placar {
+    background: rgba(0,0,0,0.4);
+    border-right: 1px solid rgba(200,169,110,0.15);
+    padding: 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .placar-titulo {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    color: var(--sepia);
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+
+  .grupo-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 2px;
+    padding: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    transition: all 0.3s;
+  }
+
+  .grupo-card.winning {
+    border-color: var(--sepia);
+    background: rgba(200,169,110,0.1);
+    box-shadow: 0 0 15px rgba(200,169,110,0.15);
+  }
+
+  .grupo-nome {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--paper);
+    line-height: 1.3;
+  }
+
+  .grupo-pts {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--sepia);
+    min-width: 2ch;
+    text-align: right;
+  }
+
+  /* CONTROLES */
+  .controles {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .btn-proxima {
+    background: linear-gradient(135deg, var(--sepia-dark), #a07820);
+    border: none;
+    color: var(--paper);
+    font-family: 'Special Elite', cursive;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    padding: 0.9rem 2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    align-self: flex-start;
+  }
+
+  .btn-proxima:hover {
+    background: linear-gradient(135deg, #a07820, var(--sepia-dark));
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+  }
+
+  /* PERGUNTA CARD */
+  .pergunta-card {
+    background: #f0e6d0;
+    border: 1px solid #ddd0b0;
+    color: var(--ink);
+    padding: 2rem;
+    box-shadow: 4px 4px 20px rgba(0,0,0,0.4);
+    animation: slideIn 0.3s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity:0; transform:translateY(8px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+
+  .pergunta-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .cat-badge {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    padding: 0.2rem 0.7rem;
+    border-radius: 20px;
+  }
+
+  .cat-normal { background: rgba(139,26,26,0.15); color: var(--blood); border: 1px solid rgba(139,26,26,0.3); }
+  .cat-confronto { background: rgba(74,85,104,0.2); color: #4a5568; border: 1px solid #4a5568; }
+  .cat-final { background: #8b6914; color: #f5e6c8; border: 1px solid #a07820; }
+
+  .grupo-badge {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    color: #4a5568;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 20px;
+  }
+
+  .mult-badge {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: #8b6914;
+    background: rgba(139,105,20,0.1);
+    border: 1px solid rgba(139,105,20,0.4);
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+  }
+
+  .pergunta-texto {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1a1208;
+    line-height: 1.4;
+    margin-bottom: 1.5rem;
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-dica {
+    background: transparent;
+    border: 1px solid #8b6914;
+    color: #8b6914;
+    font-family: 'Special Elite', cursive;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    padding: 0.6rem 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-dica:hover { background: rgba(139,105,20,0.1); }
+
+  .btn-resposta {
+    background: var(--blood);
+    border: none;
+    color: #f5e6c8;
+    font-family: 'Special Elite', cursive;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    padding: 0.7rem 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 3px 10px rgba(139,26,26,0.3);
+  }
+
+  .btn-resposta:hover { background: #a01a1a; }
+
+  .dica-box {
+    margin-top: 1rem;
+    background: rgba(139,105,20,0.1);
+    border-left: 3px solid #8b6914;
+    padding: 0.8rem 1rem;
+    font-style: italic;
+    font-size: 1rem;
+    color: #5a4a00;
+  }
+
+  .resposta-box {
+    background: rgba(45,90,27,0.1);
+    border: 2px solid rgba(45,90,27,0.4);
+    padding: 1.2rem;
+    margin-bottom: 1.5rem;
+    animation: popIn 0.3s ease;
+  }
+
+  @keyframes popIn {
+    from { opacity:0; transform:scale(0.98); }
+    to { opacity:1; transform:scale(1); }
+  }
+
+  .resposta-label {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    color: #2d5a1b;
+    margin-bottom: 0.5rem;
+  }
+
+  .resposta-texto {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: #1a3a0a;
+    font-weight: 600;
+  }
+
+  .pontuacao-section { margin-top: 1rem; }
+
+  .pontuacao-titulo {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: #4a5568;
+    margin-bottom: 0.8rem;
+  }
+
+  .grupos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 0.5rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .btn-grupo {
+    background: rgba(0,0,0,0.05);
+    border: 2px solid var(--cor);
+    color: var(--cor);
+    font-family: 'Special Elite', cursive;
+    font-size: 0.65rem;
+    letter-spacing: 0.05em;
+    padding: 0.6rem 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    line-height: 1.4;
+  }
+
+  .btn-grupo:hover {
+    background: var(--cor);
+    color: white;
+  }
+
+  .btn-passou {
+    background: transparent;
+    border: 1px dashed #aaa;
+    color: #888;
+    font-family: 'Special Elite', cursive;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s;
+  }
+
+  .btn-passou:hover { background: rgba(0,0,0,0.05); }
+
+  /* TELA INICIAL/FINAL */
+  .tela-inicio {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: #f0e6d0;
+    border: 1px solid #ddd0b0;
+    color: var(--ink);
+  }
+
+  .tela-icon { font-size: 4rem; margin-bottom: 1rem; }
+
+  .tela-titulo {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: #1a1208;
+    margin-bottom: 1rem;
+  }
+
+  .btn-action {
+    background: var(--sepia-dark);
+    border: none;
+    color: var(--paper);
+    font-family: 'Special Elite', cursive;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    padding: 0.9rem 2.5rem;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: all 0.2s;
+  }
+
+  .btn-action:hover { background: #a07820; }
+
+  /* FOOTER */
+  .footer-bar {
+    background: rgba(0,0,0,0.4);
+    border-top: 1px solid rgba(200,169,110,0.15);
+    padding: 0.6rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .footer-info {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    color: rgba(200,169,110,0.5);
+  }
+
+  /* FEEDBACK TOAST */
+  .feedback-toast {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    background: var(--trench);
+    border: 1px solid var(--sepia-dark);
+    color: var(--sepia-light);
+    font-family: 'Special Elite', cursive;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    padding: 0.7rem 1.2rem;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s;
+    z-index: 1000;
+    pointer-events: none;
+  }
+
+  .feedback-toast.show { opacity: 1; transform: translateY(0); }
+  .feedback-toast.success { border-color: #2d5a1b; background: rgba(45,90,27,0.9); }
+  .feedback-toast.neutral { border-color: #4a5568; }
+
+  /* Controles area */
+  #pergunta-area { flex: 1; }
+</style>
+</head>
+<body>
+
+<!-- FEEDBACK TOAST -->
+<div class="feedback-toast" id="feedback"></div>
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <div class="header-title">⚔️ Passa ou Repassa — A Grande Guerra</div>
+    <div class="header-sub">PAINEL DE CONTROLE DO PROFESSOR · PRIMEIRA GUERRA MUNDIAL</div>
+  </div>
+  <div style="display:flex; gap:0.5rem; align-items:center;">
+    <button class="btn-reset" onclick="resetarJogo()">↺ REINICIAR</button>
+  </div>
+</div>
+
+<!-- RODADAS -->
+<div class="rodadas-bar">
+  <span class="rodada-label">RODADAS:</span>
+  <span class="rodada-pill" id="r1">1 — Aquecimento</span>
+  <span class="rodada-pill" id="r2">2 — Perspectiva</span>
+  <span class="rodada-pill" id="r3">3 — Documento</span>
+  <span class="rodada-pill" id="r4">4 — Confronto</span>
+  <span class="rodada-pill" id="r5">5 — Final ⭐</span>
+</div>
+
+<!-- MAIN -->
+<div class="main-grid">
+  <!-- PLACAR -->
+  <div class="placar">
+    <div class="placar-titulo">◆ PLACAR ◆</div>
+    <div class="grupo-card" id="card-centrais">
+      <span class="grupo-nome">⚔️ Potências<br>Centrais</span>
+      <span class="grupo-pts" id="pts-centrais">0</span>
+    </div>
+    <div class="grupo-card" id="card-entente">
+      <span class="grupo-nome">🛡️ Tríplice<br>Entente</span>
+      <span class="grupo-pts" id="pts-entente">0</span>
+    </div>
+    <div class="grupo-card" id="card-brasil">
+      <span class="grupo-nome">🇧🇷 Brasil</span>
+      <span class="grupo-pts" id="pts-brasil">0</span>
+    </div>
+    <div class="grupo-card" id="card-soldado">
+      <span class="grupo-nome">🪖 Trincheira</span>
+      <span class="grupo-pts" id="pts-soldado">0</span>
+    </div>
+    <div class="grupo-card" id="card-imprensa">
+      <span class="grupo-nome">📰 Imprensa</span>
+      <span class="grupo-pts" id="pts-imprensa">0</span>
+    </div>
+
+    <div style="margin-top:auto; padding-top:1rem; border-top:1px solid rgba(200,169,110,0.15);">
+      <button class="btn-proxima" onclick="proximaPergunta()" style="width:100%;">
+        ▶ PRÓXIMA PERGUNTA
+      </button>
+    </div>
+  </div>
+
+  <!-- ÁREA DA PERGUNTA -->
+  <div class="controles">
+    <div id="pergunta-area"></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer-bar">
+  <span class="footer-info">EESPA · PRIMEIRA GUERRA MUNDIAL · 3º ANO</span>
+  <span class="footer-info">Firebase: pgm_ww1_quiz → estado_atual</span>
+</div>
+
+</body>
+</html>

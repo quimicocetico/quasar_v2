@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Placar — Grande Guerra</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Special+Elite&family=Crimson+Text:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  // ⚠️ SUBSTITUA COM SEU firebaseConfig REAL (mesmo do quiz_pgm.html)
+  const firebaseConfig = {
+    apiKey: "AIzaSyCfN9gVHe7aPPNzDW6q5M8-u96ju_mnJVI",
+    authDomain: "bla1-fd57b.firebaseapp.com",
+    projectId: "bla1-fd57b",
+    storageBucket: "bla1-fd57b.firebasestorage.app",
+    messagingSenderId: "468715848364",
+    appId: "1:468715848364:web:8eaabcbf5c312441c49509",
+    measurementId: "G-DVG9C3M2M5"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const GRUPOS = [
+    { id:"centrais", nome:"Potências Centrais", emoji:"⚔️", cor:"#8b1a1a" },
+    { id:"entente",  nome:"Tríplice Entente",   emoji:"🛡️", cor:"#1a3a5c" },
+    { id:"brasil",   nome:"Brasil",              emoji:"🇧🇷", cor:"#2d5a1b" },
+    { id:"soldado",  nome:"Trincheira",          emoji:"🪖", cor:"#5a4a1a" },
+    { id:"imprensa", nome:"Imprensa",            emoji:"📰", cor:"#4a2d5a" },
+  ];
+
+  let estadoAnterior = null;
+
+  // Escuta mudanças em tempo real
+  onSnapshot(doc(db, "pgm_ww1_quiz", "estado_atual"), (snap) => {
+    if (!snap.exists()) {
+      mostrarAguardando();
+      return;
+    }
+    const data = snap.data();
+    renderPlacar(data);
+    estadoAnterior = data;
+  }, (err) => {
+    console.error("Erro Firebase:", err);
+    mostrarErro();
+  });
+
+  function renderPlacar(data) {
+    const pontos = data.pontos || {};
+    const perguntaAtiva = data.perguntaAtiva;
+    const rodada = data.rodadaAtual || 1;
+
+    // Ordenar grupos por pontos
+    const ranking = GRUPOS
+      .map(g => ({ ...g, pts: pontos[g.id] || 0 }))
+      .sort((a, b) => b.pts - a.pts);
+
+    const maxPts = ranking[0]?.pts || 0;
+
+    // Render placar
+    const placarEl = document.getElementById("placar-cards");
+    placarEl.innerHTML = ranking.map((g, i) => {
+      const isLider = g.pts === maxPts && maxPts > 0;
+      const barWidth = maxPts > 0 ? (g.pts / maxPts) * 100 : 0;
+      const posicaoLabel = ["🥇", "🥈", "🥉", "4º", "5º"][i];
+
+      return `
+        <div class="grupo-row ${isLider ? 'lider' : ''}" style="--cor:${g.cor}">
+          <div class="posicao">${posicaoLabel}</div>
+          <div class="grupo-emoji">${g.emoji}</div>
+          <div class="grupo-info">
+            <div class="grupo-nome">${g.nome}</div>
+            <div class="barra-wrap">
+              <div class="barra-fill" style="width:${barWidth}%; background:${g.cor}"></div>
+            </div>
+          </div>
+          <div class="grupo-pts ${isLider ? 'pts-lider' : ''}">${g.pts}</div>
+        </div>
+      `;
+    }).join("");
+
+    // Pergunta ativa
+    const pArea = document.getElementById("pergunta-display");
+    if (perguntaAtiva) {
+      const isUltima = rodada === 5;
+      pArea.innerHTML = `
+        <div class="pergunta-live ${isUltima ? 'final' : ''}">
+          <div class="pergunta-live-cat">${isUltima ? "⭐ RODADA FINAL — PONTOS DUPLOS" : `RODADA ${rodada} — ${perguntaAtiva.categoria}`}</div>
+          <div class="pergunta-live-texto">${perguntaAtiva.pergunta}</div>
+          ${data.mostrarResposta ? `<div class="respondida-badge">✓ RESPONDIDA</div>` : ""}
+        </div>
+      `;
+    } else {
+      pArea.innerHTML = `
+        <div class="aguardando">
+          <div class="aguardando-icon">⏳</div>
+          <div class="aguardando-texto">Aguardando próxima pergunta...</div>
+        </div>
+      `;
+    }
+
+    // Rodada indicator
+    document.getElementById("rodada-display").textContent = `RODADA ${rodada} DE 5`;
+
+    // Status conexão
+    document.getElementById("status").textContent = "● AO VIVO";
+    document.getElementById("status").style.color = "#4ade80";
+  }
+
+  function mostrarAguardando() {
+    document.getElementById("placar-cards").innerHTML = `
+      <div style="text-align:center; padding:2rem; opacity:0.5; font-style:italic;">
+        Aguardando início do quiz...
+      </div>
+    `;
+  }
+
+  function mostrarErro() {
+    document.getElementById("status").textContent = "● DESCONECTADO";
+    document.getElementById("status").style.color = "#f87171";
+  }
+</script>
+
+<style>
+  :root {
+    --bg: #0d0d08;
+    --paper: #f0e6d0;
+    --sepia: #c8a96e;
+    --sepia-dark: #8b6914;
+    --ink: #1a1208;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    background-image: 
+      radial-gradient(ellipse at top, #1a1a0a 0%, #0d0d08 70%);
+    font-family: 'Crimson Text', serif;
+    color: var(--paper);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(180deg, #050503 0%, #1a1a0a 100%);
+    border-bottom: 2px solid var(--sepia-dark);
+    padding: 1.5rem 2rem;
+    text-align: center;
+    position: relative;
+  }
+
+  .header-label {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
+    color: var(--sepia);
+    opacity: 0.7;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-weight: 900;
+    color: var(--sepia);
+    line-height: 1;
+  }
+
+  .status-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    font-family: 'Special Elite', cursive;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+  }
+
+  .rodada-display {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--sepia);
+    opacity: 0.7;
+    margin-top: 0.5rem;
+  }
+
+  /* MAIN */
+  .main {
+    flex: 1;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 2rem;
+    gap: 2rem;
+  }
+
+  /* PERGUNTA DISPLAY */
+  .pergunta-live {
+    background: rgba(200,169,110,0.08);
+    border: 1px solid rgba(200,169,110,0.25);
+    padding: 1.5rem;
+    text-align: center;
+    animation: fadeSlide 0.4s ease;
+  }
+
+  .pergunta-live.final {
+    border-color: var(--sepia);
+    background: rgba(200,169,110,0.15);
+    box-shadow: 0 0 30px rgba(200,169,110,0.1);
+  }
+
+  @keyframes fadeSlide {
+    from { opacity:0; transform:translateY(-6px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+
+  .pergunta-live-cat {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--sepia);
+    margin-bottom: 0.8rem;
+  }
+
+  .pergunta-live-texto {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    font-weight: 700;
+    color: var(--paper);
+    line-height: 1.4;
+  }
+
+  .respondida-badge {
+    display: inline-block;
+    margin-top: 0.8rem;
+    background: rgba(45,90,27,0.3);
+    border: 1px solid #2d5a1b;
+    color: #4ade80;
+    font-family: 'Special Elite', cursive;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    padding: 0.2rem 0.8rem;
+  }
+
+  .aguardando {
+    text-align: center;
+    padding: 1.5rem;
+    opacity: 0.4;
+  }
+
+  .aguardando-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+  .aguardando-texto {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+  }
+
+  /* PLACAR */
+  .placar-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .grupo-row {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-left: 4px solid var(--cor);
+    padding: 0.9rem 1rem;
+    display: grid;
+    grid-template-columns: 2rem 2rem 1fr auto;
+    align-items: center;
+    gap: 0.8rem;
+    transition: all 0.5s;
+  }
+
+  .grupo-row.lider {
+    background: rgba(200,169,110,0.08);
+    border-color: var(--sepia);
+    box-shadow: 0 0 20px rgba(200,169,110,0.1);
+  }
+
+  .posicao {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    text-align: center;
+  }
+
+  .grupo-emoji { font-size: 1.4rem; text-align: center; }
+
+  .grupo-nome {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    color: var(--paper);
+    margin-bottom: 0.4rem;
+  }
+
+  .barra-wrap {
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .barra-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.8s ease;
+  }
+
+  .grupo-pts {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--sepia);
+    text-align: right;
+    transition: all 0.3s;
+    min-width: 3ch;
+  }
+
+  .grupo-pts.pts-lider {
+    color: #fbbf24;
+    text-shadow: 0 0 20px rgba(251,191,36,0.4);
+  }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    padding: 1rem;
+    font-family: 'Special Elite', cursive;
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    color: rgba(200,169,110,0.3);
+    border-top: 1px solid rgba(200,169,110,0.1);
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="header-label">EESPA · 3º ANO · PRIMEIRA GUERRA MUNDIAL</span>
+  <div class="header-title">⚔️ Passa ou Repassa</div>
+  <div class="rodada-display" id="rodada-display">AGUARDANDO INÍCIO</div>
+  <div class="status-badge" id="status">● CONECTANDO...</div>
+</div>
+
+<div class="main">
+  <div id="pergunta-display">
+    <div class="aguardando">
+      <div class="aguardando-icon">⏳</div>
+      <div class="aguardando-texto">Conectando ao Firebase...</div>
+    </div>
+  </div>
+
+  <div class="placar-cards" id="placar-cards">
+    <!-- Preenchido pelo JS -->
+  </div>
+</div>
+
+<div class="footer">
+  PLACAR AO VIVO · SINCRONIZADO VIA FIREBASE · ACADEMIA ARCANA
+</div>
+
+</body>
+</html>
