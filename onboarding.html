@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Onboarding — Quasar</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-[#0A0F1C] text-white font-['Outfit'] min-h-screen flex items-center justify-center p-4">
+
+  <div class="max-w-md w-full bg-white/5 border border-white/10 backdrop-blur-xl rounded-3xl p-8 shadow-2xl">
+    <div id="onboarding-professor" class="hidden">
+      <h1 class="text-3xl font-bold mb-2">Bem-vindo, Professor!</h1>
+      <p class="text-gray-400 mb-8">Vamos configurar seu ambiente de ensino.</p>
+      
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-1">Nome da Escola</label>
+          <input type="text" id="escola-nome" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:border-[#00F0FF] outline-none transition-all" placeholder="Ex: Escola Estadual Quasar">
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-1">Nome da Primeira Turma</label>
+          <input type="text" id="turma-nome" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:border-[#00F0FF] outline-none transition-all" placeholder="Ex: 9º Ano A">
+        </div>
+
+        <button id="btn-finalizar-professor" class="w-full bg-gradient-to-r from-[#00F0FF] to-[#7000FF] text-white font-bold py-4 rounded-xl shadow-[0_0_20px_rgba(0,240,255,0.3)] hover:scale-[1.02] transition-all">
+          Começar a Ensinar
+        </button>
+      </div>
+    </div>
+
+    <div id="onboarding-aluno" class="hidden">
+      <h1 class="text-3xl font-bold mb-2">Olá, Estudante!</h1>
+      <p class="text-gray-400 mb-8" id="aluno-msg">Verificando sua matrícula...</p>
+      
+      <div id="aluno-status-loading" class="flex justify-center py-8">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00F0FF]"></div>
+      </div>
+
+      <div id="aluno-status-erro" class="hidden text-center">
+        <div class="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-xl mb-6">
+          Nenhuma matrícula encontrada para seu e-mail institucional.
+        </div>
+        <p class="text-sm text-gray-400 mb-6">Peça ao seu professor para cadastrar seu e-mail na turma.</p>
+        <button onclick="location.reload()" class="text-[#00F0FF] font-medium hover:underline">Tentar novamente</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { requireAuth } from "./_shared/gatekeeper.js";
+    import { db, doc, getDoc, setDoc, collection, addDoc, serverTimestamp } from "./_shared/db.js";
+
+    requireAuth(async (user) => {
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+      const profile = userSnap.data();
+
+      if (profile.papel === 'professor') {
+        document.getElementById('onboarding-professor').classList.remove('hidden');
+        setupProfessor(user, userRef);
+      } else {
+        document.getElementById('onboarding-aluno').classList.remove('hidden');
+        setupAluno(user, userRef);
+      }
+    });
+
+    function setupProfessor(user, userRef) {
+      const btn = document.getElementById('btn-finalizar-professor');
+      btn.onclick = async () => {
+        const escolaNome = document.getElementById('escola-nome').value.trim();
+        const turmaNome = document.getElementById('turma-nome').value.trim();
+
+        if (!escolaNome || !turmaNome) return alert("Preencha todos os campos.");
+
+        btn.disabled = true;
+        btn.textContent = "Configurando...";
+
+        try {
+          // 1. Criar Escola
+          const escolaRef = await addDoc(collection(db, "escolas"), {
+            nome: escolaNome,
+            professor_uid: user.uid,
+            created_at: serverTimestamp()
+          });
+
+          // 2. Criar Turma
+          await addDoc(collection(db, "escolas", escolaRef.id, "turmas"), {
+            nome: turmaNome,
+            professor_uid: user.uid,
+            created_at: serverTimestamp()
+          });
+
+          // 3. Atualizar Profile
+          await setDoc(userRef, { escola_id: escolaRef.id }, { merge: true });
+
+          window.location.href = "/index.html";
+        } catch (e) {
+          console.error(e);
+          alert("Erro ao configurar. Tente novamente.");
+          btn.disabled = false;
+          btn.textContent = "Começar a Ensinar";
+        }
+      };
+    }
+
+    async function setupAluno(user, userRef) {
+      // TODO: Lógica de verificação de matrícula
+      // Por enquanto, apenas simula ou mostra erro se não houver
+      setTimeout(async () => {
+        document.getElementById('aluno-status-loading').classList.add('hidden');
+        document.getElementById('aluno-status-erro').classList.remove('hidden');
+        document.getElementById('aluno-msg').textContent = "Matrícula não localizada.";
+      }, 2000);
+    }
+  </script>
+</body>
+</html>

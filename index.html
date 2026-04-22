@@ -3,26 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Título da Página — Plataforma Quasar</title>
+  <title>Portal de Missões — Quasar</title>
  
-  <!-- 1. Tailwind (síncrono, necessário para classes do header injetado) -->
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
- 
-  <!-- 2. Lucide Icons (DEVE vir antes do app.js) -->
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
  
-  <!-- 3. Fonte Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="index.css">
 </head>
 <body>
 
-    <!-- Bolhas de fundo -->
     <div class="blob blob-1"></div>
     <div class="blob blob-2"></div>
     <div class="blob blob-3"></div>
 
-    <!-- Conteúdo principal — o header é injetado pelo app.js antes deste bloco -->
     <main id="main-content">
         <header class="page-header">
             <h1>PORTAL DE MISSÕES</h1>
@@ -30,184 +25,29 @@
         </header>
 
         <div class="container" id="missions-grid">
-            <a href="./quasar-ferramentas/lousa-interativa/index.html" class="quest-card">
-                <div class="icon">🖍️</div>
-                <h2>Lousa Interativa</h2>
-                <p>Crie e interaja com conteúdos dinâmicos na lousa digital.</p>
-                <div class="btn-enter">Abrir Lousa</div>
-            </a>
-
-            <a href="./quasar-ferramentas/primeira-guerra/index.html" class="quest-card">
-                <div class="icon">⚔️</div>
-                <h2>Timeline 1ª Guerra</h2>
-                <p>Navegue pela linha do tempo da Primeira Guerra Mundial.</p>
-                <div class="btn-enter">Explorar Timeline</div>
-            </a>
-
             <a href="./quasar-ferramentas/desafio-timeline/index.html" class="quest-card">
                 <div class="icon">⏳</div>
-                <h2>Desafio Timeline</h2>
-                <p>Enfrente desafios históricos e conquiste o domínio temporal.</p>
-                <div class="btn-enter">Iniciar Desafio</div>
+                <h2>Timeline Quest</h2>
+                <p>Enfrente desafios históricos e conquiste o domínio temporal em duplas.</p>
+                <div class="btn-enter">Iniciar Missão</div>
             </a>
 
-            <a href="./quasar-ferramentas/calc-estequiometria/index.html" class="quest-card">
-                <div class="icon">🧪</div>
-                <h2>Calc Estequiometria</h2>
-                <p>Ferramenta de cálculos estequiométricos interativa.</p>
-                <div class="btn-enter">Abrir Calculadora</div>
+            <a href="./quasar-ferramentas/taca-das-casas/index.html" class="quest-card">
+                <div class="icon">🏆</div>
+                <h2>Taça das Casas</h2>
+                <p>Veja o ranking em tempo real e ajude sua casa a vencer a temporada.</p>
+                <div class="btn-enter">Ver Ranking</div>
+            </a>
+
+            <a href="./quasar-ferramentas/lousa-interativa/index.html" class="quest-card opacity-50 grayscale">
+                <div class="icon">🖍️</div>
+                <h2>Lousa Interativa</h2>
+                <p>Em breve: Crie e interaja com conteúdos dinâmicos na lousa digital.</p>
+                <div class="btn-enter">Indisponível</div>
             </a>
         </div>
     </main>
 
-    <style>
-        /* Bolhas de fundo */
-        .blob {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(80px);
-            z-index: -1;
-            opacity: 0.5;
-            animation: float 10s infinite alternate ease-in-out;
-            pointer-events: none;
-        }
-        .blob-1 { width: 400px; height: 400px; background: rgba(112, 0, 255, 0.2); top: -10%; left: -10%; }
-        .blob-2 { width: 500px; height: 500px; background: rgba(0, 240, 255, 0.15); bottom: -20%; right: -10%; animation-delay: -5s; }
-        .blob-3 { width: 300px; height: 300px; background: rgba(16, 185, 129, 0.12); top: 40%; left: 40%; animation-duration: 15s; }
-        @keyframes float {
-            0%   { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(40px, 40px) scale(1.1); }
-        }
-
-        /* Layout principal */
-        #main-content {
-            min-height: calc(100vh - 6rem);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem 1rem 4rem;
-        }
-
-        /* Cabeçalho da página */
-        .page-header {
-            text-align: center;
-            margin-bottom: 3rem;
-            z-index: 1;
-        }
-
-        .page-header h1 {
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            font-weight: 800;
-            background: linear-gradient(to right, #a78bfa, #22d3ee);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.5rem;
-            letter-spacing: -1px;
-        }
-
-        .page-header .subtitle {
-            font-size: 1.1rem;
-            color: #94a3b8;
-            font-weight: 300;
-        }
-
-        /* Grid de cards */
-        .container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 1.5rem;
-            max-width: 1100px;
-            width: 100%;
-            z-index: 1;
-        }
-
-        /* Cards */
-        .quest-card {
-            background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 20px;
-            padding: 2.5rem 1.75rem;
-            text-decoration: none;
-            color: #ffffff;
-            transition: all 0.35s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .quest-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 50%; height: 100%;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.06), transparent);
-            transform: skewX(-20deg);
-            transition: 0.5s;
-        }
-
-        .quest-card:hover {
-            transform: translateY(-8px);
-            background: rgba(255, 255, 255, 0.07);
-            border-color: rgba(0, 240, 255, 0.25);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 240, 255, 0.05);
-        }
-
-        .quest-card:hover::before { left: 150%; }
-
-        .quest-card .icon {
-            font-size: 3.5rem;
-            margin-bottom: 1.25rem;
-            filter: drop-shadow(0 0 12px rgba(255,255,255,0.2));
-        }
-
-        .quest-card h2 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 0.75rem;
-            color: #f1f5f9;
-        }
-
-        .quest-card p {
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: #64748b;
-            margin-bottom: 1.75rem;
-            flex-grow: 1;
-        }
-
-        .btn-enter {
-            padding: 10px 24px;
-            background: rgba(0, 240, 255, 0.08);
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 0.82rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s;
-            color: #00F0FF;
-            width: 100%;
-        }
-
-        .quest-card:hover .btn-enter {
-            background: rgba(0, 240, 255, 0.15);
-            border-color: rgba(0, 240, 255, 0.5);
-            box-shadow: 0 0 16px rgba(0, 240, 255, 0.2);
-        }
-
-        @media (max-width: 640px) {
-            .blob { opacity: 0.3; }
-        }
-    </style>
-
-    <!-- O app.js é a ÚNICA fonte de auth e header. Deve ser o último script. -->
     <script type="module" src="/app.js"></script>
 </body>
 </html>

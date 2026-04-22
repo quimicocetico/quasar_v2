@@ -1,8 +1,11 @@
 // app.js — Gatekeeper e Motor de UI da Plataforma Quasar
-import { auth, loginComGoogle } from '/firebase-config.js';
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+import { requireAuth } from "./_shared/gatekeeper.js";
+import { db, doc, getDoc, setDoc, serverTimestamp } from "./_shared/db.js";
+import { signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+import { auth } from "./firebase-config.js";
 
 const isLoginPage = window.location.pathname.endsWith('login.html');
+const isOnboardingPage = window.location.pathname.endsWith('onboarding.html');
 
 // ─── 1. Estilos globais injetados uma única vez ───────────────────────────────
 document.head.insertAdjacentHTML('beforeend', `
@@ -66,32 +69,32 @@ function renderizarHeader() {
     <div class="h-16"></div>
   `);
 
-  lucide.createIcons();
+  if (window.lucide) lucide.createIcons();
   setupEvents();
 }
 
-// ─── 3. Eventos do header ─────────────────────────────────────────────────────
 function setupEvents() {
   const trigger = document.getElementById('profile-trigger');
   const card    = document.getElementById('profile-card');
   const authBtn = document.getElementById('auth-action-btn');
 
-  trigger.onclick = (e) => { e.stopPropagation(); card.classList.toggle('hidden-scale'); };
-  document.onclick = () => card.classList.add('hidden-scale');
-  card.onclick = (e) => e.stopPropagation();
+  if (trigger) trigger.onclick = (e) => { e.stopPropagation(); card.classList.toggle('hidden-scale'); };
+  document.onclick = () => card && card.classList.add('hidden-scale');
+  if (card) card.onclick = (e) => e.stopPropagation();
 
-  authBtn.onclick = async () => {
-    if (auth.currentUser) {
-      await signOut(auth);
-      window.location.href = '/login.html';
-    } else {
-      window.location.href = '/login.html';
-    }
-  };
+  if (authBtn) {
+    authBtn.onclick = async () => {
+      if (auth.currentUser) {
+        await signOut(auth);
+        window.location.href = '/login.html';
+      } else {
+        window.location.href = '/login.html';
+      }
+    };
+  }
 }
 
-// ─── 4. Atualiza header com dados do usuário ──────────────────────────────────
-function atualizarHeaderUsuario(user) {
+function atualizarHeaderUsuario(user, profile) {
   const headerName  = document.getElementById('header-name');
   const headerAvatar = document.getElementById('header-avatar');
   const cardName    = document.getElementById('card-name');
@@ -107,9 +110,8 @@ function atualizarHeaderUsuario(user) {
     cardName.textContent   = user.displayName || 'Aluno Quasar';
     cardEmail.textContent  = user.email;
 
-    // ─── Papel do usuário exposto no body ─────────────────────────────
-    const isProfessor = user.email.endsWith('@educar.rn.gov.br');
-    document.body.dataset.role = isProfessor ? 'professor' : 'aluno';
+    const papel = profile?.papel || (user.email.endsWith('@educar.rn.gov.br') ? 'professor' : 'aluno');
+    document.body.dataset.role = papel;
 
     if (user.photoURL) {
       headerAvatar.innerHTML = `<img src="${user.photoURL}" class="w-full h-full object-cover rounded-full">`;
@@ -120,17 +122,50 @@ function atualizarHeaderUsuario(user) {
       <i data-lucide="log-out" class="w-4 h-4 text-red-400"></i>
       <span class="text-red-400 font-medium">Sair da Conta</span>
     `;
-    lucide.createIcons();
+    if (window.lucide) lucide.createIcons();
   } else {
     headerName.textContent = 'Entrar';
   }
 }
 
-// ─── 5. Gatekeeper ───────────────────────────────────────────────────────────
-renderizarHeader();
+// ─── 3. Lógica de Gatekeeper e Onboarding ─────────────────────────────────────
+if (!isLoginPage) {
+  requireAuth(async (user) => {
+    if (isLoginPage) return;
 
-onAuthStateChanged(auth, (user) => {
-  if (!user && !isLoginPage) { window.location.href = '/login.html'; return; }
-  if (user  &&  isLoginPage) { window.location.href = '/index.html'; return; }
-  atualizarHeaderUsuario(user);
-});
+    renderizarHeader();
+    
+    const userRef = doc(db, "users", user.uid);
+    const snap = await getDoc(userRef);
+
+    if (!snap.exists()) {
+      // Primeiro acesso — criar profile
+      const papel = user.email.endsWith('@educar.rn.gov.br') ? "professor" : "aluno";
+      const profile = {
+        nome: user.displayName,
+        email: user.email,
+        papel: papel,
+        created_at: serverTimestamp()
+      };
+      await setDoc(userRef, profile);
+      atualizarHeaderUsuario(user, profile);
+      
+      if (!isOnboardingPage) window.location.href = "/onboarding.html";
+      return;
+    }
+
+    const profile = snap.data();
+    atualizarHeaderUsuario(user, profile);
+
+    if (!profile.escola_id && !isOnboardingPage) {
+      window.location.href = "/onboarding.html";
+      return;
+    }
+
+    // Se já tiver escola e estiver na onboarding, vai pro index
+    if (profile.escola_id && isOnboardingPage) {
+      window.location.href = "/index.html";
+      return;
+    }
+  });
+}

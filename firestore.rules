@@ -2,62 +2,82 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ─── FUNÇÕES AUXILIARES ──────────────────────────────────────────
-
+    // ─── FUNÇÕES AUXILIARES ───────────────────────────────────────
     function isAutenticado() {
       return request.auth != null;
     }
-
     function isAluno() {
       return isAutenticado() &&
         request.auth.token.email.matches('.*@estudante[.]rn[.]gov[.]br');
     }
-
     function isProfessor() {
       return isAutenticado() &&
         request.auth.token.email.matches('.*@educar[.]rn[.]gov[.]br');
     }
-
-    function isInstitucional() {
-      return isAluno() || isProfessor();
+    function isProprietario(uid) {
+      return request.auth.uid == uid;
     }
-
-    function isDonoDaAula() {
+    function professorDaTemporada(temporadaId) {
       return isProfessor() &&
-        request.auth.token.email == resource.data.professor_email;
+        request.auth.uid == get(/databases/$(database)/documents/taca_casas/$(temporadaId)).data.professor_uid;
     }
-
-    function isDonoDaAulaEscrita() {
+    function professorDaEscola(escolaId) {
       return isProfessor() &&
-        request.auth.token.email == request.resource.data.professor_email;
+        request.auth.uid == get(/databases/$(database)/documents/escolas/$(escolaId)).data.professor_uid;
     }
 
+    // ─── USUÁRIOS ────────────────────────────────────────────────
+    match /users/{uid} {
+      allow read, write: if isProprietario(uid);
 
-
-    // ─── OBJETOS EDUCACIONAIS ───────────────────────────────────────
-
-    // Desafios (Timeline, Quizzes, etc)
-    match /challenges/{challengeId} {
-      allow read: if isAutenticado();
-      allow write: if isProfessor();
-      
-      // Subcoleção de scores (se usada)
-      match /scores/{scoreId} {
-        allow read: if isAutenticado();
-        allow write: if isAutenticado();
+      match /codex/{cartaId} {
+        allow read, write: if isProprietario(uid);
       }
     }
 
-    // Configurações Globais (Ativação de desafios)
-    match /config/{configId} {
+    // ─── ESCOLAS E TURMAS ────────────────────────────────────────
+    match /escolas/{escolaId} {
       allow read: if isAutenticado();
-      allow write: if isProfessor();
+      allow create: if isProfessor();
+      allow update, delete: if professorDaEscola(escolaId);
+
+      match /turmas/{turmaId} {
+        allow read: if isAutenticado();
+        allow write: if professorDaEscola(escolaId);
+      }
     }
 
-    // Sessões de Jogo e Ranking em Tempo Real (Recursivo para subcoleções)
-    match /sessoes_timeline/{allPaths=**} {
-      allow read, write: if isAutenticado();
+    // ─── MATRÍCULAS ──────────────────────────────────────────────
+    match /matriculas/{matriculaId} {
+      allow read: if isProprietario(resource.data.aluno_uid)
+                  || isProfessor();
+      allow create: if isProfessor();
+      allow update: if isProfessor();
+      allow delete: if false;
     }
 
+    // ─── CATÁLOGO CODEX ──────────────────────────────────────────
+    match /codex/{cartaId} {
+      allow read: if isAutenticado();
+      allow write: if false; // só admin via console
+    }
+
+    // ─── TAÇA DAS CASAS ──────────────────────────────────────────
+    match /taca_casas/{temporadaId} {
+      allow read: if isAutenticado();
+      allow create: if isProfessor();
+      allow write: if isProfessor() && request.auth.uid == resource.data.professor_uid;
+
+      match /casas/{casaId} {
+        allow read: if isAutenticado();
+        allow write: if professorDaTemporada(temporadaId);
+
+        match /eventos/{eventoId} {
+          allow read: if isAutenticado();
+          allow create: if professorDaTemporada(temporadaId);
+          allow update, delete: if false;
+        }
+      }
+    }
   }
 }

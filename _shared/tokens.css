@@ -1,0 +1,12 @@
+:root {
+  --bg-deep: #0A0E1A;
+  --surface: #111827;
+  --text-primary: #E8ECF4;
+  --accent-cyan: #00D4FF;
+  --accent-warm: #FF6B35;
+  --accent-green: #10B981;
+  --font-display: 'Outfit', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+  --radius-card: 16px;
+  --radius-btn: 12px;
+}

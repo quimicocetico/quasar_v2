@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Taça das Casas — Painel do Professor</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="ranking-container">
+    <h1 style="text-align: center; margin-bottom: 40px;">🛡️ Painel de Controle das Casas</h1>
+    <div id="ranking-list">
+      <div style="text-align: center; opacity: 0.5;">Carregando painel...</div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initRanking, atribuirPontos } from "./main.js";
+
+    const list = document.getElementById("ranking-list");
+    const params = new URLSearchParams(window.location.search);
+    const temporadaId = params.get("temporada") || "temp_2024_1";
+
+    initRanking((casas) => {
+      list.innerHTML = casas.map((casa) => `
+        <div class="casa-card">
+          <div class="casa-info">
+            <div class="casa-nome">${casa.nome}</div>
+            <div class="casa-pontos">${casa.pontos_total} pts</div>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-point" onclick="addPts('${casa.id}', 10)">+10</button>
+            <button class="btn-point" onclick="addPts('${casa.id}', 50)">+50</button>
+            <button class="btn-point neg" onclick="addPts('${casa.id}', -10)">-10</button>
+          </div>
+        </div>
+      `).join('');
+    });
+
+    window.addPts = async (casaId, pts) => {
+      const motivo = prompt("Motivo da pontuação:");
+      if (!motivo) return;
+      
+      const success = await atribuirPontos(temporadaId, casaId, pts, motivo);
+      if (success) {
+        console.log("Pontos atribuídos!");
+      }
+    };
+  </script>
+</body>
+</html>
