@@ -69,7 +69,7 @@
   <script type="module" src="/app.js"></script>
   <script type="module">
     import { requireAuth } from "./_shared/gatekeeper.js";
-    import { db, collection, getDocs, addDoc, query, where, serverTimestamp } from "./_shared/db.js";
+    import { db, collection, getDocs, addDoc, query, where, serverTimestamp, getCountFromServer } from "./_shared/db.js";
 
     let activeEscolaId = null;
 
@@ -136,8 +136,17 @@
           const escola = { id: escolaDoc.id, ...escolaDoc.data() };
           const qTurmas = query(collection(db, "escolas", escola.id, "turmas"), where("professor_uid", "==", user.uid));
           const snapTurmas = await getDocs(qTurmas);
-          const turmas = snapTurmas.docs.map(d => ({ id: d.id, ...d.data() }));
-          dashboard.appendChild(renderizarEscola(escola, turmas));
+          
+          const turmasComContagem = await Promise.all(snapTurmas.docs.map(async d => {
+            const t = { id: d.id, ...d.data() };
+            // Contagem dinâmica de matrículas nesta turma
+            const qCount = query(collection(db, "matriculas"), where("turma_id", "==", t.id), where("escola_id", "==", escola.id));
+            const countSnap = await getCountFromServer(qCount);
+            t.alunoCount = countSnap.data().count;
+            return t;
+          }));
+
+          dashboard.appendChild(renderizarEscola(escola, turmasComContagem));
         }
 
         loading.classList.add('hidden');
@@ -167,7 +176,7 @@
             <div class="p-4 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-between">
               <div>
                 <div class="font-bold">${t.nome}</div>
-                <div class="text-xs text-gray-500">0 Alunos</div>
+                <div class="text-xs text-gray-500">${t.alunoCount || 0} Alunos</div>
               </div>
               <a href="/gerenciar-turma.html?escola=${escola.id}&turma=${t.id}" class="p-2 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-colors">
                 <i data-lucide="settings" class="w-4 h-4"></i>
