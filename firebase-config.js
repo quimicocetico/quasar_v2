@@ -14,7 +14,11 @@ const firebaseConfig = {
 };
 
 // ─── ALINHAMENTO COM EMULADORES ──────────────────────────────────────────────
-if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+const isLocal = location.hostname === "localhost" || location.hostname === "127.0.0.1";
+const forceProd = new URLSearchParams(window.location.search).get('prod') === 'true';
+const useEmulator = isLocal && !forceProd;
+
+if (useEmulator) {
     firebaseConfig.projectId = "demo-quasar-local";
 }
 
@@ -24,11 +28,13 @@ export const db = getFirestore(app);
 export const storage = getStorage(app);
 
 // ─── CONEXÃO COM EMULADORES (AMBIENTE LOCAL) ───────────────────────────────────
-if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+if (useEmulator) {
     connectAuthEmulator(auth, "http://127.0.0.1:9099", { disableWarnings: true });
     connectFirestoreEmulator(db, "127.0.0.1", 8080);
     connectStorageEmulator(storage, "127.0.0.1", 9199);
     console.log("🛡️ Quasar: Usando Emuladores Locais");
+} else if (isLocal && forceProd) {
+    console.warn("⚠️ Quasar: MODO DE PRODUÇÃO ATIVADO EM LOCALHOST");
 }
 
 const provider = new GoogleAuthProvider();
