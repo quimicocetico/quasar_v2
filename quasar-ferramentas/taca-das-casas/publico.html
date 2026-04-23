@@ -14,7 +14,9 @@
     .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
     
-    select option { background: #111827; color: white; }
+    /* Correção do contraste nas opções do select */
+    select option { background-color: #1a1b3a; color: white; }
+    select option:hover { background-color: #00F0FF; color: #0A0F1C; }
 
     /* Estilo de Líquido Responsivo */
     .liquid-container {
@@ -187,7 +189,7 @@
             content.innerHTML = `
               <div class="flex justify-center items-end gap-3 md:gap-8 lg:gap-12 min-h-[220px] md:min-h-[450px] lg:min-h-[550px] overflow-x-auto pb-12 custom-scrollbar">
                 ${sorted.map((casa, i) => {
-                  const color = chartColors[i % chartColors.length];
+                  const color = casa.cor || chartColors[i % chartColors.length];
                   const height = (casa.pontos_total / teto) * 100;
                   
                   return `
@@ -196,7 +198,7 @@
                         <div class="text-[10px] md:text-xs font-black text-white/40 mb-1">${casa.pontos_total} pts</div>
                       </div>
                       <div class="liquid-container">
-                        <div class="liquid-fill" style="height: ${height}%; background: ${color}">
+                        <div class="liquid-fill" style="height: ${height}%; background: ${color}; transition: height 1.5s ease-out, background-color 0.5s ease;">
                           <div class="wave"></div>
                         </div>
                       </div>

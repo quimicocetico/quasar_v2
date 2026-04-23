@@ -58,14 +58,20 @@ async function runRanking(user, profile, callback) {
 
     // 2. Listener para Pontuações das Casas
     const unsubCasas = onSnapshot(collection(db, "taca_casas", temporadaId, "casas"), (snapCasas) => {
-      const pontosPorCasa = {};
-      snapCasas.docs.forEach(d => { pontosPorCasa[d.id] = d.data().pontos_total; });
+      const dadosCasas = {};
+      snapCasas.docs.forEach(d => { 
+        dadosCasas[d.id] = { 
+          pontos: d.data().pontos_total, 
+          cor: d.data().cor 
+        }; 
+      });
 
       state.casas = todasAsTurmas.map(t => ({
         id: t.id,
         nome: t.nome,
         escola_id: t.escola_id,
-        pontos_total: pontosPorCasa[t.id] || 0
+        pontos_total: dadosCasas[t.id]?.pontos || 0,
+        cor: dadosCasas[t.id]?.cor
       })).sort((a, b) => b.pontos_total - a.pontos_total);
 
       callback({ ...state });
