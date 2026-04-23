@@ -180,7 +180,8 @@
             `).join('')}</div>`;
           } else {
             const sorted = [...casas].sort((a,b) => (a.serie || 0) - (b.serie || 0) || a.nome.localeCompare(b.nome));
-            const maxPoints = Math.max(...casas.map(c => c.pontos_total), 10);
+            const housePoints = casas.map(c => c.pontos_total);
+            const maxPoints = housePoints.length > 0 ? Math.max(...housePoints, 10) : 10;
             const teto = maxPoints * 1.25;
 
             content.innerHTML = `
