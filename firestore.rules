@@ -6,80 +6,45 @@ service cloud.firestore {
     function isAutenticado() {
       return request.auth != null;
     }
-    function isAluno() {
-      return isAutenticado() &&
-        request.auth.token.email.matches('.*@estudante[.]rn[.]gov[.]br');
-    }
     function isProfessor() {
-      return isAutenticado() &&
-        request.auth.token.email.matches('.*@educar[.]rn[.]gov[.]br');
-    }
-    function isProprietario(uid) {
-      return request.auth.uid == uid;
-    }
-    function professorDaTemporada(temporadaId) {
-      return isProfessor() &&
-        request.auth.uid == get(/databases/$(database)/documents/taca_casas/$(temporadaId)).data.professor_uid;
-    }
-    function professorDaEscola(escolaId) {
-      return isProfessor() &&
-        request.auth.uid == get(/databases/$(database)/documents/escolas/$(escolaId)).data.professor_uid;
+      return isAutenticado() && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.papel == 'professor';
     }
 
     // ─── USUÁRIOS ────────────────────────────────────────────────
     match /users/{uid} {
-      allow read, write: if isProprietario(uid);
-
-      match /codex/{cartaId} {
-        allow read, write: if isProprietario(uid);
-      }
+      allow read, write: if request.auth.uid == uid;
     }
 
     // ─── ESCOLAS E TURMAS ────────────────────────────────────────
     match /escolas/{escolaId} {
       allow read: if isAutenticado();
-      allow create: if isProfessor();
-      allow update, delete: if professorDaEscola(escolaId);
-
+      
       match /turmas/{turmaId} {
         allow read: if isAutenticado();
-        allow write: if professorDaEscola(escolaId);
+        allow write: if isProfessor();
       }
     }
 
     // ─── MATRÍCULAS ──────────────────────────────────────────────
     match /matriculas/{matriculaId} {
-      allow read: if isProfessor()
-                  || (isAutenticado() && request.auth.token.email.lower() == resource.data.email.lower())
-                  || isProprietario(resource.data.aluno_uid)
-                  || (isAutenticado() && resource.data.turma_id == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.turma_id);
-      allow create: if isProfessor();
-      allow update: if isProfessor()
-                    || (isAutenticado() && request.auth.token.email.lower() == resource.data.email.lower());
-      allow delete: if isAutenticado();
-    }
-
-    // ─── CATÁLOGO CODEX ──────────────────────────────────────────
-    match /codex/{cartaId} {
       allow read: if isAutenticado();
-      allow write: if false; // só admin via console
+      allow write: if isProfessor();
     }
 
-    // ─── TAÇA DAS CASAS ──────────────────────────────────────────
+    // ─── TAÇA DAS CASAS 2026 ─────────────────────────────────────
     match /taca_casas/{temporadaId} {
       allow read: if isAutenticado();
-      allow create: if isProfessor();
-      allow write: if isProfessor() && request.auth.uid == resource.data.professor_uid;
-
+      
       match /casas/{casaId} {
         allow read: if isAutenticado();
-        allow write: if professorDaTemporada(temporadaId);
-
-        match /eventos/{eventoId} {
-          allow read: if isAutenticado();
-          allow create: if professorDaTemporada(temporadaId);
-          allow update, delete: if false;
-        }
+        allow write: if isProfessor();
+      }
+      
+      match /eventos/{eventoId} {
+        allow read: if isAutenticado();
+        allow create: if isProfessor();
+        allow update, delete: if false; // SEGURANÇA MÁXIMA: Histórico imutável
       }
     }
   }

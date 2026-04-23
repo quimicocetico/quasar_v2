@@ -54,10 +54,20 @@
       <p class="text-gray-400 mb-6" id="modal-escola-nome">Escola...</p>
       
       <div class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-300 mb-1">Nome da Turma</label>
-          <input type="text" id="nova-turma-nome" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:border-[#00F0FF] outline-none transition-all" placeholder="Ex: 8º Ano B">
-        </div>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1">Nome da Turma</label>
+              <input type="text" id="nova-turma-nome" class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 focus:border-[#00F0FF] outline-none transition-all placeholder:text-gray-600" placeholder="Ex: 1º Ano A">
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1">Série / Ano</label>
+              <select id="nova-turma-serie" class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 focus:border-[#00F0FF] outline-none transition-all appearance-none text-white">
+                <option value="1">1º Ano</option>
+                <option value="2">2º Ano</option>
+                <option value="3">3º Ano</option>
+              </select>
+            </div>
+          </div>
         <div class="flex gap-3">
           <button onclick="fecharModal()" class="flex-1 py-3 bg-white/5 hover:bg-white/10 rounded-xl font-medium transition-all">Cancelar</button>
           <button id="btn-save-turma" class="flex-1 py-3 bg-[#00F0FF] text-[#0A0F1C] font-bold rounded-xl btn-action">Criar Turma</button>
@@ -70,6 +80,7 @@
   <script type="module">
     import { requireAuth } from "./_shared/gatekeeper.js";
     import { db, collection, getDocs, addDoc, query, where, serverTimestamp, getCountFromServer } from "./_shared/db.js";
+    import { abrirModalPontos } from "./_shared/points-helper.js";
 
     let activeEscolaId = null;
 
@@ -86,6 +97,7 @@
         btn.textContent = "Criando...";
 
         try {
+          const serie = parseInt(document.getElementById('nova-turma-serie').value);
           // 1. Prevenir duplicidade na mesma escola
           const qCheck = query(collection(db, "escolas", activeEscolaId, "turmas"), where("nome", "==", nome));
           const snapCheck = await getDocs(qCheck);
@@ -97,19 +109,20 @@
             return;
           }
 
-          // 2. Criar Turma
+          // 2. Criar Documento
           await addDoc(collection(db, "escolas", activeEscolaId, "turmas"), {
             nome: nome,
-            professor_uid: user.uid,
-            created_at: serverTimestamp()
+            serie: serie,
+            escola_id: activeEscolaId,
+            professor_uid: auth.currentUser.uid,
+            timestamp: serverTimestamp()
           });
 
           fecharModal();
-          await carregarDashboard(user);
+          location.reload();
         } catch (e) {
           console.error(e);
           alert("Erro ao criar turma.");
-        } finally {
           btn.disabled = false;
           btn.textContent = "Criar Turma";
         }
@@ -146,6 +159,9 @@
             return t;
           }));
 
+          // Ordenar por série (1, 2, 3)
+          turmasComContagem.sort((a, b) => (a.serie || 0) - (b.serie || 0));
+
           dashboard.appendChild(renderizarEscola(escola, turmasComContagem));
         }
 
@@ -178,15 +194,22 @@
                 <div class="font-bold text-lg md:text-base">${t.nome}</div>
                 <div class="text-xs text-gray-500 uppercase tracking-wider font-semibold">${t.alunoCount || 0} Alunos</div>
               </div>
-              <a href="/gerenciar-turma.html?escola=${escola.id}&turma=${t.id}" class="p-3 bg-white/5 md:bg-transparent md:p-2 hover:bg-white/10 rounded-xl text-[#00F0FF] md:text-gray-400 md:hover:text-white transition-all">
-                <i data-lucide="settings" class="w-5 h-5 md:w-4 md:h-4"></i>
-              </a>
+              <div class="flex items-center gap-2">
+                <button onclick="window.abrirModalPontos('${t.id}', '${escola.id}', '${t.nome}')" class="p-3 bg-yellow-500/10 text-yellow-500 rounded-xl hover:bg-yellow-500/20 transition-all border border-yellow-500/20">
+                  <i data-lucide="trophy" class="w-5 h-5 md:w-4 md:h-4"></i>
+                </button>
+                <a href="/gerenciar-turma.html?escola=${escola.id}&turma=${t.id}" class="p-3 bg-white/5 border border-white/5 hover:bg-white/10 rounded-xl text-gray-400 md:hover:text-white transition-all">
+                  <i data-lucide="settings" class="w-5 h-5 md:w-4 md:h-4"></i>
+                </a>
+              </div>
             </div>
           `).join('') || '<p class="text-gray-500 italic col-span-full py-4 text-center">Nenhuma turma cadastrada nesta escola.</p>'}
         </div>
       `;
       return div;
     }
+
+    window.abrirModalPontos = abrirModalPontos;
 
     window.abrirModal = (id, nome) => {
       activeEscolaId = id;

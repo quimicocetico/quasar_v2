@@ -7,59 +7,289 @@
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <script type="module" src="/app.js"></script>
   <style>
     .glass { background: rgba(17,24,39,0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
-    .gold-glow { box-shadow: 0 0 30px rgba(255,215,0,0.2); }
-    .rank-1 { background: linear-gradient(135deg, rgba(255,215,0,0.1) 0%, rgba(255,215,0,0.05) 100%); border-color: rgba(255,215,0,0.3); }
     body { background: radial-gradient(circle at top right, #1a1b3a 0%, #0A0F1C 100%); }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    
+    select option { background: #111827; color: white; }
+
+    /* Estilo de Líquido Responsivo */
+    .liquid-container {
+      position: relative;
+      width: 100%;
+      height: 160px; /* Mobile */
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 1.5rem;
+      overflow: hidden;
+      max-width: 80px;
+      margin: 0 auto;
+    }
+    @media (min-width: 768px) {
+      .liquid-container { height: 320px; max-width: 110px; }
+    }
+    @media (min-width: 1280px) {
+      .liquid-container { height: 400px; max-width: 120px; }
+    }
+
+    .liquid-fill {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      transition: height 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .view-toggle-active { color: #00F0FF !important; }
+
+    /* Animação de Ondas SVG */
+    .wave {
+      position: absolute;
+      top: -15px;
+      left: 0;
+      width: 200%;
+      height: 20px;
+      background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1000 100" xmlns="http://www.w3.org/2000/svg"><path d="M0,50 C150,0 350,100 500,50 C650,0 850,100 1000,50 L1000,100 L0,100 Z" fill="white" opacity="0.3"/></svg>');
+      background-size: 50% 100%;
+      animation: wave-move 4s linear infinite;
+    }
+    @keyframes wave-move {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
   </style>
 </head>
-<body class="text-white font-['Outfit'] min-h-screen">
-  <main class="max-w-4xl mx-auto px-4 py-16">
-    <header class="text-center mb-16">
-      <div class="inline-flex p-4 rounded-full bg-yellow-500/10 border border-yellow-500/20 mb-6 gold-glow">
-        <i data-lucide="trophy" class="w-12 h-12 text-yellow-400"></i>
+<body class="text-white font-['Outfit'] min-h-screen pb-20 custom-scrollbar">
+
+  <main class="max-w-7xl mx-auto px-4 md:px-8 space-y-12 md:space-y-20 py-8">
+    
+    <header class="relative flex flex-col items-center">
+      <!-- Alternador Discreto -->
+      <div class="absolute right-0 top-0 flex gap-3 text-gray-600">
+        <button id="view-chart-btn" class="p-2 transition-all view-toggle-active" title="Gráficos"><i data-lucide="bar-chart-2" class="w-5 h-5"></i></button>
+        <button id="view-list-btn" class="p-2 transition-all hover:text-white" title="Lista"><i data-lucide="list" class="w-5 h-5"></i></button>
       </div>
-      <h1 class="text-5xl font-black tracking-tighter mb-4 uppercase">Taça das Casas</h1>
-      <p class="text-gray-400 max-w-md mx-auto">Acompanhe a pontuação das casas em tempo real e lute pela glória da sua turma!</p>
+
+      <div class="inline-flex p-3 rounded-full bg-yellow-500/10 border border-yellow-500/20 mb-3">
+        <i data-lucide="trophy" class="w-6 h-6 text-yellow-400"></i>
+      </div>
+      <h1 class="text-2xl font-black tracking-tighter mb-1 uppercase">Taça das Casas</h1>
+      <p id="school-name" class="text-gray-400 text-[10px] font-medium uppercase tracking-widest">Escola de Heróis</p>
     </header>
 
-    <div id="ranking-list" class="space-y-4">
-      <div class="flex justify-center items-center py-20 opacity-30">
-        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+    <!-- Placar Principal (Gráficos) -->
+    <section id="ranking-section" class="transition-all duration-500">
+      <div id="ranking-content">
+        <!-- Injetado via JS -->
       </div>
+    </section>
+
+    <!-- Container Inferior: Mural e Hall da Fama -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
+      
+      <!-- Mural de Transparência -->
+      <section class="space-y-6">
+        <div class="flex items-center gap-3 px-2">
+          <i data-lucide="history" class="w-4 h-4 text-gray-500"></i>
+          <h3 class="text-[10px] font-black uppercase tracking-widest text-gray-400">Mural de Transparência</h3>
+        </div>
+        <div class="glass rounded-[2rem] overflow-hidden border-white/5 p-2">
+          <div id="event-feed" class="space-y-3 max-h-[320px] md:max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+            <!-- Injetado via JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Hall da Fama / Ranking de Alunos -->
+      <section class="space-y-6">
+        <div class="flex items-center justify-between px-2">
+          <div class="flex items-center gap-3">
+            <i data-lucide="users" class="w-4 h-4 text-gray-500"></i>
+            <h3 class="text-[10px] font-black uppercase tracking-widest text-gray-400">Estudantes Destaque</h3>
+          </div>
+          <select id="filter-turma" class="bg-[#111827] border border-white/10 rounded-lg px-2 py-1 text-[9px] font-bold text-white outline-none focus:border-[#00F0FF] transition-all">
+            <option value="">Todas as Turmas</option>
+          </select>
+        </div>
+
+        <div class="glass rounded-[2rem] overflow-hidden border-white/5">
+          <div class="grid grid-cols-4 gap-1 px-4 py-3 border-b border-white/5 bg-white/5 text-[9px] font-black uppercase tracking-tighter text-gray-500">
+            <span>Turma</span>
+            <span>Nome</span>
+            <button id="sort-desc" class="flex items-center gap-1 hover:text-green-400 transition-colors uppercase">Ganhos <i data-lucide="arrow-down" class="w-2 h-2"></i></button>
+            <button id="sort-asc" class="flex items-center gap-1 hover:text-red-400 transition-colors uppercase">Perdas <i data-lucide="arrow-up" class="w-2 h-2"></i></button>
+          </div>
+          <div id="student-ranking-list" class="max-h-[320px] md:max-h-[500px] overflow-y-auto custom-scrollbar p-2 space-y-1">
+            <!-- Injetado via JS -->
+          </div>
+        </div>
+      </section>
+
     </div>
   </main>
 
   <script type="module">
     import { initRanking } from "./main.js";
+    import { abrirModalPontos } from "../../_shared/points-helper.js";
 
-    const list = document.getElementById("ranking-list");
+    window.abrirModalPontos = abrirModalPontos;
 
-    initRanking((casas) => {
-      list.innerHTML = casas.map((casa, i) => {
-        const isTop3 = i < 3;
-        const rankColors = ['text-yellow-400', 'text-slate-300', 'text-amber-600'];
-        const rankIcons = ['crown', 'medal', 'medal'];
+    let currentView = 'chart';
+    let currentSort = 'desc';
+
+    const chartColors = [
+      'linear-gradient(to top, #00F0FF, #00A3FF)',
+      'linear-gradient(to top, #A855F7, #6366F1)',
+      'linear-gradient(to top, #F59E0B, #D97706)',
+      'linear-gradient(to top, #10B981, #059669)',
+      'linear-gradient(to top, #EC4899, #DB2777)',
+      'linear-gradient(to top, #3B82F6, #2563EB)'
+    ];
+
+    initRanking((data) => {
+      const { casas, eventos, topGanhadores, topPerdedores, profile } = data;
+      const isProfessor = profile?.papel === 'professor';
+
+      document.getElementById('school-name').textContent = profile?.escola_nome || 'Escola de Heróis';
+      
+      const filterTurma = document.getElementById('filter-turma');
+      const currentFilter = filterTurma.value;
+      filterTurma.innerHTML = '<option value="">Todas as Turmas</option>' + 
+        casas.map(c => `<option value="${c.nome}" ${currentFilter === c.nome ? 'selected' : ''}>${c.nome}</option>`).join('');
+
+      function renderRanking() {
+        const content = document.getElementById('ranking-content');
         
-        return `
-          <div class="glass rounded-3xl p-6 flex items-center justify-between group hover:scale-[1.02] transition-all duration-300 ${i === 0 ? 'rank-1' : ''}">
-            <div class="flex items-center gap-6">
-              <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center font-black text-xl ${isTop3 ? rankColors[i] : 'text-gray-500'}">
-                ${isTop3 ? `<i data-lucide="${rankIcons[i]}" class="w-6 h-6"></i>` : (i + 1)}
+        if (currentView === 'list') {
+          const sorted = [...casas].sort((a,b) => b.pontos_total - a.pontos_total);
+          content.innerHTML = `<div class="max-w-2xl mx-auto space-y-2">${sorted.map((casa, i) => `
+            <div class="glass rounded-2xl p-4 flex items-center justify-between group transition-all">
+              <div class="flex items-center gap-4 min-w-0">
+                <div class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center font-black text-sm text-gray-500">
+                  ${(i + 1)}
+                </div>
+                <div class="truncate">
+                  <div class="text-sm font-bold tracking-tight truncate text-white">${casa.nome}</div>
+                  ${isProfessor ? `
+                  <button onclick="window.abrirModalPontos('${casa.id}', '${profile.escola_id}', '${casa.nome}')" class="mt-1 text-[10px] font-bold text-yellow-500 uppercase hover:underline flex items-center gap-1">
+                    <i data-lucide="plus-circle" class="w-3 h-3"></i> Pontuar
+                  </button>
+                ` : '<div class="text-[10px] text-gray-500 uppercase tracking-widest font-bold text-yellow-500/50">Casa Ativa</div>'}
+                </div>
               </div>
-              <div>
-                <div class="text-2xl font-bold tracking-tight">${casa.nome}</div>
-                <div class="text-xs text-gray-500 uppercase tracking-widest font-semibold">${casa.descricao || 'Casa Lendária'}</div>
+              <div class="text-right">
+                <div class="text-lg font-black text-[#00F0FF]">${casa.pontos_total}</div>
+                <div class="text-[8px] text-gray-600 uppercase font-bold tracking-tighter">Pontos</div>
               </div>
             </div>
-            <div class="text-right">
-              <div class="text-3xl font-black text-[#00F0FF]">${casa.pontos_total}</div>
-              <div class="text-[10px] text-gray-500 uppercase font-bold tracking-tighter">Pontos Arcanos</div>
+          `).join('')}</div>`;
+        } else {
+          // Visualização de Gráfico Responsivo (Teto 80%)
+          const sorted = [...casas].sort((a,b) => (a.serie || 0) - (b.serie || 0) || a.nome.localeCompare(b.nome));
+          const maxPoints = Math.max(...casas.map(c => c.pontos_total), 10);
+          const teto = maxPoints * 1.25;
+
+          content.innerHTML = `
+            <div class="flex justify-center items-end gap-3 md:gap-8 lg:gap-12 min-h-[220px] md:min-h-[450px] lg:min-h-[550px] overflow-x-auto pb-12 custom-scrollbar">
+              ${sorted.map((casa, i) => {
+                const color = chartColors[i % chartColors.length];
+                const height = (casa.pontos_total / teto) * 100;
+                
+                return `
+                  <div class="flex flex-col items-center gap-4 group min-w-[70px] md:min-w-[120px]">
+                    <div class="text-center">
+                      <div class="text-[10px] md:text-xs font-black text-white/40 mb-1">${casa.pontos_total} pts</div>
+                    </div>
+                    <div class="liquid-container">
+                      <div class="liquid-fill" style="height: ${height}%; background: ${color}">
+                        <div class="wave"></div>
+                      </div>
+                    </div>
+                    <div class="text-center">
+                      <div class="text-xs md:text-lg font-black uppercase tracking-tighter text-white group-hover:text-[#00F0FF] transition-colors leading-tight">${casa.nome}</div>
+                      ${isProfessor ? `
+                        <button onclick="window.abrirModalPontos('${casa.id}', '${profile.escola_id}', '${casa.nome}')" class="mt-3 w-10 h-10 bg-white/5 hover:bg-[#00F0FF]/20 rounded-full flex items-center justify-center transition-all mx-auto border border-white/10 group-hover:border-[#00F0FF]/30">
+                          <i data-lucide="plus" class="w-5 h-5 text-yellow-500"></i>
+                        </button>
+                      ` : ''}
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `;
+        }
+        if (window.lucide) lucide.createIcons();
+      }
+
+      function renderFeed() {
+        const feed = document.getElementById("event-feed");
+        feed.innerHTML = eventos.map(ev => `
+          <div class="flex items-start gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all">
+            <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${ev.pontos > 0 ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'} border border-white/5">
+              <span class="text-xs font-black">${ev.pontos > 0 ? '+' : ''}${ev.pontos}</span>
+            </div>
+            <div class="min-w-0 flex-1">
+              <div class="text-[11px] font-bold text-white mb-0.5">
+                ${ev.professor_nome} 
+                <span class="text-gray-500 font-normal">→</span> 
+                <span class="text-orange-500">${ev.turma_nome}</span>
+                ${ev.aluno_nome ? `<span class="text-[#00F0FF]"> (${ev.aluno_nome})</span>` : ''}
+              </div>
+              <div class="text-[10px] text-gray-500 italic truncate italic">"${ev.motivo}"</div>
             </div>
           </div>
-        `;
-      }).join('');
+        `).join('') || '<p class="text-gray-500 italic text-center py-12 text-xs">Nenhum evento registrado ainda.</p>';
+      }
+
+      function renderStudents() {
+        const list = document.getElementById('student-ranking-list');
+        const turmaFiltro = document.getElementById('filter-turma').value;
+        let lista = currentSort === 'desc' ? [...topGanhadores] : [...topPerdedores];
+        if (turmaFiltro) lista = lista.filter(al => al.turma === turmaFiltro);
+        list.innerHTML = lista.map((al) => `
+          <div class="grid grid-cols-4 gap-1 px-4 py-3 rounded-xl hover:bg-white/5 transition-all items-center">
+            <div class="text-[9px] font-bold text-gray-500 truncate uppercase tracking-tighter">${al.turma || '—'}</div>
+            <div class="text-[11px] font-black text-gray-200 truncate">${al.nome}</div>
+            <div class="text-center text-[10px] font-black text-green-400">${al.ganhos > 0 ? '+' + al.ganhos : '—'}</div>
+            <div class="text-right text-[10px] font-black text-red-400">${al.perdidos > 0 ? '-' + al.perdidos : '—'}</div>
+          </div>
+        `).join('') || '<p class="text-gray-600 text-[10px] italic py-8 text-center">Nenhum aluno no ranking.</p>';
+      }
+
+      // Inicializar Filtro
+      if (filterTurma.options.length <= 1) {
+        casas.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c.nome; opt.textContent = c.nome;
+          filterTurma.appendChild(opt);
+        });
+      }
+
+      // Eventos
+      document.getElementById('view-list-btn').onclick = () => {
+        currentView = 'list';
+        document.getElementById('view-list-btn').classList.add('view-toggle-active');
+        document.getElementById('view-chart-btn').classList.remove('view-toggle-active');
+        renderRanking();
+      };
+      document.getElementById('view-chart-btn').onclick = () => {
+        currentView = 'chart';
+        document.getElementById('view-chart-btn').classList.add('view-toggle-active');
+        document.getElementById('view-list-btn').classList.remove('view-toggle-active');
+        renderRanking();
+      };
+      document.getElementById('sort-desc').onclick = () => { currentSort = 'desc'; renderStudents(); };
+      document.getElementById('sort-asc').onclick = () => { currentSort = 'asc'; renderStudents(); };
+      filterTurma.onchange = () => renderStudents();
+
+      renderRanking();
+      renderFeed();
+      renderStudents();
       if (window.lucide) lucide.createIcons();
     });
   </script>

@@ -3,7 +3,7 @@
 
 ---
 
-## Sprint 0 — Sanitização do Firebase
+## Sprint 0 — Sanitização do Firebase [CONCLUÍDO]
 **Objetivo:** zerar banco e rules antes de qualquer desenvolvimento. Executar primeiro, sem exceção.
 
 ### Pré-requisito
@@ -129,7 +129,7 @@ firebase deploy --only firestore:rules
 
 ---
 
-## Sprint 1 — Criar `_shared/`
+## Sprint 1 — Criar `_shared/` [CONCLUÍDO]
 **Objetivo:** base compartilhada que todas as apps vão importar.
 
 ### Criar `_shared/gatekeeper.js`
@@ -178,7 +178,7 @@ Extrair as variáveis CSS do design system atual para este arquivo:
 
 ---
 
-## Sprint 2 — Refatorar `desafio-timeline`
+## Sprint 2 — Refatorar `desafio-timeline` [CONCLUÍDO]
 **Objetivo:** quebrar o `index.html` de 48KB em arquivos separados.
 
 ### Estrutura alvo
@@ -200,7 +200,7 @@ desafio-timeline/
 
 ---
 
-## Sprint 3 — Modelo de dados no Firestore
+## Sprint 3 — Modelo de dados no Firestore [CONCLUÍDO]
 **Objetivo:** criar a estrutura de coleções para área de usuário e apps persistentes.
 
 ### Coleções a criar (via console Firebase ou seed script)
@@ -237,7 +237,7 @@ users/{uid}/codex/{carta_id}
 
 ---
 
-## Sprint 4 — Atualizar `firestore.rules`
+## Sprint 4 — Atualizar `firestore.rules` [CONCLUÍDO]
 **Objetivo:** garantir isolamento entre apps e entre usuários.
 
 Adicionar ao `firestore.rules` existente:
@@ -303,8 +303,8 @@ Após editar: `firebase deploy --only firestore:rules`
 
 ---
 
-## Sprint 5 — Área de usuário no hub
-**Objetivo:** onboarding automático de professor e aluno após login.
+## Sprint 5 — Área de usuário no hub [CONCLUÍDO]
+**Objetivo:** onboarding automático e dashboards mobile-first para professor e aluno.
 
 ### Lógica em `app.js` (adicionar ao fluxo existente)
 
@@ -350,12 +350,13 @@ function detectarPapel(email) {
 - Se sim: atualiza `aluno_uid`, muda status para `ativo`, cria `profile`
 - Se não: exibe mensagem "seu professor ainda não criou sua turma"
 
-**Entrega:** fluxo completo de primeiro acesso funcionando para professor e aluno.
+**Entrega:** Fluxo de primeiro acesso completo com vínculo automático de UID via e-mail e dashboards funcionais para ambos os papéis.
 
 ---
 
-## Sprint 6 — Criar `taca-das-casas/`
-**Objetivo:** app do zero com ranking realtime.
+## Sprint 6 — Refatorar `taca-das-casas/` [CONCLUÍDO]
+**Objetivo:** Refinar a experiência mobile do ranking e consolidar a lógica de atribuição de pontos. 
+*Nota: Refinado em 23/04 com ranking real-time, mural de transparência, hall da fama e responsividade desktop otimizada.*
 
 ### Estrutura
 ```

@@ -39,10 +39,30 @@ quasar_v2/
 │   ├── taca-das-casas/       # Real-time (SOLID)
 │   └── ...
 │
-├── app.js                    # Orquestrador do Hub
-├── index.html                # Entry-point (Mobile First)
-└── firestore.rules           # Segurança de Nível 0
+├── app.js                    # Orquestrador do Hub (Gatekeeper & Header Global)
+├── index.html                # Portal de Missões (Hub Central)
+├── dashboard-professor.html  # Gestão de Escolas, Turmas e Alunos
+├── dashboard-aluno.html      # Perfil, Lista de Turma e Atalhos
+├── onboarding.html           # Fluxo de Configuração e Vínculo de Matrícula
+└── firestore.rules           # Regras de Segurança e Privacidade
 ```
+
+---
+
+## 🌟 Funcionalidades Implementadas
+
+### 👨‍🏫 Área do Professor
+- **Gestão de Turmas:** Interface mobile-first para adicionar, editar e remover estudantes.
+- **Matrícula em Lote:** Importação rápida de listas de e-mails institucionais.
+- **Segurança:** Acesso restrito via domínios governamentais (`@educar.rn.gov.br`).
+
+### 🎓 Área do Aluno
+- **Vínculo Automático:** Sincronização instantânea com a turma baseada no e-mail institucional no primeiro login.
+- **Dashboard Pessoal:** Visualização da Casa, pontuação em tempo real e listagem de colegas de turma (modal privado).
+- **Gamification Modular:** Integração nativa com a Taça das Casas (ranking real-time, mural de transparência e hall da fama) e o Codex Arcano.
+- **UI Estabilizada:** Cabeçalho global padronizado em todas as ferramentas e interfaces responsivas otimizadas para mobile e desktop.
+
+---
 
 ---
 
@@ -61,6 +81,58 @@ Ao desenvolver para a Quasar, siga o checklist:
 - **Backend:** Firebase (Auth, Firestore, Hosting).
 - **Icons:** Lucide Icons.
 - **Fonts:** Outfit (Google Fonts).
+
+---
+
+## 🔐 Autenticação
+
+O acesso à plataforma é restrito aos domínios institucionais do RN:
+- **Alunos:** `@estudante.rn.gov.br`
+- **Professores:** `@educar.rn.gov.br`
+
+A autenticação é feita via Google OAuth e é centralizada no Hub. Todas as ferramentas herdam a sessão automaticamente através do `_shared/gatekeeper.js`.
+
+---
+
+## 🛠️ Como Rodar Localmente
+
+**Pré-requisitos:** Firebase CLI instalado e autenticado.
+
+```bash
+# 1. Clonar o repositório
+git clone https://github.com/quimicocetico/quasar_v2.git
+cd quasar_v2
+
+# 2. Iniciar servidor de desenvolvimento (Live Server)
+npm run dev
+
+# 3. Deploy de regras do Firestore (necessário após mudanças no arquivo .rules)
+firebase deploy --only firestore:rules
+```
+
+---
+
+## ➕ Adicionando Novas Ferramentas (Micro-Apps)
+
+Para manter a modularidade da Quasar, siga esta estrutura ao criar uma nova ferramenta em `quasar-ferramentas/`:
+
+1.  **Estrutura da Pasta:**
+    ```
+    nome-da-ferramenta/
+    ├── index.html    # Estrutura (KISS)
+    ├── style.css     # Estilo (Importar _shared/tokens.css)
+    └── main.js       # Comportamento (Importar _shared/gatekeeper.js)
+    ```
+2.  **Regra de Ouro:** Nunca inicialize o Firebase dentro de uma ferramenta. Use sempre as abstrações de `_shared/db.js`.
+3.  **Registro:** Adicione um novo card no `index.html` da raiz para dar acesso à ferramenta.
+
+---
+
+## 🏢 Relação com a Plataforma MOVA
+
+A Quasar é um laboratório de ferramentas interativas (Objetos Educacionais). Ela funciona de forma complementar à **Plataforma MOVA**, que é o ambiente principal de gestão pedagógica e conteúdo estruturado.
+
+---
 
 ---
 
