@@ -14,6 +14,8 @@
   "author": "Robson",
   "license": "ISC",
   "devDependencies": {
+    "@faker-js/faker": "^10.4.0",
+    "firebase-admin": "^13.8.0",
     "live-server": "^1.2.2"
   },
   "dependencies": {
