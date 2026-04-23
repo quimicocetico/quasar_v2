@@ -49,10 +49,13 @@ service cloud.firestore {
 
     // ─── MATRÍCULAS ──────────────────────────────────────────────
     match /matriculas/{matriculaId} {
-      allow read: if isProprietario(resource.data.aluno_uid)
-                  || isProfessor();
+      allow read: if isProfessor()
+                  || (isAutenticado() && request.auth.token.email.lower() == resource.data.email.lower())
+                  || isProprietario(resource.data.aluno_uid)
+                  || (isAutenticado() && resource.data.turma_id == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.turma_id);
       allow create: if isProfessor();
-      allow update: if isProfessor();
+      allow update: if isProfessor()
+                    || (isAutenticado() && request.auth.token.email.lower() == resource.data.email.lower());
       allow delete: if isAutenticado();
     }
 

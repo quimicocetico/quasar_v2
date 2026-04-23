@@ -60,7 +60,7 @@
 
   <script type="module">
     import { requireAuth } from "./_shared/gatekeeper.js";
-    import { db, doc, getDoc, setDoc, collection, addDoc, getDocs, serverTimestamp } from "./_shared/db.js";
+    import { db, doc, getDoc, setDoc, updateDoc, collection, addDoc, getDocs, query, where, serverTimestamp } from "./_shared/db.js";
 
     requireAuth(async (user) => {
       const userRef = doc(db, "users", user.uid);
@@ -146,12 +146,33 @@
     }
 
     async function setupAluno(user, userRef) {
-      // ... (sem alterações por enquanto)
-      setTimeout(async () => {
-        document.getElementById('aluno-status-loading').classList.add('hidden');
-        document.getElementById('aluno-status-erro').classList.remove('hidden');
-        document.getElementById('aluno-msg').textContent = "Matrícula não localizada.";
-      }, 2000);
+      const emailAlvo = user.email.toLowerCase();
+      
+      try {
+        const q = query(collection(db, "matriculas"), where("email", "==", emailAlvo));
+        const snap = await getDocs(q);
+
+        if (!snap.empty) {
+          const matDoc = snap.docs[0];
+          const matData = matDoc.data();
+          
+          // Vincula e finaliza onboarding
+          await updateDoc(userRef, { 
+            escola_id: matData.escola_id, 
+            turma_id: matData.turma_id 
+          });
+          await updateDoc(matDoc.ref, { aluno_uid: user.uid });
+          
+          window.location.href = "/index.html";
+        } else {
+          document.getElementById('aluno-status-loading').classList.add('hidden');
+          document.getElementById('aluno-status-erro').classList.remove('hidden');
+          document.getElementById('aluno-msg').textContent = "Nenhuma matrícula encontrada para seu e-mail institucional.";
+        }
+      } catch (e) {
+        console.error(e);
+        document.getElementById('aluno-msg').textContent = "Erro ao verificar matrícula. Tente atualizar a página.";
+      }
     }
   </script>
 </body>

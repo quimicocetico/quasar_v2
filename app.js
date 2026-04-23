@@ -1,6 +1,6 @@
 // app.js — Gatekeeper e Motor de UI da Plataforma Quasar
 import { requireAuth } from "./_shared/gatekeeper.js";
-import { db, doc, getDoc, setDoc, serverTimestamp } from "./_shared/db.js";
+import { db, doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs, serverTimestamp } from "./_shared/db.js";
 import { signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 import { auth } from "./firebase-config.js";
 
@@ -124,7 +124,12 @@ function atualizarHeaderUsuario(user, profile) {
           <i data-lucide="layout-dashboard" class="w-4 h-4 text-[#00F0FF]"></i>
           <span>Painel do Mestre</span>
         </a>
-      ` : ''}
+      ` : `
+        <a href="/dashboard-aluno.html" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-sm transition-colors mb-1">
+          <i data-lucide="user" class="w-4 h-4 text-[#00F0FF]"></i>
+          <span>Meu Perfil</span>
+        </a>
+      `}
       <button id="auth-signout-btn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-sm transition-colors">
         <i data-lucide="log-out" class="w-4 h-4 text-red-400"></i>
         <span class="text-red-400 font-medium">Sair da Conta</span>
@@ -161,20 +166,55 @@ requireAuth(async (user) => {
   if (!snap.exists()) {
     // Primeiro acesso — criar profile
     const papel = user.email.endsWith('@educar.rn.gov.br') ? "professor" : "aluno";
+    let escolaId = null;
+    let turmaId = null;
+
+    if (papel === "aluno") {
+      // Tenta vincular matrícula pré-existente
+      const q = query(collection(db, "matriculas"), where("email", "==", user.email.toLowerCase()));
+      const mSnap = await getDocs(q);
+      if (!mSnap.empty) {
+        const matDoc = mSnap.docs[0];
+        escolaId = matDoc.data().escola_id;
+        turmaId = matDoc.data().turma_id;
+        // Vincula UID à matrícula
+        await updateDoc(matDoc.ref, { aluno_uid: user.uid });
+      }
+    }
+
     const profile = {
       nome: user.displayName,
       email: user.email,
       papel: papel,
+      escola_id: escolaId,
+      turma_id: turmaId,
       created_at: serverTimestamp()
     };
     await setDoc(userRef, profile);
     atualizarHeaderUsuario(user, profile);
     
-    if (!isOnboardingPage) window.location.href = "/onboarding.html";
-    return;
+    if (!profile.escola_id && !isOnboardingPage) {
+      window.location.href = "/onboarding.html";
+      return;
+    }
   }
 
   const profile = snap.data();
+
+  // Se for aluno e não tiver escola, tenta vincular agora (caso tenha sido criado antes da lógica de vínculo)
+  if (profile.papel === "aluno" && !profile.escola_id) {
+    const q = query(collection(db, "matriculas"), where("email", "==", user.email.toLowerCase()));
+    const mSnap = await getDocs(q);
+    if (!mSnap.empty) {
+      const matDoc = mSnap.docs[0];
+      const matData = matDoc.data();
+      await updateDoc(userRef, { escola_id: matData.escola_id, turma_id: matData.turma_id });
+      await updateDoc(matDoc.ref, { aluno_uid: user.uid });
+      profile.escola_id = matData.escola_id;
+      profile.turma_id = matData.turma_id;
+    }
+  }
+
   atualizarHeaderUsuario(user, profile);
 
   if (!profile.escola_id && !isOnboardingPage) {
