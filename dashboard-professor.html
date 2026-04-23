@@ -11,6 +11,10 @@
     .glass { background: rgba(17,24,39,0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
     .btn-action { transition: all 0.2s; }
     .btn-action:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,240,255,0.2); }
+    
+    /* Correção do contraste nas opções do select */
+    select option { background-color: #1a1b3a; color: white; }
+    select option:hover { background-color: #00F0FF; color: #0A0F1C; }
   </style>
 </head>
 <body class="bg-[#0A0F1C] text-white font-['Outfit'] min-h-screen">
@@ -105,13 +109,15 @@
   <script type="module" src="/app.js"></script>
   <script type="module">
     import { requireAuth } from "./_shared/gatekeeper.js";
-    import { db, collection, getDocs, addDoc, query, where, serverTimestamp, getCountFromServer } from "./_shared/db.js";
+    import { db, doc, getDoc, collection, getDocs, addDoc, query, where, serverTimestamp, getCountFromServer } from "./_shared/db.js";
     import { abrirModalPontos } from "./_shared/points-helper.js";
 
     let activeEscolaId = null;
 
     requireAuth(async (user) => {
-      await carregarDashboard(user);
+      const userSnap = await getDoc(doc(db, "users", user.uid));
+      const profile = userSnap.data();
+      await carregarDashboard(user, profile);
 
       // Configurar botão de salvar turma dentro do contexto do usuário
       document.getElementById('btn-save-turma').onclick = async () => {
@@ -155,23 +161,34 @@
       };
     });
 
-    async function carregarDashboard(user) {
+    async function carregarDashboard(user, profile) {
       const dashboard = document.getElementById('dashboard-content');
       const loading = document.getElementById('loading-state');
       const empty = document.getElementById('empty-state');
 
       try {
-        const qEscolas = query(collection(db, "escolas"), where("professor_uid", "==", user.uid));
-        const snapEscolas = await getDocs(qEscolas);
+        // 1. Buscar escolas onde é dono
+        const qEscolasOwner = query(collection(db, "escolas"), where("professor_uid", "==", user.uid));
+        const snapEscolas = await getDocs(qEscolasOwner);
+        
+        let escolasIds = snapEscolas.docs.map(d => d.id);
+        
+        // 2. Incluir escola do perfil (vinculada em onboarding)
+        if (profile?.escola_id && !escolasIds.includes(profile.escola_id)) {
+          escolasIds.push(profile.escola_id);
+        }
 
-        if (snapEscolas.empty) {
+        if (escolasIds.length === 0) {
           loading.classList.add('hidden');
           empty.classList.remove('hidden');
           return;
         }
 
         dashboard.innerHTML = '';
-        for (const escolaDoc of snapEscolas.docs) {
+        for (const escolaId of escolasIds) {
+          const escolaDoc = await getDoc(doc(db, "escolas", escolaId));
+          if (!escolaDoc.exists()) continue;
+
           const escola = { id: escolaDoc.id, ...escolaDoc.data() };
           const qTurmas = query(collection(db, "escolas", escola.id, "turmas"), where("professor_uid", "==", user.uid));
           const snapTurmas = await getDocs(qTurmas);

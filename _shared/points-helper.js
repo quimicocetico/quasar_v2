@@ -37,7 +37,11 @@ export async function abrirModalPontos(turmaId, escolaId, turmaNome) {
   searchInput.value = '';
 
   const renderList = (filter = "") => {
-    const filtered = allStudents.filter(s => s.nome.toLowerCase().includes(filter.toLowerCase()));
+    const searchTerm = (filter || "").toLowerCase();
+    const filtered = allStudents.filter(s => {
+      const nome = s.nome || "Estudante";
+      return nome.toLowerCase().includes(searchTerm);
+    });
     if (filtered.length === 0) {
       studentList.innerHTML = `<p class="text-gray-500 text-[10px] italic py-2 text-center">${allStudents.length > 0 ? 'Nenhum aluno corresponde à busca.' : 'Nenhum estudante vinculado.'}</p>`;
       return;
