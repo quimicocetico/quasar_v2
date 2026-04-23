@@ -68,14 +68,26 @@ async function seed() {
       pontos_total: 0
     });
 
-    // 6. Codex
-    await setDoc(doc(db, "codex", "carta_001"), {
-      nome: "Átomo de Dalton",
-      descricao: "A primeira visão moderna do átomo.",
-      raridade: "comum",
-      imagem_url: "",
-      disciplina: "Química"
-    });
+    // 6. Codex (Catálogo Global)
+    const cards = [
+      { id: "c1", nome: "Átomo de Dalton", raridade: "comum", emoji: "⚪", categoria: "Química" },
+      { id: "c2", nome: "Revolução Francesa", raridade: "raro", emoji: "🇫🇷", categoria: "História" },
+      { id: "c3", nome: "Célula Procarionte", raridade: "comum", emoji: "🧬", categoria: "Biologia" },
+      { id: "c4", nome: "Equação de Einstein", raridade: "lendario", emoji: "⚛️", categoria: "Física" },
+      { id: "c5", nome: "Tabela Periódica", raridade: "epico", emoji: "📊", categoria: "Química" },
+      { id: "c6", nome: "Queda da Bastilha", raridade: "raro", emoji: "🏰", categoria: "História" }
+    ];
+
+    for (const card of cards) {
+      await setDoc(doc(db, "codex", card.id), {
+        ...card,
+        created_at: serverTimestamp()
+      });
+    }
+
+    // 7. Inventário de Exemplo (para o placeholder_user)
+    await setDoc(doc(db, "users", "aluno_placeholder", "inventario", "c1"), { obtida_em: serverTimestamp() });
+    await setDoc(doc(db, "users", "aluno_placeholder", "inventario", "c3"), { obtida_em: serverTimestamp() });
 
     console.log("Seed finalizado com sucesso!");
     process.exit(0);

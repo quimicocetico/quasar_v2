@@ -15,15 +15,15 @@
 </head>
 <body class="bg-[#0A0F1C] text-white font-['Outfit'] min-h-screen">
 
-  <main class="max-w-5xl mx-auto px-4 py-12">
-    <div class="flex justify-between items-center mb-10">
-      <div>
-        <h1 class="text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-[#00F0FF] to-[#7000FF]">Painel do Mestre</h1>
-        <p class="text-gray-400 mt-2">Gerencie suas escolas e turmas do Quasar.</p>
+  <main class="max-w-5xl mx-auto px-4 py-8 md:py-12">
+    <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-6 mb-10">
+      <div class="text-center md:text-left">
+        <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-[#00F0FF] to-[#7000FF]">Painel do Mestre</h1>
+        <p class="text-gray-400 mt-2 text-sm md:text-base">Gerencie suas escolas e turmas do Quasar.</p>
       </div>
-      <a href="/index.html" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all">
+      <a href="/index.html" class="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all w-full md:w-auto">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
-        <span>Voltar ao Hub</span>
+        <span class="font-bold">Voltar ao Hub</span>
       </a>
     </div>
 
@@ -54,10 +54,20 @@
       <p class="text-gray-400 mb-6" id="modal-escola-nome">Escola...</p>
       
       <div class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-300 mb-1">Nome da Turma</label>
-          <input type="text" id="nova-turma-nome" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:border-[#00F0FF] outline-none transition-all" placeholder="Ex: 8º Ano B">
-        </div>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1">Nome da Turma</label>
+              <input type="text" id="nova-turma-nome" class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 focus:border-[#00F0FF] outline-none transition-all placeholder:text-gray-600" placeholder="Ex: 1º Ano A">
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1">Série / Ano</label>
+              <select id="nova-turma-serie" class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 focus:border-[#00F0FF] outline-none transition-all appearance-none text-white">
+                <option value="1">1º Ano</option>
+                <option value="2">2º Ano</option>
+                <option value="3">3º Ano</option>
+              </select>
+            </div>
+          </div>
         <div class="flex gap-3">
           <button onclick="fecharModal()" class="flex-1 py-3 bg-white/5 hover:bg-white/10 rounded-xl font-medium transition-all">Cancelar</button>
           <button id="btn-save-turma" class="flex-1 py-3 bg-[#00F0FF] text-[#0A0F1C] font-bold rounded-xl btn-action">Criar Turma</button>
@@ -69,7 +79,8 @@
   <script type="module" src="/app.js"></script>
   <script type="module">
     import { requireAuth } from "./_shared/gatekeeper.js";
-    import { db, collection, getDocs, addDoc, query, where, serverTimestamp } from "./_shared/db.js";
+    import { db, collection, getDocs, addDoc, query, where, serverTimestamp, getCountFromServer } from "./_shared/db.js";
+    import { abrirModalPontos } from "./_shared/points-helper.js";
 
     let activeEscolaId = null;
 
@@ -86,6 +97,7 @@
         btn.textContent = "Criando...";
 
         try {
+          const serie = parseInt(document.getElementById('nova-turma-serie').value);
           // 1. Prevenir duplicidade na mesma escola
           const qCheck = query(collection(db, "escolas", activeEscolaId, "turmas"), where("nome", "==", nome));
           const snapCheck = await getDocs(qCheck);
@@ -97,19 +109,20 @@
             return;
           }
 
-          // 2. Criar Turma
+          // 2. Criar Documento
           await addDoc(collection(db, "escolas", activeEscolaId, "turmas"), {
             nome: nome,
-            professor_uid: user.uid,
-            created_at: serverTimestamp()
+            serie: serie,
+            escola_id: activeEscolaId,
+            professor_uid: auth.currentUser.uid,
+            timestamp: serverTimestamp()
           });
 
           fecharModal();
-          await carregarDashboard(user);
+          location.reload();
         } catch (e) {
           console.error(e);
           alert("Erro ao criar turma.");
-        } finally {
           btn.disabled = false;
           btn.textContent = "Criar Turma";
         }
@@ -136,8 +149,20 @@
           const escola = { id: escolaDoc.id, ...escolaDoc.data() };
           const qTurmas = query(collection(db, "escolas", escola.id, "turmas"), where("professor_uid", "==", user.uid));
           const snapTurmas = await getDocs(qTurmas);
-          const turmas = snapTurmas.docs.map(d => ({ id: d.id, ...d.data() }));
-          dashboard.appendChild(renderizarEscola(escola, turmas));
+          
+          const turmasComContagem = await Promise.all(snapTurmas.docs.map(async d => {
+            const t = { id: d.id, ...d.data() };
+            // Contagem dinâmica de matrículas nesta turma
+            const qCount = query(collection(db, "matriculas"), where("turma_id", "==", t.id), where("escola_id", "==", escola.id));
+            const countSnap = await getCountFromServer(qCount);
+            t.alunoCount = countSnap.data().count;
+            return t;
+          }));
+
+          // Ordenar por série (1, 2, 3)
+          turmasComContagem.sort((a, b) => (a.serie || 0) - (b.serie || 0));
+
+          dashboard.appendChild(renderizarEscola(escola, turmasComContagem));
         }
 
         loading.classList.add('hidden');
@@ -150,34 +175,41 @@
 
     function renderizarEscola(escola, turmas) {
       const div = document.createElement('div');
-      div.className = 'glass rounded-3xl p-8';
+      div.className = 'glass rounded-3xl p-4 md:p-8';
       div.innerHTML = `
-        <div class="flex justify-between items-start mb-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
-            <h2 class="text-2xl font-bold">${escola.nome}</h2>
-            <p class="text-gray-500 text-sm">ID: ${escola.id}</p>
+            <h2 class="text-xl md:text-2xl font-bold">${escola.nome}</h2>
+            <p class="text-gray-500 text-xs md:text-sm">ID: ${escola.id}</p>
           </div>
-          <button onclick="window.abrirModal('${escola.id}', '${escola.nome}')" class="flex items-center gap-2 px-4 py-2 bg-[#00F0FF]/10 text-[#00F0FF] border border-[#00F0FF]/20 rounded-xl hover:bg-[#00F0FF]/20 transition-all text-sm font-bold">
+          <button onclick="window.abrirModal('${escola.id}', '${escola.nome}')" class="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-[#00F0FF]/10 text-[#00F0FF] border border-[#00F0FF]/20 rounded-xl hover:bg-[#00F0FF]/20 transition-all text-sm font-bold">
             <i data-lucide="plus" class="w-4 h-4"></i>
             Nova Turma
           </button>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
           ${turmas.map(t => `
-            <div class="p-4 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-between">
+            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-between group hover:bg-white/10 transition-all">
               <div>
-                <div class="font-bold">${t.nome}</div>
-                <div class="text-xs text-gray-500">0 Alunos</div>
+                <div class="font-bold text-lg md:text-base">${t.nome}</div>
+                <div class="text-xs text-gray-500 uppercase tracking-wider font-semibold">${t.alunoCount || 0} Alunos</div>
               </div>
-              <a href="/gerenciar-turma.html?escola=${escola.id}&turma=${t.id}" class="p-2 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-colors">
-                <i data-lucide="settings" class="w-4 h-4"></i>
-              </a>
+              <div class="flex items-center gap-2">
+                <button onclick="window.abrirModalPontos('${t.id}', '${escola.id}', '${t.nome}')" class="p-3 bg-yellow-500/10 text-yellow-500 rounded-xl hover:bg-yellow-500/20 transition-all border border-yellow-500/20">
+                  <i data-lucide="trophy" class="w-5 h-5 md:w-4 md:h-4"></i>
+                </button>
+                <a href="/gerenciar-turma.html?escola=${escola.id}&turma=${t.id}" class="p-3 bg-white/5 border border-white/5 hover:bg-white/10 rounded-xl text-gray-400 md:hover:text-white transition-all">
+                  <i data-lucide="settings" class="w-5 h-5 md:w-4 md:h-4"></i>
+                </a>
+              </div>
             </div>
-          `).join('') || '<p class="text-gray-500 italic col-span-full">Nenhuma turma cadastrada nesta escola.</p>'}
+          `).join('') || '<p class="text-gray-500 italic col-span-full py-4 text-center">Nenhuma turma cadastrada nesta escola.</p>'}
         </div>
       `;
       return div;
     }
+
+    window.abrirModalPontos = abrirModalPontos;
 
     window.abrirModal = (id, nome) => {
       activeEscolaId = id;

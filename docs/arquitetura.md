@@ -53,4 +53,4 @@ As regras do Firestore foram higienizadas para remover vestígios de aplicativos
 ## 5. Como Adicionar Novas Ferramentas
 1. Crie uma nova pasta dentro de `quasar-ferramentas/` com os arquivos HTML, JS e CSS da aplicação isolada.
 2. No Hub Central (`index.html`), adicione um novo bloco `<a href="./quasar-ferramentas/sua-ferramenta/index.html" class="quest-card">` no grid de missões.
-3. Se a ferramenta precisar de acesso ao banco ou autenticação, ela deverá importar diretamente do `firebase-config.js` localizado na raiz do projeto.
+3. Se a ferramenta precisar de acesso ao banco ou autenticação, ela deverá importar das abstrações em `_shared/gatekeeper.js` e `_shared/db.js` para garantir consistência e segurança. O cabeçalho global é injetado automaticamente ao importar o `/app.js` no `index.html` da ferramenta.
