@@ -1,5 +1,5 @@
 import { requireAuth } from "../../_shared/gatekeeper.js";
-import { db, collection, onSnapshot, query, where, getDocs, orderBy, limit } from "../../_shared/db.js";
+import { db, collection, onSnapshot, query, where, getDocs, orderBy, limit, doc, getDoc } from "../../_shared/db.js";
 
 export function initRanking(callback, publicEscolaId = null) {
   if (publicEscolaId) {
@@ -22,8 +22,8 @@ async function runRanking(user, profile, callback) {
     return;
   }
 
-  // Tenta buscar o nome da escola se não estiver no profile (útil para modo público)
-  if (!profile.escola_nome) {
+  // Tenta buscar o nome da escola se não estiver no profile ou se for o genérico
+  if (!profile.escola_nome || profile.escola_nome === 'Escola de Heróis') {
     try {
       const escolaRef = doc(db, "escolas", escolaId);
       const escolaSnap = await getDoc(escolaRef);
