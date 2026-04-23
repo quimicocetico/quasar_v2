@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ranking Público — Quasar</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .glass { background: rgba(17,24,39,0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
+    body { background: radial-gradient(circle at top right, #1a1b3a 0%, #0A0F1C 100%); }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    
+    select option { background: #111827; color: white; }
+
+    /* Estilo de Líquido Responsivo */
+    .liquid-container {
+      position: relative;
+      width: 100%;
+      height: 160px; /* Mobile */
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 1.5rem;
+      overflow: hidden;
+      max-width: 80px;
+      margin: 0 auto;
+    }
+    @media (min-width: 768px) {
+      .liquid-container { height: 320px; max-width: 110px; }
+    }
+    @media (min-width: 1280px) {
+      .liquid-container { height: 400px; max-width: 120px; }
+    }
+
+    .liquid-fill {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      transition: height 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .view-toggle-active { color: #00F0FF !important; }
+
+    /* Animação de Ondas SVG */
+    .wave {
+      position: absolute;
+      top: -15px;
+      left: 0;
+      width: 200%;
+      height: 20px;
+      background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1000 100" xmlns="http://www.w3.org/2000/svg"><path d="M0,50 C150,0 350,100 500,50 C650,0 850,100 1000,50 L1000,100 L0,100 Z" fill="white" opacity="0.3"/></svg>');
+      background-size: 50% 100%;
+      animation: wave-move 4s linear infinite;
+    }
+    @keyframes wave-move {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+  </style>
+</head>
+<body class="text-white font-['Outfit'] min-h-screen pb-20 custom-scrollbar">
+
+  <main class="max-w-7xl mx-auto px-4 md:px-8 space-y-12 md:space-y-20 py-8">
+    
+    <header class="relative flex flex-col items-center">
+      <!-- Alternador Discreto -->
+      <div class="absolute right-0 top-0 flex gap-3 text-gray-600">
+        <button id="view-chart-btn" class="p-2 transition-all view-toggle-active" title="Gráficos"><i data-lucide="bar-chart-2" class="w-5 h-5"></i></button>
+        <button id="view-list-btn" class="p-2 transition-all hover:text-white" title="Lista"><i data-lucide="list" class="w-5 h-5"></i></button>
+      </div>
+
+      <div class="inline-flex p-3 rounded-full bg-yellow-500/10 border border-yellow-500/20 mb-3">
+        <i data-lucide="trophy" class="w-6 h-6 text-yellow-400"></i>
+      </div>
+      <h1 class="text-2xl font-black tracking-tighter mb-1 uppercase">Taça das Casas</h1>
+      <p id="school-name" class="text-gray-400 text-[10px] font-medium uppercase tracking-widest">Carregando Ranking...</p>
+    </header>
+
+    <!-- Placar Principal (Gráficos) -->
+    <section id="ranking-section" class="transition-all duration-500">
+      <div id="ranking-content">
+        <!-- Injetado via JS -->
+      </div>
+    </section>
+
+    <!-- Ranking de Alunos (Centralizado e largo no modo público) -->
+    <div class="max-w-4xl mx-auto">
+      <section class="space-y-6">
+        <div class="flex items-center justify-between px-2">
+          <div class="flex items-center gap-3">
+            <i data-lucide="users" class="w-4 h-4 text-gray-500"></i>
+            <h3 class="text-[10px] font-black uppercase tracking-widest text-gray-400">Estudantes Destaque</h3>
+          </div>
+          <select id="filter-turma" class="bg-[#111827] border border-white/10 rounded-lg px-2 py-1 text-[9px] font-bold text-white outline-none focus:border-[#00F0FF] transition-all">
+            <option value="">Todas as Turmas</option>
+          </select>
+        </div>
+
+        <div class="glass rounded-[2rem] overflow-hidden border-white/5">
+          <div class="grid grid-cols-4 gap-1 px-4 py-3 border-b border-white/5 bg-white/5 text-[9px] font-black uppercase tracking-tighter text-gray-500">
+            <span>Turma</span>
+            <span>Nome</span>
+            <button id="sort-desc" class="flex items-center gap-1 hover:text-green-400 transition-colors uppercase">Ganhos <i data-lucide="arrow-down" class="w-2 h-2"></i></button>
+            <button id="sort-asc" class="flex items-center gap-1 hover:text-red-400 transition-colors uppercase">Perdas <i data-lucide="arrow-up" class="w-2 h-2"></i></button>
+          </div>
+          <div id="student-ranking-list" class="max-h-[500px] overflow-y-auto custom-scrollbar p-2 space-y-1">
+            <!-- Injetado via JS -->
+          </div>
+        </div>
+      </section>
+    </div>
+
+  </main>
+
+  <script type="module">
+    import { initRanking } from "./main.js";
+
+    // Pega o ID da escola da URL (Ex: publico.html?escola=ID_DA_ESCOLA)
+    const urlParams = new URLSearchParams(window.location.search);
+    const escolaId = urlParams.get('escola');
+
+    if (!escolaId) {
+      document.body.innerHTML = `
+        <div class="min-h-screen flex items-center justify-center p-8 text-center">
+          <div class="glass p-12 rounded-[3rem] max-w-md">
+            <i data-lucide="alert-circle" class="w-16 h-16 text-yellow-500 mx-auto mb-6"></i>
+            <h1 class="text-2xl font-bold mb-4">Link Incompleto</h1>
+            <p class="text-gray-400 text-sm">Este ranking precisa de um identificador de escola para ser exibido.</p>
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+    } else {
+      let currentView = 'chart';
+      let currentSort = 'desc';
+
+      const chartColors = [
+        'linear-gradient(to top, #00F0FF, #00A3FF)',
+        'linear-gradient(to top, #A855F7, #6366F1)',
+        'linear-gradient(to top, #F59E0B, #D97706)',
+        'linear-gradient(to top, #10B981, #059669)',
+        'linear-gradient(to top, #EC4899, #DB2777)',
+        'linear-gradient(to top, #3B82F6, #2563EB)'
+      ];
+
+      initRanking((data) => {
+        const { casas, topGanhadores, topPerdedores, profile } = data;
+
+        document.getElementById('school-name').textContent = profile?.escola_nome || 'Escola Registrada';
+        
+        const filterTurma = document.getElementById('filter-turma');
+        const currentFilter = filterTurma.value;
+        filterTurma.innerHTML = '<option value="">Todas as Turmas</option>' + 
+          casas.map(c => `<option value="${c.nome}" ${currentFilter === c.nome ? 'selected' : ''}>${c.nome}</option>`).join('');
+
+        function renderRanking() {
+          const content = document.getElementById('ranking-content');
+          
+          if (currentView === 'list') {
+            const sorted = [...casas].sort((a,b) => b.pontos_total - a.pontos_total);
+            content.innerHTML = `<div class="max-w-2xl mx-auto space-y-2">${sorted.map((casa, i) => `
+              <div class="glass rounded-2xl p-4 flex items-center justify-between group transition-all">
+                <div class="flex items-center gap-4 min-w-0">
+                  <div class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center font-black text-sm text-gray-500">
+                    ${(i + 1)}
+                  </div>
+                  <div class="truncate">
+                    <div class="text-sm font-bold tracking-tight truncate text-white">${casa.nome}</div>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="text-lg font-black text-[#00F0FF]">${casa.pontos_total}</div>
+                  <div class="text-[8px] text-gray-600 uppercase font-bold tracking-tighter">Pontos</div>
+                </div>
+              </div>
+            `).join('')}</div>`;
+          } else {
+            const sorted = [...casas].sort((a,b) => (a.serie || 0) - (b.serie || 0) || a.nome.localeCompare(b.nome));
+            const maxPoints = Math.max(...casas.map(c => c.pontos_total), 10);
+            const teto = maxPoints * 1.25;
+
+            content.innerHTML = `
+              <div class="flex justify-center items-end gap-3 md:gap-8 lg:gap-12 min-h-[220px] md:min-h-[450px] lg:min-h-[550px] overflow-x-auto pb-12 custom-scrollbar">
+                ${sorted.map((casa, i) => {
+                  const color = chartColors[i % chartColors.length];
+                  const height = (casa.pontos_total / teto) * 100;
+                  
+                  return `
+                    <div class="flex flex-col items-center gap-4 group min-w-[70px] md:min-w-[120px]">
+                      <div class="text-center">
+                        <div class="text-[10px] md:text-xs font-black text-white/40 mb-1">${casa.pontos_total} pts</div>
+                      </div>
+                      <div class="liquid-container">
+                        <div class="liquid-fill" style="height: ${height}%; background: ${color}">
+                          <div class="wave"></div>
+                        </div>
+                      </div>
+                      <div class="text-center">
+                        <div class="text-xs md:text-lg font-black uppercase tracking-tighter text-white group-hover:text-[#00F0FF] transition-colors leading-tight">${casa.nome}</div>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            `;
+          }
+          if (window.lucide) lucide.createIcons();
+        }
+
+        function renderStudents() {
+          const list = document.getElementById('student-ranking-list');
+          const turmaFiltro = document.getElementById('filter-turma').value;
+          let lista = currentSort === 'desc' ? [...topGanhadores] : [...topPerdedores];
+          if (turmaFiltro) lista = lista.filter(al => al.turma === turmaFiltro);
+          list.innerHTML = lista.map((al) => `
+            <div class="grid grid-cols-4 gap-1 px-4 py-3 rounded-xl hover:bg-white/5 transition-all items-center">
+              <div class="text-[9px] font-bold text-gray-500 truncate uppercase tracking-tighter">${al.turma || '—'}</div>
+              <div class="text-[11px] font-black text-gray-200 truncate">${al.nome}</div>
+              <div class="text-center text-[10px] font-black text-green-400">${al.ganhos > 0 ? '+' + al.ganhos : '—'}</div>
+              <div class="text-right text-[10px] font-black text-red-400">${al.perdidos > 0 ? '-' + al.perdidos : '—'}</div>
+            </div>
+          `).join('') || '<p class="text-gray-600 text-[10px] italic py-8 text-center">Nenhum aluno no ranking.</p>';
+        }
+
+        // Eventos
+        document.getElementById('view-list-btn').onclick = () => {
+          currentView = 'list';
+          document.getElementById('view-list-btn').classList.add('view-toggle-active');
+          document.getElementById('view-chart-btn').classList.remove('view-toggle-active');
+          renderRanking();
+        };
+        document.getElementById('view-chart-btn').onclick = () => {
+          currentView = 'chart';
+          document.getElementById('view-chart-btn').classList.add('view-toggle-active');
+          document.getElementById('view-list-btn').classList.remove('view-toggle-active');
+          renderRanking();
+        };
+        document.getElementById('sort-desc').onclick = () => { currentSort = 'desc'; renderStudents(); };
+        document.getElementById('sort-asc').onclick = () => { currentSort = 'asc'; renderStudents(); };
+        filterTurma.onchange = () => renderStudents();
+
+        renderRanking();
+        renderStudents();
+        if (window.lucide) lucide.createIcons();
+      }, escolaId);
+    }
+  </script>
+</body>
+</html>

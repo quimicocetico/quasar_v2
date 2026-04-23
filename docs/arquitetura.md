@@ -48,7 +48,7 @@ Gerencia o fluxo de login com restrição de domínio corporativo institucional.
 Cada pasta dentro deste diretório funciona como uma aplicação frontend própria e isolada. O acesso a essas aplicações é feito exclusivamente através dos links fornecidos pelo Hub Central.
 
 ## 4. Segurança (Firestore Rules)
-As regras do Firestore foram higienizadas para remover vestígios de aplicativos legados (como *atividades_alunos* ou *aulas*). Futuras integrações das ferramentas ao banco de dados deverão ser adicionadas no final do documento de regras, separadas por contexto.
+As regras do Firestore permitem leitura pública (sem autenticação) para as coleções de `escolas`, `turmas` e `taca_casas`, visando suportar o ranking público. Operações de escrita permanecem restritas a professores autenticados. Dados sensíveis de usuários permanecem protegidos.
 
 ## 5. Como Adicionar Novas Ferramentas
 1. Crie uma nova pasta dentro de `quasar-ferramentas/` com os arquivos HTML, JS e CSS da aplicação isolada.

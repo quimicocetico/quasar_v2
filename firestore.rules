@@ -18,10 +18,10 @@ service cloud.firestore {
 
     // ─── ESCOLAS E TURMAS ────────────────────────────────────────
     match /escolas/{escolaId} {
-      allow read: if isAutenticado();
+      allow read: if true; // Aberto para ranking público
       
       match /turmas/{turmaId} {
-        allow read: if isAutenticado();
+        allow read: if true;
         allow write: if isProfessor();
       }
     }
@@ -34,15 +34,15 @@ service cloud.firestore {
 
     // ─── TAÇA DAS CASAS 2026 ─────────────────────────────────────
     match /taca_casas/{temporadaId} {
-      allow read: if isAutenticado();
+      allow read: if true;
       
       match /casas/{casaId} {
-        allow read: if isAutenticado();
+        allow read: if true;
         allow write: if isProfessor();
       }
       
       match /eventos/{eventoId} {
-        allow read: if isAutenticado();
+        allow read: if true;
         allow create: if isProfessor();
         allow update, delete: if false; // SEGURANÇA MÁXIMA: Histórico imutável
       }

@@ -60,6 +60,7 @@ quasar_v2/
 - **Vínculo Automático:** Sincronização instantânea com a turma baseada no e-mail institucional no primeiro login.
 - **Dashboard Pessoal:** Visualização da Casa, pontuação em tempo real e listagem de colegas de turma (modal privado).
 - **Gamification Modular:** Integração nativa com a Taça das Casas (ranking real-time, mural de transparência e hall da fama) e o Codex Arcano.
+- **Ranking Público:** Disponível versão sem login em `publico.html?escola=ID_DA_ESCOLA` (exibe apenas ranking e hall da fama).
 - **UI Estabilizada:** Cabeçalho global padronizado em todas as ferramentas e interfaces responsivas otimizadas para mobile e desktop.
 
 ---
