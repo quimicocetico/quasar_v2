@@ -70,18 +70,36 @@
 
       <!-- Coluna Taça e Info -->
       <div class="space-y-6">
-        <div class="glass rounded-3xl p-6 md:p-8 border-t-4 border-t-[#00F0FF]/50">
+        <div class="glass rounded-3xl p-5 md:p-8 border-t-4 border-t-[#00F0FF]/50">
+          <h2 class="text-xl md:text-2xl font-bold mb-6 flex items-center gap-3">
+            <i data-lucide="graduation-cap" class="text-[#00F0FF]"></i> Regentes
+          </h2>
+          <div id="lista-regentes" class="space-y-4 mb-6">
+            <!-- Professores da turma -->
+          </div>
+          <div class="flex flex-col gap-2">
+            <button id="btn-assumir-turma" class="hidden w-full py-3 bg-[#00F0FF]/10 text-[#00F0FF] border border-[#00F0FF]/20 rounded-xl font-bold hover:bg-[#00F0FF]/20 transition-all text-sm">
+              Assumir esta Turma
+            </button>
+            <button id="btn-deixar-turma" class="hidden w-full py-3 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl font-bold hover:bg-red-500/20 transition-all text-sm">
+              Deixar esta Turma
+            </button>
+          </div>
+        </div>
+
+        <div class="glass rounded-3xl p-6 md:p-8 border-t-4 border-t-[#FFD700]/50">
           <h2 class="text-xl md:text-2xl font-bold mb-6 flex items-center gap-3">
             <i data-lucide="trophy" class="text-[#FFD700]"></i> Pontuação de Casa
           </h2>
           <div class="space-y-6">
-            <div>
-              <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 block">Casa Vinculada</label>
-              <select id="select-casa" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 md:py-3 outline-none focus:border-[#00F0FF] transition-all appearance-none">
-                <option value="" class="bg-[#0A0F1C]">Selecione uma casa...</option>
-              </select>
+            <div class="flex items-center justify-between bg-white/5 p-4 rounded-2xl border border-white/5">
+              <div>
+                <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-1">Saldo Atual</label>
+                <div id="casa-nome-display" class="text-xs font-bold text-yellow-500/80 uppercase">Carregando...</div>
+              </div>
+              <div id="casa-pontos-display" class="text-4xl font-black text-white">0</div>
             </div>
-            <button onclick="abrirModalPontos()" class="w-full py-5 md:py-4 bg-gradient-to-r from-[#00F0FF]/20 to-[#7000FF]/20 border border-[#00F0FF]/30 text-[#00F0FF] rounded-2xl font-black hover:bg-[#00F0FF]/30 transition-all uppercase tracking-tighter">
+            <button id="btn-atribuir-pontos" class="w-full py-5 md:py-4 bg-gradient-to-r from-[#00F0FF]/20 to-[#7000FF]/20 border border-[#00F0FF]/30 text-[#00F0FF] rounded-2xl font-black hover:bg-[#00F0FF]/30 transition-all uppercase tracking-tighter">
               ATRIBUIR PONTOS
             </button>
           </div>
@@ -91,8 +109,8 @@
   </main>
 
   <!-- Modal Config Turma -->
-  <div id="modal-config" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
-    <div class="max-w-md w-full glass rounded-3xl p-6 md:p-8 shadow-2xl">
+  <div id="modal-config" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm hidden">
+    <div class="max-w-md w-full glass rounded-t-[2rem] sm:rounded-3xl p-6 md:p-8 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300">
       <h2 class="text-2xl font-bold mb-6">Configurações</h2>
       <div class="space-y-6">
         <div>
@@ -112,8 +130,8 @@
   </div>
 
   <!-- Modal Matricular Aluno -->
-  <div id="modal-aluno" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
-    <div class="max-w-md w-full glass rounded-3xl p-6 md:p-8 shadow-2xl">
+  <div id="modal-aluno" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm hidden">
+    <div class="max-w-md w-full glass rounded-t-[2rem] sm:rounded-3xl p-6 md:p-8 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300">
       <h2 class="text-2xl font-bold mb-2">Matricular</h2>
       <p class="text-gray-400 mb-6 text-sm">Insira os dados do aluno para adicioná-lo à turma.</p>
       <div class="space-y-5">
@@ -133,30 +151,11 @@
     </div>
   </div>
 
-  <!-- Modal Pontos -->
-  <div id="modal-pontos" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
-    <div class="max-w-md w-full glass rounded-3xl p-6 md:p-8 shadow-2xl">
-      <h2 class="text-2xl font-bold mb-6 italic tracking-tighter">ATRIBUIR PONTOS</h2>
-      <div class="space-y-5">
-        <div>
-          <label class="block text-sm font-medium text-gray-300 mb-1">Pontuação</label>
-          <input type="number" id="input-pontos" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 md:py-3 focus:border-[#00F0FF] outline-none transition-all text-2xl font-black text-[#00F0FF]" value="10">
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-300 mb-1">Motivo</label>
-          <input type="text" id="input-motivo" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 md:py-3 focus:border-[#00F0FF] outline-none transition-all" placeholder="Ex: Participação em aula">
-        </div>
-        <div class="flex gap-3 pt-2">
-          <button onclick="fecharModais()" class="flex-1 py-4 md:py-3 bg-white/5 rounded-xl font-bold text-gray-400">Cancelar</button>
-          <button id="btn-confirmar-pontos" class="flex-1 py-4 md:py-3 bg-gradient-to-r from-[#FFD700] to-[#FFA500] text-black font-black rounded-xl uppercase">Confirmar</button>
-        </div>
-      </div>
-    </div>
-  </div>
+
 
   <!-- Modal Matrícula em Massa -->
-  <div id="modal-massa" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
-    <div class="max-w-2xl w-full glass rounded-3xl p-6 md:p-8 shadow-2xl">
+  <div id="modal-massa" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm hidden">
+    <div class="max-w-2xl w-full glass rounded-t-[2rem] sm:rounded-3xl p-6 md:p-8 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300">
       <h2 class="text-2xl font-bold mb-2">Matrícula em Lote</h2>
       <p class="text-gray-400 mb-6 text-sm">Cole aqui a lista. Formatos aceitos: <b class="text-white">"Nome;Email"</b> ou apenas e-mails.</p>
       
@@ -175,8 +174,8 @@
   </div>
 
   <!-- Modal Editar Aluno -->
-  <div id="modal-editar-aluno" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
-    <div class="max-w-md w-full glass rounded-3xl p-6 md:p-8 shadow-2xl">
+  <div id="modal-editar-aluno" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm hidden">
+    <div class="max-w-md w-full glass rounded-t-[2rem] sm:rounded-3xl p-6 md:p-8 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300">
       <h2 class="text-2xl font-bold mb-2 tracking-tight">Editar Estudante</h2>
       <p class="text-gray-400 mb-6 text-sm">Corrija os dados do aluno abaixo.</p>
       <input type="hidden" id="edit-aluno-id">
@@ -200,7 +199,8 @@
   <script type="module" src="/app.js"></script>
   <script type="module">
     import { requireAuth } from "./_shared/gatekeeper.js";
-    import { db, doc, getDoc, setDoc, updateDoc, deleteDoc, writeBatch, collection, getDocs, query, where, addDoc, serverTimestamp } from "./_shared/db.js";
+    import { db, doc, getDoc, setDoc, updateDoc, deleteDoc, writeBatch, collection, getDocs, query, where, addDoc, serverTimestamp, arrayUnion, arrayRemove, onSnapshot } from "./_shared/db.js";
+    import { abrirModalPontos } from "./_shared/points-helper.js";
 
     const params = new URLSearchParams(window.location.search);
     const escolaId = params.get('escola');
@@ -209,11 +209,11 @@
     if (!escolaId || !turmaId) window.location.href = "/dashboard-professor.html";
 
     requireAuth(async (user) => {
-      await inicializarPagina();
+      await inicializarPagina(user);
       setupEvents(user);
     });
 
-    async function inicializarPagina() {
+    async function inicializarPagina(user) {
       try {
         // 1. Dados Escola/Turma
         const turmaRef = doc(db, "escolas", escolaId, "turmas", turmaId);
@@ -236,8 +236,16 @@
         // 2. Alunos
         await carregarAlunos();
 
-        // 3. Casas
-        await carregarCasas();
+        // 3. Pontos da Casa
+        await carregarPontosCasa();
+
+        // 4. Regentes (Professores)
+        await carregarRegentes(user, turmaData);
+
+        // 5. Configurar Botão de Pontos
+        document.getElementById('btn-atribuir-pontos').onclick = () => {
+          abrirModalPontos(turmaId, escolaId, turmaData.nome);
+        };
 
         lucide.createIcons();
       } catch (e) { console.error(e); }
@@ -284,17 +292,93 @@
       lucide.createIcons();
     }
 
-    async function carregarCasas() {
-      const select = document.getElementById('select-casa');
-      // Temporada fixa para teste
-      const q = collection(db, "taca_casas", "temp_2024_1", "casas");
-      const snap = await getDocs(q);
-      snap.forEach(d => {
-        const opt = document.createElement('option');
-        opt.value = d.id;
-        opt.textContent = d.data().nome;
-        opt.className = "bg-[#1e293b]";
-        select.appendChild(opt);
+    async function carregarRegentes(currentUser, turmaData) {
+      const lista = document.getElementById('lista-regentes');
+      const btnAssumir = document.getElementById('btn-assumir-turma');
+      const btnDeixar = document.getElementById('btn-deixar-turma');
+      
+      // Fallback para legado (professor_uid único)
+      const profsUids = turmaData.professores || (turmaData.professor_uid ? [turmaData.professor_uid] : []);
+      const souRegente = profsUids.includes(currentUser.uid);
+
+      if (souRegente) {
+        btnDeixar.classList.remove('hidden');
+        btnAssumir.classList.add('hidden');
+      } else {
+        btnAssumir.classList.remove('hidden');
+        btnDeixar.classList.add('hidden');
+      }
+
+      lista.innerHTML = '';
+      for (const uid of profsUids) {
+        const pSnap = await getDoc(doc(db, "users", uid));
+        if (pSnap.exists()) {
+          const p = pSnap.data();
+          lista.innerHTML += `
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5">
+              <div class="w-8 h-8 rounded-full bg-[#00F0FF]/10 flex items-center justify-center shrink-0">
+                <i data-lucide="user" class="w-4 h-4 text-[#00F0FF]"></i>
+              </div>
+              <div class="min-w-0">
+                <div class="text-sm font-bold text-gray-200 truncate">${p.nome || "Professor"}</div>
+                <div class="text-[10px] text-gray-500 truncate">${p.email}</div>
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      btnAssumir.onclick = async () => {
+        // Vincula o professor à turma
+        const tRef = doc(db, "escolas", escolaId, "turmas", turmaId);
+        if (!turmaData.professores && turmaData.professor_uid) {
+          await updateDoc(tRef, {
+            professores: arrayUnion(turmaData.professor_uid, currentUser.uid)
+          });
+        } else {
+          await updateDoc(tRef, {
+            professores: arrayUnion(currentUser.uid)
+          });
+        }
+
+        // Garante que a escola está nos vínculos do professor para aparecer no dashboard
+        await setDoc(doc(db, "users", currentUser.uid), {
+          vinculos: arrayUnion(escolaId)
+        }, { merge: true });
+        
+        location.reload();
+      };
+
+      btnDeixar.onclick = async () => {
+        if (profsUids.length === 1) {
+          if (!confirm("Você é o único regente desta turma. Se sair, a turma ficará sem professor. Continuar?")) return;
+        }
+        await updateDoc(doc(db, "escolas", escolaId, "turmas", turmaId), {
+          professores: arrayRemove(currentUser.uid)
+        });
+        location.reload();
+      };
+      
+      lucide.createIcons();
+    }
+
+    function carregarPontosCasa() {
+      const displayNome = document.getElementById('casa-nome-display');
+      const displayPontos = document.getElementById('casa-pontos-display');
+      
+      const casaRef = doc(db, "taca_casas", "temp_2026_1", "casas", turmaId);
+      
+      return onSnapshot(casaRef, (snap) => {
+        if (snap.exists()) {
+          const data = snap.data();
+          displayNome.textContent = data.nome || "Casa Vinculada";
+          displayPontos.textContent = data.pontos_total || 0;
+        } else {
+          displayNome.textContent = "Sem Casa Vinculada";
+          displayPontos.textContent = "—";
+        }
+      }, (err) => {
+        console.error("Erro no listener de pontos da casa:", err);
       });
     }
 
@@ -332,25 +416,7 @@
         await carregarAlunos();
       };
 
-      // Atribuir Pontos
-      document.getElementById('btn-confirmar-pontos').onclick = async () => {
-        const casaId = document.getElementById('select-casa').value;
-        const pontos = parseInt(document.getElementById('input-pontos').value);
-        const motivo = document.getElementById('input-motivo').value.trim();
 
-        if (!casaId || isNaN(pontos)) return alert("Selecione a casa e a pontuação.");
-
-        const casaRef = doc(db, "taca_casas", "temp_2024_1", "casas", casaId);
-        const snap = await getDoc(casaRef);
-        await updateDoc(casaRef, { pontos_total: (snap.data().pontos_total || 0) + pontos });
-        
-        await addDoc(collection(db, "taca_casas", "temp_2024_1", "casas", casaId, "eventos"), {
-          pontos, motivo, professor_uid: user.uid, created_at: serverTimestamp()
-        });
-
-        alert("Pontos atribuídos!");
-        fecharModais();
-      };
 
       // Matrícula em Massa
       document.getElementById('btn-processar-massa').onclick = async () => {
@@ -417,14 +483,14 @@
 
     window.abrirModalConfig = () => document.getElementById('modal-config').classList.remove('hidden');
     window.abrirModalAluno = () => document.getElementById('modal-aluno').classList.remove('hidden');
-    window.abrirModalPontos = () => document.getElementById('modal-pontos').classList.remove('hidden');
+
     window.abrirModalMassa = () => {
       document.getElementById('modal-massa').classList.remove('hidden');
       document.getElementById('input-massa-emails').focus();
     };
 
     window.fecharModais = () => {
-      ['modal-config', 'modal-aluno', 'modal-pontos', 'modal-massa', 'modal-editar-aluno'].forEach(id => {
+      ['modal-config', 'modal-aluno', 'modal-massa', 'modal-editar-aluno'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.add('hidden');
       });

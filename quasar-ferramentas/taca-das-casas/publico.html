@@ -69,6 +69,14 @@
   <main class="max-w-7xl mx-auto px-4 md:px-8 space-y-12 md:space-y-20 py-8">
     
     <header class="relative flex flex-col items-center">
+      <!-- Botão Voltar -->
+      <div class="absolute left-0 top-0">
+        <a href="javascript:history.back()" class="p-2 text-gray-600 hover:text-white transition-all flex items-center gap-2" title="Voltar">
+          <i data-lucide="arrow-left" class="w-5 h-5"></i>
+          <span class="hidden md:inline text-[10px] font-black uppercase tracking-widest">Voltar</span>
+        </a>
+      </div>
+
       <!-- Alternador Discreto -->
       <div class="absolute right-0 top-0 flex gap-3 text-gray-600">
         <button id="view-chart-btn" class="p-2 transition-all view-toggle-active" title="Gráficos"><i data-lucide="bar-chart-2" class="w-5 h-5"></i></button>

@@ -12,7 +12,7 @@
     .card-arcane { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); perspective: 1000px; }
     .card-arcane:hover { transform: translateY(-10px) rotateY(10deg); }
     .locked { filter: grayscale(1) brightness(0.5); opacity: 0.5; cursor: not-allowed; }
-    .locked::after { content: '🔒'; position: absolute; inset: 0; display: flex; items-center: center; justify-content: center; font-size: 3rem; opacity: 0.5; }
+    .locked::after { content: '🔒'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 3rem; opacity: 0.5; }
     body { background: radial-gradient(circle at center, #1e1b4b 0%, #020617 100%); }
     .rarity-comum { border-color: #94a3b8; }
     .rarity-raro { border-color: #3b82f6; box-shadow: 0 0 15px rgba(59,130,246,0.3); }
@@ -22,7 +22,22 @@
   </style>
 </head>
 <body class="text-white font-['Outfit'] min-h-screen">
-  <main class="max-w-7xl mx-auto px-4 py-12">
+  <!-- Overlay de Desativação Temporária -->
+  <div class="fixed inset-0 z-[200] bg-[#020617]/95 backdrop-blur-xl flex flex-col items-center justify-center text-center p-8">
+    <div class="w-24 h-24 bg-blue-500/10 rounded-3xl flex items-center justify-center mb-8 border border-blue-500/20 animate-pulse">
+      <i data-lucide="shield-alert" class="w-12 h-12 text-blue-400"></i>
+    </div>
+    <h1 class="text-4xl font-black italic tracking-tighter mb-4 uppercase">Sistema em Calibragem</h1>
+    <p class="text-gray-400 max-w-md mx-auto leading-relaxed">
+      O Codex Arcano está sendo preparado para uma nova era de conhecimentos. <br>
+      As janelas e módulos estão temporariamente desativados.
+    </p>
+    <a href="/index.html" class="mt-12 px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl font-bold transition-all uppercase tracking-widest text-sm">
+      Voltar ao Hub
+    </a>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-4 py-12 opacity-10 pointer-events-none grayscale">
     <header class="flex flex-col md:flex-row justify-between items-end gap-6 mb-16">
       <div>
         <h1 class="text-6xl font-black tracking-tighter mb-2 italic bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">CODEX ARCANO</h1>

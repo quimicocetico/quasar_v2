@@ -56,8 +56,13 @@ async function runRanking(user, profile, callback) {
       callback({ ...state, casas: [] });
     }
 
-    // 2. Listener para Pontuações das Casas
-    const unsubCasas = onSnapshot(collection(db, "taca_casas", temporadaId, "casas"), (snapCasas) => {
+    // 2. Listener para Pontuações das Casas (Filtrado por Escola)
+    const qCasas = query(
+      collection(db, "taca_casas", temporadaId, "casas"),
+      where("escola_id", "==", escolaId)
+    );
+
+    const unsubCasas = onSnapshot(qCasas, (snapCasas) => {
       const dadosCasas = {};
       snapCasas.docs.forEach(d => { 
         dadosCasas[d.id] = { 
@@ -77,15 +82,22 @@ async function runRanking(user, profile, callback) {
       callback({ ...state });
     }, (err) => console.error("❌ Erro no listener de casas:", err));
 
-    // 3. Listener para Eventos (Mural e Ranking de Alunos)
-    const unsubEventos = onSnapshot(collection(db, "taca_casas", temporadaId, "eventos"), (snapEvents) => {
-      const todosEventos = snapEvents.docs.map(d => ({ id: d.id, ...d.data() }));
-      const eventosEscola = todosEventos.filter(ev => ev.escola_id === escolaId);
+    // 3. Listener para Eventos (Mural e Ranking de Alunos) - Filtrado por Escola
+    // Buscamos os últimos 200 eventos da escola para o ranking de alunos, mas limitamos o mural a 10.
+    const qEventos = query(
+      collection(db, "taca_casas", temporadaId, "eventos"),
+      where("escola_id", "==", escolaId),
+      orderBy("timestamp", "desc"),
+      limit(200) // Limite razoável para processamento client-side
+    );
 
-      state.eventos = [...eventosEscola]
-        .sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0))
-        .slice(0, 10);
+    const unsubEventos = onSnapshot(qEventos, (snapEvents) => {
+      const eventosEscola = snapEvents.docs.map(d => ({ id: d.id, ...d.data() }));
 
+      // Mural de Transparência (Top 10)
+      state.eventos = eventosEscola.slice(0, 10);
+
+      // Ranking de Alunos (Baseado nos 200 eventos recentes)
       const statsAlunos = {};
       eventosEscola.forEach(ev => {
         const key = ev.aluno_uid || `name_${ev.aluno_nome}`;

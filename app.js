@@ -215,6 +215,13 @@ requireAuth(async (user) => {
     }
   }
 
+  // Se não tem escola_id mas tem vinculos (Professor multi-escola), recupera o primeiro para não travar o app
+  if (!profile.escola_id && profile.vinculos && profile.vinculos.length > 0) {
+    const primaryEscola = profile.vinculos[0];
+    await updateDoc(doc(db, "users", user.uid), { escola_id: primaryEscola });
+    profile.escola_id = primaryEscola;
+  }
+
   atualizarHeaderUsuario(user, profile);
 
   if (!profile.escola_id && !isOnboardingPage) {
@@ -222,8 +229,9 @@ requireAuth(async (user) => {
     return;
   }
 
-  // Se já tiver escola e estiver na onboarding, vai pro index
-  if (profile.escola_id && isOnboardingPage) {
+  // Se já tiver escola e estiver na onboarding, vai pro index (a menos que queira adicionar outra)
+  const isForceAdd = new URLSearchParams(window.location.search).get('mode') === 'add';
+  if (profile.escola_id && isOnboardingPage && !isForceAdd) {
     window.location.href = "/index.html";
     return;
   }

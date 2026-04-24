@@ -25,10 +25,16 @@
         <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-[#00F0FF] to-[#7000FF]">Painel do Mestre</h1>
         <p class="text-gray-400 mt-2 text-sm md:text-base">Gerencie suas escolas e turmas do Quasar.</p>
       </div>
-      <a href="/index.html" class="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all w-full md:w-auto">
-        <i data-lucide="arrow-left" class="w-4 h-4"></i>
-        <span class="font-bold">Voltar ao Hub</span>
-      </a>
+      <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+        <a href="/onboarding.html?mode=add" class="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#00F0FF]/10 text-[#00F0FF] border border-[#00F0FF]/20 hover:bg-[#00F0FF]/20 transition-all w-full sm:w-auto">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i>
+          <span class="font-bold text-sm">Vincular outra Escola</span>
+        </a>
+        <a href="/index.html" class="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all w-full sm:w-auto">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span class="font-bold text-sm">Voltar ao Hub</span>
+        </a>
+      </div>
     </div>
 
     <div id="loading-state" class="flex justify-center py-20">
@@ -52,8 +58,8 @@
   </main>
 
   <!-- Modal Nova Turma -->
-  <div id="modal-turma" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
-    <div class="max-w-md w-full glass rounded-3xl p-8 shadow-2xl">
+  <div id="modal-turma" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm hidden">
+    <div class="max-w-md w-full glass rounded-t-[2.5rem] sm:rounded-3xl p-8 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300">
       <h2 class="text-2xl font-bold mb-2">Nova Turma</h2>
       <p class="text-gray-400 mb-6" id="modal-escola-nome">Escola...</p>
       
@@ -81,8 +87,8 @@
   </div>
 
   <!-- Modal Compartilhar -->
-  <div id="modal-share" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onclick="window.fecharModalShare()">
-    <div class="glass max-w-sm w-full p-8 rounded-[2.5rem] text-center space-y-6 animate-in zoom-in duration-300" onclick="event.stopPropagation()">
+  <div id="modal-share" class="fixed inset-0 z-[110] hidden flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm" onclick="window.fecharModalShare()">
+    <div class="glass max-w-sm w-full p-8 rounded-t-[2.5rem] sm:rounded-[2.5rem] text-center space-y-6 animate-in slide-in-from-bottom sm:zoom-in duration-300" onclick="event.stopPropagation()">
       <div class="w-16 h-16 bg-[#00F0FF]/10 rounded-2xl flex items-center justify-center mx-auto">
         <i data-lucide="qr-code" class="w-8 h-8 text-[#00F0FF]"></i>
       </div>
@@ -106,10 +112,32 @@
     </div>
   </div>
 
+  <!-- Modal Gestão de Equipe -->
+  <div id="modal-equipe" class="fixed inset-0 z-[120] hidden flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm" onclick="window.fecharModalEquipe()">
+    <div class="glass max-w-2xl w-full p-6 md:p-10 rounded-t-[2.5rem] sm:rounded-[2.5rem] shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h2 class="text-2xl font-bold">Equipe da Escola</h2>
+          <p id="equipe-escola-nome" class="text-xs text-[#00F0FF] font-bold uppercase tracking-widest mt-1">NOME DA ESCOLA</p>
+        </div>
+        <button onclick="window.fecharModalEquipe()" class="p-2 hover:bg-white/5 rounded-full transition-all">
+          <i data-lucide="x" class="w-6 h-6 text-gray-500"></i>
+        </button>
+      </div>
+      
+      <div id="lista-equipe" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+        <!-- Professores serão injetados aqui -->
+      </div>
+    </div>
+  </div>
+</div>
+  </div>
+
   <script type="module" src="/app.js"></script>
   <script type="module">
+    import { auth } from "./firebase-config.js";
     import { requireAuth } from "./_shared/gatekeeper.js";
-    import { db, doc, getDoc, collection, getDocs, addDoc, query, where, serverTimestamp, getCountFromServer } from "./_shared/db.js";
+    import { db, doc, getDoc, setDoc, updateDoc, collection, getDocs, addDoc, query, where, serverTimestamp, getCountFromServer, arrayUnion, arrayRemove } from "./_shared/db.js";
     import { abrirModalPontos } from "./_shared/points-helper.js";
 
     let activeEscolaId = null;
@@ -147,6 +175,7 @@
             serie: serie,
             escola_id: activeEscolaId,
             professor_uid: auth.currentUser.uid,
+            professores: [auth.currentUser.uid],
             timestamp: serverTimestamp()
           });
 
@@ -173,10 +202,15 @@
         
         let escolasIds = snapEscolas.docs.map(d => d.id);
         
-        // 2. Incluir escola do perfil (vinculada em onboarding)
-        if (profile?.escola_id && !escolasIds.includes(profile.escola_id)) {
-          escolasIds.push(profile.escola_id);
+        // 2. Incluir escolas dos vinculos (vinculadas em onboarding ou assumidas)
+        const vinculos = profile?.vinculos || [];
+        if (profile?.escola_id && !vinculos.includes(profile.escola_id)) {
+          vinculos.push(profile.escola_id);
         }
+
+        vinculos.forEach(id => {
+          if (!escolasIds.includes(id)) escolasIds.push(id);
+        });
 
         if (escolasIds.length === 0) {
           loading.classList.add('hidden');
@@ -190,7 +224,7 @@
           if (!escolaDoc.exists()) continue;
 
           const escola = { id: escolaDoc.id, ...escolaDoc.data() };
-          const qTurmas = query(collection(db, "escolas", escola.id, "turmas"), where("professor_uid", "==", user.uid));
+          const qTurmas = query(collection(db, "escolas", escola.id, "turmas"));
           const snapTurmas = await getDocs(qTurmas);
           
           const turmasComContagem = await Promise.all(snapTurmas.docs.map(async d => {
@@ -205,7 +239,7 @@
           // Ordenar por série (1, 2, 3)
           turmasComContagem.sort((a, b) => (a.serie || 0) - (b.serie || 0));
 
-          dashboard.appendChild(renderizarEscola(escola, turmasComContagem));
+          dashboard.appendChild(renderizarEscola(escola, turmasComContagem, user));
         }
 
         loading.classList.add('hidden');
@@ -216,7 +250,7 @@
       }
     }
 
-    function renderizarEscola(escola, turmas) {
+    function renderizarEscola(escola, turmas, user) {
       const div = document.createElement('div');
       div.className = 'glass rounded-3xl p-4 md:p-8';
       div.innerHTML = `
@@ -225,10 +259,21 @@
             <h2 class="text-xl md:text-2xl font-bold">${escola.nome}</h2>
             <p class="text-gray-500 text-xs md:text-sm">ID: ${escola.id}</p>
           </div>
-          <div class="flex items-center gap-2 w-full md:w-auto">
-            <button onclick="window.abrirModalShare('${escola.id}')" class="flex-1 md:flex-none p-3 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-xl hover:bg-blue-500/20 transition-all text-sm font-bold" title="Compartilhar Ranking Público">
-              <i data-lucide="share-2" class="w-5 h-5 md:w-4 md:h-4"></i>
-            </button>
+          <div class="flex flex-col md:flex-row items-stretch md:items-center gap-2 w-full md:w-auto">
+            ${escola.codigo_acesso ? `
+              <div class="flex items-center gap-2 px-4 py-3 bg-yellow-500/10 border border-yellow-500/20 rounded-xl">
+                <span class="text-[10px] font-bold text-yellow-500 uppercase tracking-widest">Código:</span>
+                <span class="font-mono font-bold text-yellow-200 tracking-wider">${escola.codigo_acesso}</span>
+              </div>
+            ` : ''}
+            <div class="flex gap-2">
+              <button onclick="window.abrirModalEquipe('${escola.id}', '${escola.nome}', '${escola.professor_uid}')" class="flex-1 md:flex-none p-3 bg-white/5 text-gray-400 border border-white/10 rounded-xl hover:bg-white/10 transition-all text-sm font-bold" title="Ver Equipe Docente">
+                <i data-lucide="users" class="w-5 h-5 md:w-4 md:h-4"></i>
+              </button>
+              <button onclick="window.abrirModalShare('${escola.id}')" class="flex-1 md:flex-none p-3 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-xl hover:bg-blue-500/20 transition-all text-sm font-bold" title="Compartilhar Ranking Público">
+                <i data-lucide="share-2" class="w-5 h-5 md:w-4 md:h-4"></i>
+              </button>
+            </div>
             <button onclick="window.abrirModal('${escola.id}', '${escola.nome}')" class="flex-[3] md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-[#00F0FF]/10 text-[#00F0FF] border border-[#00F0FF]/20 rounded-xl hover:bg-[#00F0FF]/20 transition-all text-sm font-bold">
               <i data-lucide="plus" class="w-4 h-4"></i>
               Nova Turma
@@ -236,22 +281,35 @@
           </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-          ${turmas.map(t => `
-            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-between group hover:bg-white/10 transition-all">
-              <div>
-                <div class="font-bold text-lg md:text-base">${t.nome}</div>
-                <div class="text-xs text-gray-500 uppercase tracking-wider font-semibold">${t.alunoCount || 0} Alunos</div>
+          ${turmas.map(t => {
+            const souRegente = t.professores?.includes(user.uid);
+            
+            return `
+              <div class="p-5 ${souRegente ? 'bg-[#00F0FF]/5 border-[#00F0FF]/20 shadow-[0_0_20px_rgba(0,240,255,0.05)]' : 'bg-white/5 border-white/5 opacity-80'} border rounded-2xl flex items-center justify-between group hover:bg-white/10 transition-all">
+                <div class="min-w-0">
+                  <div class="flex items-center gap-2 mb-0.5">
+                    <div class="font-bold text-lg md:text-base truncate">${t.nome}</div>
+                  </div>
+                  <div class="text-xs text-gray-500 uppercase tracking-wider font-semibold">${t.alunoCount || 0} Alunos</div>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                  ${souRegente ? `
+                    <button onclick="window.abrirModalPontos('${t.id}', '${escola.id}', '${t.nome}')" class="p-3 bg-yellow-500/10 text-yellow-500 rounded-xl hover:bg-yellow-500/20 transition-all border border-yellow-500/20" title="Atribuir Pontos">
+                      <i data-lucide="trophy" class="w-5 h-5 md:w-4 md:h-4"></i>
+                    </button>
+                    <a href="/gerenciar-turma.html?escola=${escola.id}&turma=${t.id}" class="p-3 bg-white/5 border border-white/5 hover:bg-white/10 rounded-xl text-gray-400 md:hover:text-white transition-all" title="Configurar Turma">
+                      <i data-lucide="settings" class="w-5 h-5 md:w-4 md:h-4"></i>
+                    </a>
+                  ` : `
+                    <button onclick="window.assumirTurmaRapido('${escola.id}', '${t.id}', '${t.nome}')" class="px-4 py-3 bg-[#00F0FF]/10 text-[#00F0FF] border border-[#00F0FF]/20 rounded-xl hover:bg-[#00F0FF]/20 transition-all text-xs font-black uppercase tracking-tighter">
+                      VINCULAR
+                    </button>
+                  `}
+                </div>
               </div>
-              <div class="flex items-center gap-2">
-                <button onclick="window.abrirModalPontos('${t.id}', '${escola.id}', '${t.nome}')" class="p-3 bg-yellow-500/10 text-yellow-500 rounded-xl hover:bg-yellow-500/20 transition-all border border-yellow-500/20">
-                  <i data-lucide="trophy" class="w-5 h-5 md:w-4 md:h-4"></i>
-                </button>
-                <a href="/gerenciar-turma.html?escola=${escola.id}&turma=${t.id}" class="p-3 bg-white/5 border border-white/5 hover:bg-white/10 rounded-xl text-gray-400 md:hover:text-white transition-all">
-                  <i data-lucide="settings" class="w-5 h-5 md:w-4 md:h-4"></i>
-                </a>
-              </div>
-            </div>
-          `).join('') || '<p class="text-gray-500 italic col-span-full py-4 text-center">Nenhuma turma cadastrada nesta escola.</p>'}
+            `;
+          }).join('') || '<p class="text-gray-500 italic col-span-full py-4 text-center">Nenhuma turma cadastrada nesta escola.</p>'}
         </div>
       `;
       return div;
@@ -271,22 +329,144 @@
       document.getElementById('nova-turma-nome').value = '';
     };
 
-    // Funções de Compartilhamento
+    // Funções de Equipe
+    window.abrirModalEquipe = async (escolaId, escolaNome, adminUid) => {
+      const modal = document.getElementById('modal-equipe');
+      const lista = document.getElementById('lista-equipe');
+      document.getElementById('equipe-escola-nome').textContent = parseInt(escolaNome) ? `Escola ${escolaNome}` : escolaNome;
+      
+      modal.classList.remove('hidden');
+      lista.innerHTML = '<div class="flex justify-center py-10"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00F0FF]"></div></div>';
+
+      try {
+        // 1. Buscar todos os professores da escola
+        const qProfs = query(collection(db, "users"), where("escola_id", "==", escolaId), where("papel", "==", "professor"));
+        const snapProfs = await getDocs(qProfs);
+        
+        // 2. Buscar todas as turmas da escola para saber quem regencia o quê
+        const qTurmas = query(collection(db, "escolas", escolaId, "turmas"));
+        const snapTurmas = await getDocs(qTurmas);
+        const todasTurmas = snapTurmas.docs.map(d => ({ id: d.id, ...d.data() }));
+
+        const profs = snapProfs.docs.map(d => ({ id: d.id, ...d.data() }));
+        
+        lista.innerHTML = profs.map(p => {
+          const turmasRegente = todasTurmas.filter(t => t.professores?.includes(p.id));
+          const isAdmin = p.id === adminUid;
+          const souAdmin = auth.currentUser.uid === adminUid;
+
+          return `
+            <div class="p-5 rounded-3xl bg-white/5 border border-white/10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div class="min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="font-bold text-gray-100">${p.nome || "Professor"}</span>
+                  ${isAdmin ? '<span class="text-[9px] bg-[#00F0FF]/20 text-[#00F0FF] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border border-[#00F0FF]/30">Administrador</span>' : ''}
+                </div>
+                <div class="text-xs text-gray-500 truncate mb-3">${p.email}</div>
+                
+                <div class="flex flex-wrap gap-1.5">
+                  ${turmasRegente.map(t => `
+                    <span class="text-[10px] bg-white/5 text-gray-400 px-2.5 py-1 rounded-lg border border-white/5">${t.nome}</span>
+                  `).join('') || '<span class="text-[10px] text-gray-600 italic">Nenhuma turma vinculada</span>'}
+                </div>
+              </div>
+
+              ${(souAdmin && !isAdmin) ? `
+                <button onclick="window.removerProfessorDaEscola('${p.id}', '${escolaId}')" class="w-full md:w-auto px-4 py-2 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl hover:bg-red-500/20 transition-all text-xs font-bold">
+                  Desvincular
+                </button>
+              ` : ''}
+            </div>
+          `;
+        }).join('');
+
+        lucide.createIcons();
+      } catch (e) {
+        console.error(e);
+        lista.innerHTML = '<p class="text-center text-red-400 py-10">Erro ao carregar equipe.</p>';
+      }
+    };
+
+    window.fecharModalEquipe = () => {
+      document.getElementById('modal-equipe').classList.add('hidden');
+    };
+
+    window.removerProfessorDaEscola = async (uid, escolaId) => {
+      if (!confirm("Tem certeza que deseja remover este professor da instituição? Ele perderá acesso a todas as turmas desta escola.")) return;
+      
+      try {
+        // Remove vínculo da escola no perfil do usuário
+        await setDoc(doc(db, "users", uid), { 
+          escola_id: null,
+          vinculos: arrayRemove(escolaId)
+        }, { merge: true });
+        
+        // Remove o professor de todas as turmas da escola
+        const qTurmas = query(collection(db, "escolas", escolaId, "turmas"));
+        const snapTurmas = await getDocs(qTurmas);
+        
+        for (const tDoc of snapTurmas.docs) {
+          const tData = tDoc.data();
+          if (tData.professores?.includes(uid)) {
+            await updateDoc(tDoc.ref, {
+              professores: arrayRemove(uid)
+            });
+          }
+        }
+
+        alert("Professor desvinculado com sucesso!");
+        location.reload();
+      } catch (e) {
+        console.error(e);
+        alert("Erro ao desvincular professor. Apenas o administrador da escola tem permissão.");
+      }
+    };
+
+    window.assumirTurmaRapido = async (escolaId, turmaId, turmaNome) => {
+      if (!confirm(`Você deseja vincular-se à turma "${turmaNome}"?`)) return;
+      if (!confirm("Confirmar co-regência? Você passará a gerenciar esta turma junto com os outros professores vinculados.")) return;
+      
+      try {
+        const uid = auth.currentUser.uid;
+        const tRef = doc(db, "escolas", escolaId, "turmas", turmaId);
+        const tSnap = await getDoc(tRef);
+        const tData = tSnap.data();
+
+        if (tData && !tData.professores && tData.professor_uid) {
+          await updateDoc(tRef, {
+            professores: arrayUnion(tData.professor_uid, uid)
+          });
+        } else {
+          await updateDoc(tRef, {
+            professores: arrayUnion(uid)
+          });
+        }
+
+        await setDoc(doc(db, "users", uid), {
+          vinculos: arrayUnion(escolaId)
+        }, { merge: true });
+        
+        alert("Vínculo realizado com sucesso!");
+        location.reload();
+      } catch (e) {
+        console.error(e);
+        alert("Erro ao assumir turma.");
+      }
+    };
+
     let publicLink = "";
 
     window.abrirModalShare = (escolaId) => {
-      publicLink = `${window.location.origin}/quasar-ferramentas/taca-das-casas/publico.html?escola=${escolaId}`;
-      const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(publicLink)}`;
+      const baseUrl = window.location.origin;
+      publicLink = `${baseUrl}/quasar-ferramentas/taca-das-casas/publico.html?escola=${escolaId}`;
       
-      document.getElementById('qrcode-img').src = qrApi;
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(publicLink)}`;
+      document.getElementById('qrcode-img').src = qrUrl;
       document.getElementById('modal-share').classList.remove('hidden');
-      document.body.style.overflow = 'hidden';
-      if (window.lucide) lucide.createIcons();
     };
 
     window.fecharModalShare = () => {
       document.getElementById('modal-share').classList.add('hidden');
-      document.body.style.overflow = '';
     };
 
     document.getElementById('btn-copy-link').onclick = () => {

@@ -155,8 +155,8 @@ export async function abrirModalPontos(turmaId, escolaId, turmaNome) {
 
 function injectModalHTML() {
   const html = `
-    <div id="modal-points-global" class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
-      <div class="max-w-md w-full glass rounded-[2.5rem] p-8 shadow-2xl animate-in zoom-in duration-200">
+    <div id="modal-points-global" class="fixed inset-0 z-[110] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm hidden">
+      <div class="max-w-md w-full glass rounded-t-[2.5rem] sm:rounded-[2.5rem] p-8 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-200">
         <div class="flex items-center gap-3 mb-6">
           <div class="w-12 h-12 bg-yellow-500/10 rounded-2xl flex items-center justify-center">
             <i data-lucide="trophy" class="text-yellow-500 w-6 h-6"></i>

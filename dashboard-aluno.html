@@ -82,7 +82,7 @@
     </button>
 
     <!-- Stats Discretas -->
-    <div class="glass p-5 rounded-2xl flex items-center justify-between">
+    <div class="glass p-5 rounded-2xl flex items-center justify-between hidden">
       <div class="flex items-center gap-3">
         <div class="w-8 h-8 bg-purple-500/10 rounded-lg flex items-center justify-center">
           <i data-lucide="layers" class="text-purple-400 w-4 h-4"></i>
@@ -104,7 +104,7 @@
           </div>
           <i data-lucide="chevron-right" class="text-gray-600"></i>
         </a>
-        <a href="/quasar-ferramentas/codex-arcano/index.html" class="flex items-center justify-between glass p-5 rounded-2xl hover:bg-white/5 transition-all">
+        <a href="/quasar-ferramentas/codex-arcano/index.html" class="flex items-center justify-between glass p-5 rounded-2xl hover:bg-white/5 transition-all hidden">
           <div class="flex items-center gap-4">
             <div class="w-10 h-10 bg-purple-500/10 rounded-xl flex items-center justify-center">
               <i data-lucide="book-open" class="text-purple-400 w-5 h-5"></i>
@@ -192,19 +192,29 @@
               }
             });
 
-            // 4. Buscar Colegas de Turma
+            // 4. Buscar Colegas de Turma e Professores
             const qColegas = query(
               collection(db, "matriculas"), 
               where("turma_id", "==", profile.turma_id)
             );
             
-            onSnapshot(qColegas, (snap) => {
+            onSnapshot(qColegas, async (snap) => {
               const colegas = snap.docs.map(d => d.data());
               colegas.sort((a,b) => (a.nome || "").localeCompare(b.nome || ""));
               
               const countText = `${colegas.length} Alunos`;
               document.getElementById('contagem-colegas').textContent = countText;
               document.getElementById('modal-contagem').textContent = countText;
+
+              // Buscar dados dos professores da turma
+              const turmaData = (await getDoc(doc(db, "escolas", profile.escola_id, "turmas", profile.turma_id))).data();
+              const profsData = [];
+              const profsUids = turmaData?.professores || (turmaData?.professor_uid ? [turmaData.professor_uid] : []);
+              
+              for (const pUid of profsUids) {
+                const pSnap = await getDoc(doc(db, "users", pUid));
+                if (pSnap.exists()) profsData.push(pSnap.data());
+              }
 
               // Preview no card (avatares)
               const preview = document.getElementById('lista-colegas-preview');
@@ -216,14 +226,38 @@
               
               // Lista no Modal
               const modalLista = document.getElementById('modal-lista-colegas');
-              modalLista.innerHTML = colegas.map(c => `
-                <div class="flex items-center gap-4 p-3 rounded-2xl bg-white/5 border border-white/5">
-                  <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center shrink-0">
-                    <i data-lucide="user" class="w-5 h-5 text-gray-500"></i>
+              modalLista.innerHTML = `
+                <div class="mb-6">
+                  <h3 class="text-[10px] font-bold text-[#00F0FF] uppercase tracking-widest mb-3 ml-1">Corpo Docente</h3>
+                  <div class="space-y-2">
+                    ${profsData.map(p => `
+                      <div class="flex items-center gap-4 p-3.5 rounded-2xl bg-[#00F0FF]/5 border border-[#00F0FF]/10">
+                        <div class="w-10 h-10 rounded-full bg-[#00F0FF]/20 flex items-center justify-center shrink-0">
+                          <i data-lucide="graduation-cap" class="w-5 h-5 text-[#00F0FF]"></i>
+                        </div>
+                        <div class="min-w-0">
+                          <div class="font-bold text-white text-sm truncate">${p.nome || "Professor"}</div>
+                          <div class="text-[10px] text-gray-500 truncate">${p.email || ""}</div>
+                        </div>
+                      </div>
+                    `).join('') || '<p class="text-xs text-gray-500 italic ml-1">Nenhum professor regente.</p>'}
                   </div>
-                  <span class="font-bold text-gray-200 text-sm">${c.nome || "Estudante"}</span>
                 </div>
-              `).join('');
+
+                <div>
+                  <h3 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 ml-1">Meus Colegas</h3>
+                  <div class="space-y-2">
+                    ${colegas.map(c => `
+                      <div class="flex items-center gap-4 p-3 rounded-2xl bg-white/5 border border-white/5">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center shrink-0">
+                          <i data-lucide="user" class="w-5 h-5 text-gray-500"></i>
+                        </div>
+                        <span class="font-bold text-gray-200 text-sm">${c.nome || "Estudante"}</span>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+              `;
 
               lucide.createIcons();
             });

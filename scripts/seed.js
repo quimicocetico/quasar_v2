@@ -84,14 +84,16 @@ async function runSeed() {
 
     for (let i = 0; i < CONFIG.NUM_ESCOLAS; i++) {
       const nomeEscola = `Escola Estadual ${faker.person.lastName()}`;
+      const codigoAcesso = faker.string.alphanumeric(6).toUpperCase();
       
       // 1. Criar Escola
       const escolaRef = await db.collection('escolas').add({
         nome: nomeEscola,
         professor_uid: 'master_dev', 
+        codigo_acesso: codigoAcesso,
         created_at: admin.firestore.FieldValue.serverTimestamp()
       });
-      console.log(`🏫 Escola: ${nomeEscola}`);
+      console.log(`🏫 Escola: ${nomeEscola} (Código: ${codigoAcesso})`);
 
       for (let j = 0; j < CONFIG.PROFS_POR_ESCOLA; j++) {
         const nomeProf = `Prof. ${faker.person.fullName()}`;
@@ -125,6 +127,7 @@ async function runSeed() {
           const turmaRef = await escolaRef.collection('turmas').add({
             nome: nomeTurma,
             professor_uid: profAuth.uid,
+            professores: [profAuth.uid],
             escola_id: escolaRef.id,
             created_at: admin.firestore.FieldValue.serverTimestamp(),
             serie: faker.number.int({ min: 1, max: 3 })

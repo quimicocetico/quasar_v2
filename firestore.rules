@@ -13,23 +13,36 @@ service cloud.firestore {
 
     // ─── USUÁRIOS ────────────────────────────────────────────────
     match /users/{uid} {
-      allow read, write: if request.auth.uid == uid;
+      allow read: if isAutenticado();
+      allow write: if request.auth.uid == uid || isProfessor();
     }
 
     // ─── ESCOLAS E TURMAS ────────────────────────────────────────
     match /escolas/{escolaId} {
-      allow read: if true; // Aberto para ranking público
+      allow read: if true; 
+      allow create: if isProfessor();
+      allow update, delete: if isProfessor() && resource.data.professor_uid == request.auth.uid;
       
       match /turmas/{turmaId} {
         allow read: if true;
-        allow write: if isProfessor();
+        allow create: if isProfessor();
+        allow update, delete: if isProfessor() && (
+          request.auth.uid in resource.data.professores || 
+          get(/databases/$(database)/documents/escolas/$(escolaId)).data.professor_uid == request.auth.uid ||
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['professores'])
+        );
       }
     }
 
     // ─── MATRÍCULAS ──────────────────────────────────────────────
     match /matriculas/{matriculaId} {
       allow read: if isAutenticado();
-      allow write: if isProfessor();
+      allow create, delete: if isProfessor();
+      allow update: if isProfessor() || (
+        isAutenticado() && 
+        request.auth.token.email.lower() == resource.data.email.lower() &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['aluno_uid'])
+      );
     }
 
     // ─── TAÇA DAS CASAS 2026 ─────────────────────────────────────
