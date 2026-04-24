@@ -1,0 +1,22 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "eventos",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        { "fieldPath": "escola_id", "order": "ASCENDING" },
+        { "fieldPath": "timestamp", "order": "DESCENDING" },
+        { "fieldPath": "__name__", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "users",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "escola_id", "order": "ASCENDING" },
+        { "fieldPath": "papel", "order": "ASCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

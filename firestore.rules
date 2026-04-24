@@ -14,14 +14,20 @@ service cloud.firestore {
     // ─── USUÁRIOS ────────────────────────────────────────────────
     match /users/{uid} {
       allow read: if isAutenticado();
-      allow write: if request.auth.uid == uid || isProfessor();
+      allow write: if isAutenticado() && (request.auth.uid == uid || isProfessor());
+    }
+    match /users {
+      allow read, list: if isAutenticado();
     }
 
     // ─── ESCOLAS E TURMAS ────────────────────────────────────────
     match /escolas/{escolaId} {
       allow read: if true; 
       allow create: if isProfessor();
-      allow update, delete: if isProfessor() && resource.data.professor_uid == request.auth.uid;
+      allow update, delete: if isProfessor() && (
+        resource.data.professor_uid == request.auth.uid ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.id == resource.data.professor_uid
+      );
       
       match /turmas/{turmaId} {
         allow read: if true;
@@ -45,7 +51,7 @@ service cloud.firestore {
       );
     }
 
-    // ─── TAÇA DAS CASAS 2026 ─────────────────────────────────────
+    // ─── TAÇA DAS CASAS ──────────────────────────────────────────
     match /taca_casas/{temporadaId} {
       allow read: if true;
       
@@ -57,8 +63,13 @@ service cloud.firestore {
       match /eventos/{eventoId} {
         allow read: if true;
         allow create: if isProfessor();
-        allow update, delete: if false; // SEGURANÇA MÁXIMA: Histórico imutável
+        allow update, delete: if false;
       }
+    }
+
+    // ─── COLLECTION GROUPS ───────────────────────────────────────
+    match /{path=**}/eventos/{eventoId} {
+      allow read: if true;
     }
   }
 }
