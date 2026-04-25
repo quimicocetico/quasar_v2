@@ -212,14 +212,25 @@ function renderizarFeedMCAT(statusEtapas) {
                         <div class="p-6 rounded-2xl bg-indigo-500/5 border border-indigo-500/10">
                             <h4 class="text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-4">Ações de Mentoria</h4>
                             <div class="flex flex-col gap-3">
-                                ${perfilLogado.papel === 'professor' && isEsperando ? `
-                                    <button onclick="avaliarEtapa('${etapa.id}', 'aprovado')" 
-                                        ${!checklistCompleto ? 'disabled title="Complete o checklist primeiro"' : ''}
-                                        class="w-full py-3 bg-emerald-500 text-black font-black text-[9px] uppercase tracking-widest rounded-xl hover:bg-emerald-400 transition-all disabled:opacity-30 disabled:grayscale">Aprovar Etapa</button>
-                                    
-                                    <button onclick="avaliarEtapa('${etapa.id}', 'devolvido')" class="w-full py-3 bg-rose-500/20 text-rose-500 font-black text-[9px] uppercase tracking-widest rounded-xl border border-rose-500/20 hover:bg-rose-500/30 transition-all">Devolver p/ Ajustes</button>
+                                ${perfilLogado.papel === 'professor' && !isAprovada ? `
+                                    <div class="space-y-3 mb-4">
+                                        <label class="text-[8px] font-black uppercase text-indigo-300/60 ml-1">Justificativa / Feedback</label>
+                                        <textarea id="feedback-eval-${etapa.id}" 
+                                            class="w-full bg-[#0d1221] border border-white/10 rounded-xl p-3 text-xs text-white focus:border-indigo-500 outline-none h-20 resize-none custom-scrollbar"
+                                            placeholder="Escreva as orientações para os alunos..."></textarea>
+                                    </div>
+
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <button onclick="avaliarEtapa('${etapa.id}', 'aprovado')" 
+                                            ${!checklistCompleto ? 'disabled title="Complete o checklist primeiro"' : ''}
+                                            class="py-3 bg-emerald-500 text-black font-black text-[9px] uppercase tracking-widest rounded-xl hover:bg-emerald-400 transition-all disabled:opacity-30 disabled:grayscale">Aprovar</button>
+                                        
+                                        <button onclick="avaliarEtapa('${etapa.id}', 'devolvido')" 
+                                            class="py-3 bg-rose-500/20 text-rose-500 font-black text-[9px] uppercase tracking-widest rounded-xl border border-rose-500/20 hover:bg-rose-500/30 transition-all">Devolver</button>
+                                    </div>
                                 ` : ''}
-                                <button onclick="abrirFeedbackDrawer('${etapa.id}')" class="w-full py-3 bg-white/5 text-gray-400 font-black text-[9px] uppercase tracking-widest rounded-xl border border-white/5 hover:text-white transition-all">
+                                
+                                <button onclick="abrirFeedbackDrawer('${etapa.id}')" class="w-full py-3 bg-white/5 text-gray-400 font-black text-[9px] uppercase tracking-widest rounded-xl border border-white/5 hover:text-white transition-all ${isAprovada ? 'mt-0' : 'mt-2'}">
                                     Histórico de Feedbacks
                                 </button>
                             </div>
@@ -291,14 +302,14 @@ window.enviarEtapa = async (etapaId) => {
 };
 
 window.avaliarEtapa = async (etapaId, status) => {
-    let feedback = "";
+    const feedbackField = document.getElementById(`feedback-eval-${etapaId}`);
+    const feedback = feedbackField ? feedbackField.value.trim() : "";
     
-    if (status === 'devolvido') {
-        feedback = prompt("Obrigatório: Descreva os ajustes necessários para o estudante:");
-        if (!feedback || feedback.trim() === "") return alert("Você precisa fornecer um feedback para devolver a etapa.");
-    } else {
-        feedback = prompt("Comentário de aprovação (opcional):");
+    if (status === 'devolvido' && !feedback) {
+        return alert("Por favor, descreva os ajustes necessários no campo de feedback antes de devolver.");
     }
+    
+    if (!confirm(`Deseja marcar esta etapa como ${status.toUpperCase()}?`)) return;
     
     await setDoc(doc(db, `projetos/${projetoAtual.id}/etapas/${etapaId}`), {
         status_etapa: status,
@@ -306,15 +317,13 @@ window.avaliarEtapa = async (etapaId, status) => {
     }, { merge: true });
 
     if (feedback) {
-        const subSnap = await getDocs(query(collection(db, `projetos/${projetoAtual.id}/etapas/${etapaId}/submissoes`), orderBy("data_envio", "desc"), limit(1)));
-        if (!subSnap.empty) {
-            await addDoc(collection(db, `projetos/${projetoAtual.id}/etapas/${etapaId}/submissoes/${subSnap.docs[0].id}/feedbacks`), {
-                autor: perfilLogado.nome || "Professor",
-                autor_tipo: perfilLogado.papel,
-                comentario: feedback,
-                data: serverTimestamp()
-            });
-        }
+        await addDoc(collection(db, `projetos/${projetoAtual.id}/etapas/${etapaId}/feedbacks`), {
+            autor: perfilLogado.nome || "Professor",
+            autor_tipo: perfilLogado.papel,
+            comentario: feedback,
+            token: perfilLogado.papel === 'coorientador' ? projetoAtual.dados_gerais.token_coorientador : null,
+            data: serverTimestamp()
+        });
     }
     
     if (status === 'aprovado') alert("✅ Etapa aprovada com sucesso!");
@@ -333,21 +342,56 @@ window.abrirFeedbackDrawer = async (etapaId) => {
     
     history.innerHTML = '<p class="text-xs text-gray-500 italic py-10 text-center">Buscando mentorias...</p>';
 
-    const subSnap = await getDocs(query(collection(db, `projetos/${projetoAtual.id}/etapas/${etapaId}/submissoes`), orderBy("data_envio", "desc"), limit(1)));
-    if (subSnap.empty) {
-        history.innerHTML = '<p class="text-[10px] text-gray-600 font-bold uppercase tracking-widest text-center py-12">Sem submissões para esta etapa.</p>';
-        return;
-    }
+    const legacyPath = collection(db, `projetos/${projetoAtual.id}/etapas/${etapaId}/submissoes`);
+    const legacySnap = await getDocs(query(legacyPath, orderBy("data_envio", "desc"), limit(1)));
+    let legacySubId = !legacySnap.empty ? legacySnap.docs[0].id : null;
 
-    onSnapshot(query(collection(db, `projetos/${projetoAtual.id}/etapas/${etapaId}/submissoes/${subSnap.docs[0].id}/feedbacks`), orderBy("data", "asc")), (fSnap) => {
+    console.log(`[Drawer] Carregando feedbacks para Etapa ${etapaId}. Legacy SubId: ${legacySubId}`);
+
+    onSnapshot(query(collection(db, `projetos/${projetoAtual.id}/etapas/${etapaId}/feedbacks`), orderBy("data", "asc")), (fSnap) => {
         history.innerHTML = '';
-        fSnap.forEach(fDoc => {
-            const f = fDoc.data();
+        const allFeedbacks = [];
+        
+        // Coletar novos feedbacks (Unified Path)
+        fSnap.forEach(d => allFeedbacks.push({ id: d.id, ...d.data() }));
+
+        // Caso exista submissão legada, tentar buscar feedbacks de lá também (Uma única vez ou via novo listener)
+        // Para simplificar e garantir reatividade em ambos, vamos focar no unificado daqui para frente, 
+        // mas injetar os legados se existirem no carregamento inicial.
+        if (legacySubId) {
+            getDocs(query(collection(db, `projetos/${projetoAtual.id}/etapas/${etapaId}/submissoes/${legacySubId}/feedbacks`), orderBy("data", "asc")))
+                .then(lSnap => {
+                    lSnap.forEach(d => {
+                        if (!allFeedbacks.some(f => f.comentario === d.data().comentario)) {
+                            allFeedbacks.push({ id: d.id, ...d.data(), legacy: true });
+                        }
+                    });
+                    renderFeedbacks(allFeedbacks);
+                });
+        } else {
+            renderFeedbacks(allFeedbacks);
+        }
+    });
+
+    function renderFeedbacks(feedbacks) {
+        history.innerHTML = '';
+        if (feedbacks.length === 0) {
+            history.innerHTML = '<p class="text-[10px] text-gray-600 font-bold uppercase tracking-widest text-center py-12 opacity-50">Nenhuma orientação registrada.</p>';
+            return;
+        }
+
+        // Ordenar por data (pode haver mistura de legados e novos)
+        feedbacks.sort((a, b) => (a.data?.toMillis() || 0) - (b.data?.toMillis() || 0));
+
+        feedbacks.forEach(f => {
             const div = document.createElement('div');
-            div.className = `feedback-bubble ${f.autor_tipo === 'professor' ? 'bg-cyan-500/10 border-l-2 border-cyan-500' : 'bg-purple-500/10 border-l-2 border-purple-500'}`;
+            div.className = `feedback-bubble animate-in slide-in-from-bottom-2 duration-300 ${f.autor_tipo === 'professor' ? 'bg-cyan-500/10 border-l-2 border-cyan-500' : 'bg-purple-500/10 border-l-2 border-purple-500'}`;
             div.innerHTML = `
                 <div class="flex justify-between items-center mb-1">
-                    <span class="text-[8px] font-black uppercase text-gray-400">${f.autor}</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[8px] font-black uppercase text-gray-400">${f.autor}</span>
+                        ${f.legacy ? '<span class="text-[6px] font-black uppercase bg-white/5 px-1 rounded text-gray-600">Arquivo</span>' : ''}
+                    </div>
                     <span class="text-[7px] text-gray-600">${f.data?.toDate().toLocaleDateString() || '...'}</span>
                 </div>
                 <p class="text-xs text-gray-200 leading-relaxed">${f.comentario}</p>
@@ -355,7 +399,7 @@ window.abrirFeedbackDrawer = async (etapaId) => {
             history.appendChild(div);
         });
         history.scrollTop = history.scrollHeight;
-    });
+    }
 };
 
 window.fecharFeedbackDrawer = () => {
@@ -367,12 +411,11 @@ window.fecharFeedbackDrawer = () => {
 document.getElementById('btn-send-drawer-feedback').onclick = async () => {
     const texto = document.getElementById('drawer-text').value.trim();
     if (!texto || !feedbackEtapaId) return;
-    const subSnap = await getDocs(query(collection(db, `projetos/${projetoAtual.id}/etapas/${feedbackEtapaId}/submissoes`), orderBy("data_envio", "desc"), limit(1)));
-    if (subSnap.empty) return;
-    await addDoc(collection(db, `projetos/${projetoAtual.id}/etapas/${feedbackEtapaId}/submissoes/${subSnap.docs[0].id}/feedbacks`), {
+    await addDoc(collection(db, `projetos/${projetoAtual.id}/etapas/${feedbackEtapaId}/feedbacks`), {
         autor: perfilLogado.nome || "Mentor",
         autor_tipo: perfilLogado.papel,
         comentario: texto,
+        token: perfilLogado.papel === 'coorientador' ? projetoAtual.dados_gerais.token_coorientador : null,
         data: serverTimestamp()
     });
     document.getElementById('drawer-text').value = '';

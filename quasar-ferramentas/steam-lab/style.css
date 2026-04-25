@@ -255,14 +255,26 @@ body {
     background: rgba(0, 212, 255, 0.03);
 }
 
-/* Feedback Drawer Animation */
 #feedback-drawer {
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    transform: translateY(100%);
+    transition: opacity 0.3s ease;
 }
 
-#feedback-drawer.active {
+#feedback-drawer .drawer-content {
+    transform: translateY(100%);
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+#feedback-drawer.active .drawer-content {
     transform: translateY(0);
+}
+
+#feedback-drawer.active .bg-black\/60 {
+    opacity: 1;
+}
+
+#feedback-drawer .bg-black\/60 {
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 .feedback-bubble {
