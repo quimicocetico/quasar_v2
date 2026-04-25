@@ -7,70 +7,106 @@ import { auth } from "./firebase-config.js";
 const isLoginPage = window.location.pathname.includes('login');
 const isOnboardingPage = window.location.pathname.includes('onboarding');
 
-// ─── 1. Estilos globais injetados uma única vez ───────────────────────────────
-document.head.insertAdjacentHTML('beforeend', `
-  <style>
-    :root { --bg-deep: #0A0F1C; --accent: #00F0FF; --accent-soft: rgba(0,240,255,0.1); }
-    body { background-color: var(--bg-deep); color: white; font-family: 'Outfit', sans-serif; }
-    .glass {
-      background: rgba(17,24,39,0.8);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-    .profile-card-shadow {
-      box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 20px rgba(0,240,255,0.1);
-    }
-    .dropdown-transition { transition: all 0.2s cubic-bezier(0.4,0,0.2,1); }
-    .hidden-scale { opacity:0; transform:scale(0.95) translateY(-10px); pointer-events:none; }
-  </style>
-`);
+// ─── 1. Inicialização ────────────────────────────────────────────────────────
 
 // ─── 2. Header HTML ───────────────────────────────────────────────────────────
+// ─── 2. Header & Footer HTML ──────────────────────────────────────────────────
 function renderizarHeader() {
-  document.body.insertAdjacentHTML('afterbegin', `
-    <header class="fixed top-0 w-full z-50 glass border-b border-white/5">
-      <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
+  // Remove header se já existir (prevenção contra duplicados)
+  const existingHeader = document.querySelector('header.platform-header');
+  if (existingHeader) existingHeader.remove();
 
-        <a href="/index.html" class="flex items-center gap-3 group">
-          <div class="w-9 h-9 bg-gradient-to-br from-[#00F0FF] to-[#7000FF] rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(0,240,255,0.3)] group-hover:scale-110 transition-transform">
-            <i data-lucide="layout-grid" class="text-white w-5 h-5"></i>
+  document.body.insertAdjacentHTML('afterbegin', `
+    <header class="platform-header fixed top-0 w-full z-[100] glass border-b border-white/5">
+      <div class="max-w-7xl mx-auto px-4 md:px-8 h-16 md:h-20 flex justify-between items-center">
+
+        <a href="/index.html" class="flex items-center gap-2 md:gap-3 group">
+          <div class="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-cyan-400 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:scale-110 transition-transform">
+            <i data-lucide="sparkles" class="text-white w-4 h-4 md:w-5 md:h-5"></i>
           </div>
-          <span class="text-xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">QUASAR</span>
+          <div class="flex flex-col">
+            <span class="text-sm md:text-xl font-black tracking-tighter text-white leading-tight">QUASAR</span>
+            <span class="text-[8px] font-bold text-cyan-400/60 uppercase tracking-widest hidden md:block">Plataforma Educacional</span>
+          </div>
         </a>
 
-        <div class="relative">
-          <button id="profile-trigger" class="flex items-center gap-2 p-1.5 pr-4 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all">
-            <div id="header-avatar" class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center overflow-hidden border border-white/20">
-              <i data-lucide="user" class="w-4 h-4 text-gray-400"></i>
-            </div>
-            <span id="header-name" class="text-sm font-medium text-gray-200 hidden sm:block">Entrar</span>
-            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500"></i>
-          </button>
-
-          <div id="profile-card" class="dropdown-transition hidden-scale absolute right-0 mt-3 w-72 glass rounded-2xl profile-card-shadow overflow-hidden">
-            <div class="p-6 text-center border-b border-white/5">
-              <div id="card-avatar" class="w-16 h-16 mx-auto rounded-full bg-gray-800 flex items-center justify-center mb-3 border-2 border-[#00F0FF]/30">
-                <i data-lucide="user" class="w-8 h-8 text-gray-500"></i>
+        <div class="flex items-center gap-4">
+          <div class="relative">
+            <button id="profile-trigger" class="flex items-center gap-2 p-1 md:p-1.5 pr-3 md:pr-4 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all group">
+              <div id="header-avatar" class="w-8 h-8 md:w-9 md:h-9 rounded-full bg-gray-800 flex items-center justify-center overflow-hidden border border-white/10 group-hover:border-cyan-500/50 transition-all">
+                <i data-lucide="user" class="w-4 h-4 text-gray-500"></i>
               </div>
-              <h3 id="card-name" class="font-bold text-base text-white">Visitante</h3>
-              <p id="card-email" class="text-xs text-gray-400 truncate mt-0.5">Não autenticado</p>
-            </div>
-            <div class="p-2">
-              <button id="auth-action-btn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-sm transition-colors">
-                <i data-lucide="log-in" class="w-4 h-4 text-[#00F0FF]"></i>
-                <span>Fazer Login</span>
-              </button>
+              <span id="header-name" class="text-[11px] md:text-sm font-black uppercase tracking-widest text-gray-300 hidden sm:block">Acessar</span>
+              <i data-lucide="chevron-down" class="w-4 h-4 text-gray-600 group-hover:text-cyan-500 transition-colors"></i>
+            </button>
+
+            <div id="profile-card" class="dropdown-transition hidden-scale absolute right-0 mt-3 w-72 glass-card profile-card-shadow overflow-hidden">
+              <div class="p-8 text-center border-b border-white/5 relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-b from-cyan-500/10 to-transparent opacity-50"></div>
+                <div id="card-avatar" class="relative z-10 w-20 h-20 mx-auto rounded-full bg-gray-900 flex items-center justify-center mb-4 border-2 border-cyan-500/20 shadow-xl">
+                  <i data-lucide="user" class="w-10 h-10 text-gray-600"></i>
+                </div>
+                <h3 id="card-name" class="relative z-10 font-black text-lg text-white uppercase tracking-tight">Visitante</h3>
+                <p id="card-email" class="relative z-10 text-[10px] text-gray-500 font-bold uppercase tracking-widest truncate mt-1">Nenhum vínculo detectado</p>
+              </div>
+              <div class="p-3 bg-white/[0.02]">
+                <div id="auth-action-container">
+                  <button id="auth-action-btn" class="w-full flex items-center gap-3 px-5 py-4 rounded-xl hover:bg-white/5 text-xs font-black uppercase tracking-widest text-cyan-400 transition-all">
+                    <i data-lucide="log-in" class="w-4 h-4"></i>
+                    <span>Entrar no Portal</span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
       </div>
     </header>
-    <div class="h-16"></div>
+    <div class="h-16 md:h-20"></div>
   `);
 
   if (window.lucide) lucide.createIcons();
   setupEvents();
+}
+
+function renderizarFooter() {
+  const existingFooter = document.querySelector('footer.platform-footer');
+  if (existingFooter) existingFooter.remove();
+
+  document.body.insertAdjacentHTML('beforeend', `
+    <footer class="platform-footer mt-20 pb-12 border-t border-white/5">
+      <div class="max-w-7xl mx-auto px-4 md:px-8 pt-12">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+          <div class="flex flex-col items-center md:items-start gap-4">
+            <div class="flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+              <div class="w-6 h-6 bg-white/10 rounded flex items-center justify-center">
+                <i data-lucide="layout-grid" class="w-3.5 h-3.5 text-white"></i>
+              </div>
+              <span class="text-xs font-black tracking-widest uppercase">Quasar Platform</span>
+            </div>
+            <p class="text-[10px] text-gray-600 font-bold uppercase tracking-[0.2em] text-center md:text-left">
+              &copy; 2024 PRESSAGIO DESIGN. TODOS OS DIREITOS RESERVADOS.
+            </p>
+          </div>
+          
+          <div class="flex flex-col items-center md:items-end gap-2">
+            <div class="flex items-center gap-6 mb-2">
+              <a href="#" class="text-[10px] font-black text-gray-500 hover:text-cyan-400 uppercase tracking-widest transition-colors">Termos</a>
+              <a href="#" class="text-[10px] font-black text-gray-500 hover:text-cyan-400 uppercase tracking-widest transition-colors">Privacidade</a>
+              <a href="#" class="text-[10px] font-black text-gray-500 hover:text-cyan-400 uppercase tracking-widest transition-colors">Suporte</a>
+            </div>
+            <div class="flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span class="text-[9px] font-black text-gray-500 uppercase tracking-tighter">v2.0.8 — STABLE RELEASE</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  `);
+
+  if (window.lucide) lucide.createIcons();
 }
 
 function setupEvents() {
@@ -149,6 +185,12 @@ function atualizarHeaderUsuario(user, profile) {
 
 // ─── 3. Lógica de Gatekeeper e Onboarding ─────────────────────────────────────
 // ─── 3. Lógica de Gatekeeper e Onboarding ─────────────────────────────────────
+// Renderiza imediatamente se for login ou público para evitar "flash" de página vazia
+if (isLoginPage || window.location.pathname.includes('publico')) {
+  renderizarHeader();
+  renderizarFooter();
+}
+
 requireAuth(async (user) => {
   // Se estamos na página de login e o usuário já está autenticado, vai para o index
   if (isLoginPage && user) {
@@ -156,9 +198,11 @@ requireAuth(async (user) => {
     return;
   }
 
-  if (isLoginPage) return;
-
+  // Renderiza para todos os outros casos autenticados
   renderizarHeader();
+  renderizarFooter();
+  
+  if (isLoginPage) return;
   
   const userRef = doc(db, "users", user.uid);
   const snap = await getDoc(userRef);

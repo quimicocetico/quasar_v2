@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,100 +9,41 @@
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    body {
-      background-color: #0A0F1C;
-      color: #ffffff;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      position: relative;
-      font-family: 'Outfit', sans-serif;
-    }
-    .blob {
-      position: absolute; border-radius: 50%; filter: blur(80px);
-      z-index: 0; opacity: 0.5; animation: float 10s infinite alternate ease-in-out;
-      pointer-events: none;
-    }
-    .blob-1 { width: 400px; height: 400px; background: rgba(0,240,255,0.15); top: -100px; left: -100px; }
-    .blob-2 { width: 300px; height: 300px; background: rgba(112,0,255,0.15); bottom: -50px; right: -50px; animation-delay: -5s; }
-    @keyframes float {
-      0%   { transform: translateY(0) scale(1); }
-      100% { transform: translateY(20px) scale(1.05); }
-    }
-    .login-box {
-      position: relative;
-      z-index: 1;
-      background: rgba(17,24,39,0.75);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(255,255,255,0.07);
-      padding: 3rem 2.5rem;
-      border-radius: 20px;
-      text-align: center;
-      max-width: 400px;
-      width: 90%;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-    }
-    .logo-icon {
-      width: 52px; height: 52px;
-      background: linear-gradient(135deg, #00F0FF, #7000FF);
-      border-radius: 14px;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 1.25rem;
-      box-shadow: 0 0 20px rgba(0,240,255,0.3);
-    }
-    h1 {
-      font-weight: 800; font-size: 1.75rem; letter-spacing: 2px;
-      text-transform: uppercase;
-      background: linear-gradient(90deg, #00F0FF, #7000FF);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 0.5rem;
-    }
-    .subtitle {
-      color: #64748b; font-size: 0.9rem; margin-bottom: 2rem; line-height: 1.5;
-    }
-    .btn-google {
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      width: 100%; padding: 13px;
-      background-color: white; color: #1e293b;
-      border: none; border-radius: 10px;
-      font-weight: 700; font-size: 0.95rem; font-family: 'Outfit', sans-serif;
-      cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .btn-google:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,255,255,0.15); }
-    .btn-google:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-    .btn-google img { width: 20px; height: 20px; }
-    #error-msg {
-      color: #ef4444; font-size: 0.82rem; margin-top: 1rem;
-      display: none; font-weight: 600;
-      padding: 10px 12px;
-      background: rgba(239,68,68,0.08);
-      border: 1px solid rgba(239,68,68,0.2);
-      border-radius: 8px;
-      line-height: 1.4;
-    }
-  </style>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acesso — Plataforma Quasar</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
 </head>
-<body>
-  <div class="blob blob-1"></div>
-  <div class="blob blob-2"></div>
+</head>
 
-  <div class="login-box">
-    <div class="logo-icon">
-      <i data-lucide="layout-grid" style="color:white;width:24px;height:24px;"></i>
+<body class="hero-bg min-h-screen flex items-center justify-center p-6 text-white font-['Outfit']">
+  <div class="geo-grid"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <div class="glass-card max-w-md w-full p-12 text-center shadow-2xl animate-in fade-in zoom-in duration-500">
+    <div class="w-20 h-20 bg-gradient-to-br from-cyan-500 to-emerald-500 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-cyan-500/20 border-4 border-white/10">
+      <i data-lucide="layout-grid" class="w-10 h-10 text-white"></i>
     </div>
-    <h1>Quasar</h1>
-    <p class="subtitle">Acesso restrito à rede de ensino<br>do Rio Grande do Norte.</p>
+    
+    <h1 class="text-4xl font-black tracking-tighter uppercase mb-2">Quasar</h1>
+    <p class="text-gray-400 font-medium leading-relaxed mb-10 opacity-70">Acesso restrito à rede de ensino<br>do Rio Grande do Norte.</p>
 
-    <button id="btn-login" class="btn-google">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google">
+    <button id="btn-login" class="w-full flex items-center justify-center gap-4 py-4 bg-white text-gray-900 rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-white/5">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" class="w-6 h-6">
       Entrar com Google
     </button>
 
-    <div id="error-msg"></div>
+    <div id="error-msg" class="mt-6 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-xs font-bold hidden animate-in slide-in-from-top-2"></div>
+    
+    <div class="mt-12 pt-8 border-t border-white/5">
+      <p class="text-[10px] font-black text-gray-600 uppercase tracking-[0.2em]">Secretaria de Educação — RN</p>
+    </div>
   </div>
 
   <script>
@@ -133,4 +75,5 @@
   <!-- Gatekeeper (redireciona se já estiver logado) -->
   <script type="module" src="/app.js"></script>
 </body>
+
 </html>

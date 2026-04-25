@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quasar STEAM Lab — Iniciação Científica</title>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <link rel="stylesheet" href="../../global.css">
+    <link rel="stylesheet" href="../../_shared/tokens.css">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script type="module" src="../../app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <main id="app-container">
+        <!-- Dashboard Principal -->
+        <div id="dashboard" class="space-y-6">
+            <header class="lab-header">
+                <a href="../../index.html" class="btn-back">← Voltar ao Hub Quasar</a>
+                <div class="flex flex-col items-center">
+                    <span class="badge-lab">STEAM LAB</span>
+                    <h1>Iniciação Científica</h1>
+                    <p id="user-greeting" class="text-sm opacity-60">Carregando laboratório...</p>
+                </div>
+            </header>
+
+            <!-- Alertas de Convite (Aluno) -->
+            <div id="invites-container" class="space-y-4"></div>
+
+            <!-- Seção de Projetos -->
+            <div id="projects-section" class="hidden">
+                <div class="flex justify-between items-end mb-4 border-b border-white/5 pb-2">
+                    <h2 class="text-xs font-bold text-gray-500 uppercase tracking-[0.2em]">Meus Projetos (Orientação)</h2>
+                    <button id="btn-show-form" class="btn btn-secondary text-[10px] py-2 px-4">+ Novo Projeto</button>
+                </div>
+                <div id="projects-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </div>
+
+            <!-- Botão Novo Projeto (Professor - Vazio) -->
+            <div id="teacher-actions-empty" class="hidden text-center py-12 edu-card border-dashed">
+                <p class="text-gray-500 mb-4">Você ainda não orienta nenhum projeto de IC.</p>
+                <button id="btn-show-form-empty" class="btn btn-primary">+ Iniciar Primeiro Projeto</button>
+            </div>
+        </div>
+
+        <!-- Área de Trabalho do Projeto (Feed de Etapas) -->
+        <div id="project-view" class="hidden">
+            <header class="flex justify-between items-center mb-8">
+                <button id="btn-back-dashboard" class="btn btn-secondary py-2 px-4 text-[10px]">← Painel</button>
+                <div class="text-center">
+                    <h1 id="view-project-title" class="text-xl font-bold mb-1">Título do Projeto</h1>
+                    <div id="view-project-progress"></div>
+                </div>
+                <button onclick="abrirMagicModal(projetoAtual.id)" class="btn-icon-sm text-cyan-400" title="Acesso Coorientador">🔑</button>
+            </header>
+
+            <!-- Feed de Etapas MCAT -->
+            <div id="mcat-feed" class="space-y-12 max-w-4xl mx-auto pb-20">
+                <!-- As etapas serão injetadas aqui como containers individuais -->
+            </div>
+        </div>
+
+        <!-- MODAL 1: Cadastro de Novo Projeto -->
+        <div id="creation-modal" class="modal-overlay hidden">
+            <div class="modal-content edu-card max-w-lg">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-lg font-bold mb-0">Novo Projeto IC</h2>
+                    <button id="btn-cancel-creation" class="text-gray-500 hover:text-white text-xl">✕</button>
+                </div>
+
+                <form id="form-projeto" class="space-y-4">
+                    <div class="input-group">
+                        <label>Título Provisório</label>
+                        <input type="text" id="titulo" placeholder="Ex: Impacto dos Microplásticos..." required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Situação Problema</label>
+                        <textarea id="problema" placeholder="Qual a pergunta científica?" required></textarea>
+                    </div>
+
+                    <div class="space-y-3">
+                        <p class="text-[9px] font-bold text-gray-500 uppercase">Equipe (Até 3 alunos)</p>
+                        <div class="grid grid-cols-1 gap-2">
+                            <input type="email" id="email1" placeholder="E-mail Aluno 1" required>
+                            <input type="email" id="email2" placeholder="E-mail Aluno 2 (Opcional)">
+                            <input type="email" id="email3" placeholder="E-mail Aluno 3 (Opcional)">
+                        </div>
+                    </div>
+
+                    <button type="submit" id="btn-submit" class="btn btn-primary w-full py-4 mt-4">Criar Projeto</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- MODAL 2: Link Mágico e QR Code -->
+        <div id="magic-link-modal" class="modal-overlay hidden">
+            <div class="modal-content edu-card max-w-sm text-center">
+                <div class="flex justify-end">
+                    <button onclick="fecharMagicModal()" class="text-gray-500 hover:text-white">✕</button>
+                </div>
+                <div class="p-4 space-y-4">
+                    <h3 class="text-sm font-bold uppercase tracking-widest">Acesso do Coorientador</h3>
+                    <div id="qrcode-container" class="bg-white p-4 rounded-xl inline-block mx-auto">
+                        <img id="magic-qr" src="" alt="QR Code" class="w-48 h-48">
+                    </div>
+                    <p class="text-[10px] text-gray-400">Escaneie para acessar ou copie o link abaixo.</p>
+                    <div id="magic-link-text" class="bg-black/30 p-3 rounded-lg text-[9px] font-mono text-cyan-400 break-all select-all cursor-pointer"></div>
+                    <div class="flex flex-col gap-2">
+                        <button onclick="copiarLinkMagico()" class="btn btn-primary text-[10px] py-2">Copiar Link</button>
+                        <button id="btn-revogar-magic" class="btn btn-secondary text-[10px] py-2 text-red-400 border-red-400/20">Revogar e Gerar Novo</button>
+                    </div>
+                    <p class="text-[8px] text-red-500 font-bold uppercase">⚠️ Atenção: Não compartilhe publicamente (LGPD).</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="main.js"></script>
+    <!-- Modal de Busca de Aluno (Adicionar à Equipe) -->
+    <div id="search-member-modal" class="modal-overlay hidden">
+        <div class="modal-content edu-card max-w-md">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold mb-0">Localizar Aluno</h2>
+                <button onclick="fecharSearchModal()" class="text-gray-500 hover:text-white">✕</button>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="input-group">
+                    <label>Selecionar Escola</label>
+                    <select id="search-escola" class="w-full bg-white/5 border-white/10 rounded-lg p-2 text-sm">
+                        <option value="">Selecione uma escola...</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Selecionar Turma</label>
+                    <select id="search-turma" class="w-full bg-white/5 border-white/10 rounded-lg p-2 text-sm" disabled>
+                        <option value="">Selecione a turma...</option>
+                    </select>
+                </div>
+
+                <div class="border-t border-white/5 pt-4">
+                    <label class="text-[10px] uppercase font-bold text-cyan-400 mb-2 block">Resultados</label>
+                    <div id="search-results" class="space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
+                        <p class="text-xs text-gray-500 italic">Selecione escola e turma para ver os alunos.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal de Feedback Flutuante (Drawer) -->
+    <div id="feedback-drawer" class="fixed bottom-0 left-0 right-0 z-[3000] hidden">
+        <div class="glass border-t border-white/10 p-6 max-w-2xl mx-auto rounded-t-3xl shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-sm font-bold text-cyan-400 uppercase tracking-widest">Orientação e Feedbacks</h3>
+                <button onclick="fecharFeedbackDrawer()" class="text-gray-500 hover:text-white">✕</button>
+            </div>
+            <div id="drawer-history" class="space-y-4 max-h-60 overflow-y-auto mb-4 custom-scrollbar pr-2">
+                <!-- Comentários injetados aqui -->
+            </div>
+            
+            <div id="drawer-input-area" class="flex gap-2">
+                <textarea id="drawer-text" placeholder="Escreva uma orientação concisa (máx 280 car.)..." class="flex-1 bg-white/5 border-white/10 rounded-xl p-3 text-xs h-16 resize-none" maxlength="280"></textarea>
+                <button id="btn-send-drawer-feedback" class="btn btn-primary px-6 h-16 text-xs font-bold uppercase tracking-widest">Enviar</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

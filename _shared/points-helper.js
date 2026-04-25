@@ -47,9 +47,12 @@ export async function abrirModalPontos(turmaId, escolaId, turmaNome) {
       return;
     }
     studentList.innerHTML = filtered.map(al => `
-      <label class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-white/5 transition-all cursor-pointer border border-transparent has-[:checked]:border-[#00F0FF]/30 has-[:checked]:bg-[#00F0FF]/5">
-        <input type="checkbox" value="${al.aluno_uid || ''}" data-nome="${al.nome}" class="w-3 h-3 rounded border-white/10 bg-white/5 text-[#00F0FF] focus:ring-[#00F0FF]">
-        <span class="text-xs font-medium text-gray-300">${al.nome}</span>
+      <label class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all cursor-pointer border border-transparent has-[:checked]:border-cyan-500/30 has-[:checked]:bg-cyan-500/5 group">
+        <div class="relative flex items-center justify-center">
+          <input type="checkbox" value="${al.aluno_uid || ''}" data-nome="${al.nome}" class="peer appearance-none w-5 h-5 rounded-lg border-2 border-white/10 bg-white/5 checked:bg-cyan-500 checked:border-cyan-500 transition-all cursor-pointer">
+          <i data-lucide="check" class="absolute w-3 h-3 text-gray-900 opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none"></i>
+        </div>
+        <span class="text-sm font-bold text-gray-400 peer-checked:text-white transition-colors">${al.nome}</span>
       </label>
     `).join('');
   };
@@ -155,52 +158,52 @@ export async function abrirModalPontos(turmaId, escolaId, turmaNome) {
 
 function injectModalHTML() {
   const html = `
-    <div id="modal-points-global" class="fixed inset-0 z-[110] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm hidden">
-      <div class="max-w-md w-full glass rounded-t-[2.5rem] sm:rounded-[2.5rem] p-8 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-200">
-        <div class="flex items-center gap-3 mb-6">
-          <div class="w-12 h-12 bg-yellow-500/10 rounded-2xl flex items-center justify-center">
-            <i data-lucide="trophy" class="text-yellow-500 w-6 h-6"></i>
+    <div id="modal-points-global" class="fixed inset-0 z-[110] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm hidden modal-overlay">
+      <div class="max-w-md w-full glass-card p-10 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300">
+        <div class="flex items-center gap-4 mb-8">
+          <div class="w-14 h-14 bg-amber-500/10 rounded-2xl flex items-center justify-center border border-amber-500/20">
+            <i data-lucide="trophy" class="text-amber-500 w-7 h-7"></i>
           </div>
           <div>
-            <h2 id="points-modal-title" class="text-xl font-bold">Atribuir Pontos</h2>
-            <p class="text-xs text-gray-400">Taça das Casas — Temporada 2024.1</p>
+            <h2 id="points-modal-title" class="text-2xl font-black tracking-tighter">Atribuir Pontos</h2>
+            <p class="text-[10px] font-black text-amber-500/60 uppercase tracking-[0.2em] mt-1">Taça das Casas — 2024.1</p>
           </div>
         </div>
 
-        <div class="space-y-5">
+        <div class="space-y-6">
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1">Pontos</label>
-              <input type="number" id="points-value" class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 focus:border-[#00F0FF] outline-none transition-all font-black text-xl text-[#00F0FF]" value="10">
+              <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Pontos</label>
+              <input type="number" id="points-value" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:border-amber-500 outline-none transition-all font-black text-2xl text-amber-400" value="10">
             </div>
             <div class="flex items-end gap-2 pb-1">
-              <button onclick="const v = document.getElementById('points-value'); v.value = parseInt(v.value) - 10" class="p-3 bg-red-500/10 text-red-400 rounded-xl hover:bg-red-500/20 transition-all border border-red-500/20">
-                <i data-lucide="minus-circle" class="w-5 h-5"></i>
+              <button onclick="const v = document.getElementById('points-value'); v.value = parseInt(v.value) - 10" class="p-4 bg-white/5 text-gray-400 rounded-2xl hover:bg-red-500/10 hover:text-red-400 transition-all border border-white/10 hover:border-red-500/20">
+                <i data-lucide="minus" class="w-5 h-5"></i>
               </button>
-              <button onclick="const v = document.getElementById('points-value'); v.value = parseInt(v.value) + 10" class="p-3 bg-green-500/10 text-green-400 rounded-xl hover:bg-green-500/20 transition-all border border-green-500/20">
-                <i data-lucide="plus-circle" class="w-5 h-5"></i>
+              <button onclick="const v = document.getElementById('points-value'); v.value = parseInt(v.value) + 10" class="p-4 bg-white/5 text-gray-400 rounded-2xl hover:bg-emerald-500/10 hover:text-emerald-400 transition-all border border-white/10 hover:border-emerald-500/20">
+                <i data-lucide="plus" class="w-5 h-5"></i>
               </button>
             </div>
           </div>
 
           <div>
-            <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1">Motivo (Transparência)</label>
-            <textarea id="points-reason" rows="2" class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 focus:border-[#00F0FF] outline-none transition-all text-sm" placeholder="Ex: Excelente comportamento ou participação..."></textarea>
+            <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Motivo da Pontuação</label>
+            <textarea id="points-reason" rows="2" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:border-amber-500 outline-none transition-all text-sm placeholder:text-gray-600" placeholder="Ex: Participação exemplar na aula..."></textarea>
           </div>
 
           <div>
-            <div class="flex items-center justify-between mb-1.5 ml-1">
-              <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest">Vincular Estudantes (Opcional)</label>
-              <input type="text" id="points-search" class="bg-transparent text-[10px] text-[#00F0FF] border-b border-white/10 outline-none w-24 focus:w-32 transition-all placeholder:text-gray-600" placeholder="Buscar nome...">
+            <div class="flex items-center justify-between mb-3 ml-1">
+              <label class="block text-xs font-black text-gray-500 uppercase tracking-widest">Estudantes (Opcional)</label>
+              <input type="text" id="points-search" class="bg-transparent text-[10px] font-bold text-cyan-400 border-b border-white/10 outline-none w-24 focus:w-32 transition-all placeholder:text-gray-600" placeholder="Buscar...">
             </div>
-            <div id="points-student-list" class="max-h-40 overflow-y-auto space-y-1 pr-2 custom-scrollbar">
+            <div id="points-student-list" class="max-h-44 overflow-y-auto space-y-2 pr-3 custom-scrollbar">
               <!-- JS Injects -->
             </div>
           </div>
 
-          <div class="flex gap-3 pt-2">
-            <button onclick="window.fecharModalPontos()" class="flex-1 py-4 bg-white/5 hover:bg-white/10 rounded-2xl font-bold text-sm uppercase tracking-widest transition-all">Cancelar</button>
-            <button id="btn-points-save" class="flex-1 py-4 bg-[#00F0FF] text-[#0A0F1C] font-black rounded-2xl hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-[#00F0FF]/20 text-sm uppercase tracking-widest">Confirmar</button>
+          <div class="flex gap-4 pt-4">
+            <button onclick="window.fecharModalPontos()" class="flex-1 py-4 bg-white/5 hover:bg-white/10 rounded-2xl font-bold border border-white/5 transition-all text-gray-400">Cancelar</button>
+            <button id="btn-points-save" class="btn-glow flex-1 py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-amber-500/20">Confirmar</button>
           </div>
         </div>
       </div>

@@ -3,109 +3,119 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard do Professor — Quasar</title>
+  <title>Painel do Mestre — Quasar</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    .glass { background: rgba(17,24,39,0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
-    .btn-action { transition: all 0.2s; }
-    .btn-action:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,240,255,0.2); }
-    
-    /* Correção do contraste nas opções do select */
-    select option { background-color: #1a1b3a; color: white; }
-    select option:hover { background-color: #00F0FF; color: #0A0F1C; }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
 </head>
-<body class="bg-[#0A0F1C] text-white font-['Outfit'] min-h-screen">
+<body class="bg-[#0A0F1C] text-white font-['Outfit'] min-h-screen hero-bg">
+  <div class="geo-grid"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
 
-  <main class="max-w-5xl mx-auto px-4 py-8 md:py-12">
-    <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-6 mb-10">
+  <main class="relative z-10 max-w-6xl mx-auto px-4 py-8 md:py-16">
+    <div class="flex flex-col md:flex-row md:justify-between md:items-end gap-6 md:gap-8 mb-8 md:mb-12 stagger-in">
       <div class="text-center md:text-left">
-        <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-[#00F0FF] to-[#7000FF]">Painel do Mestre</h1>
-        <p class="text-gray-400 mt-2 text-sm md:text-base">Gerencie suas escolas e turmas do Quasar.</p>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] font-black uppercase tracking-widest mb-3 md:mb-4">
+          <i data-lucide="shield-check" class="w-3 h-3"></i> Área Administrativa
+        </div>
+        <h1 class="text-3xl md:text-6xl font-black tracking-tight mb-2">Painel do <span class="stat-value">Mestre</span></h1>
+        <p class="text-gray-400 text-sm md:text-lg max-w-xl opacity-70">Gerencie suas instituições, turmas e acompanhe a evolução dos estudantes.</p>
       </div>
-      <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
-        <a href="/onboarding.html?mode=add" class="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#00F0FF]/10 text-[#00F0FF] border border-[#00F0FF]/20 hover:bg-[#00F0FF]/20 transition-all w-full sm:w-auto">
+      <div class="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
+        <a href="/onboarding.html?mode=add" class="btn btn-secondary w-full sm:w-auto">
           <i data-lucide="plus-circle" class="w-4 h-4"></i>
-          <span class="font-bold text-sm">Vincular outra Escola</span>
+          <span>Vincular Escola</span>
         </a>
-        <a href="/index.html" class="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all w-full sm:w-auto">
-          <i data-lucide="arrow-left" class="w-4 h-4"></i>
-          <span class="font-bold text-sm">Voltar ao Hub</span>
+        <a href="/index.html" class="btn bg-white/5 hover:bg-white/10 border border-white/10 w-full sm:w-auto">
+          <i data-lucide="layout-dashboard" class="w-4 h-4 text-gray-400"></i>
+          <span>Hub Principal</span>
         </a>
       </div>
     </div>
 
-    <div id="loading-state" class="flex justify-center py-20">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00F0FF]"></div>
+    <div id="loading-state" class="flex flex-col items-center justify-center py-24 stagger-in" style="animation-delay: 0.2s">
+      <div class="relative w-16 h-16">
+        <div class="absolute inset-0 rounded-full border-4 border-cyan-500/20"></div>
+        <div class="absolute inset-0 rounded-full border-4 border-cyan-500 border-t-transparent animate-spin"></div>
+      </div>
+      <p class="mt-4 text-gray-500 font-medium animate-pulse">Sincronizando com a rede...</p>
     </div>
 
-    <div id="dashboard-content" class="hidden space-y-8">
+    <div id="dashboard-content" class="hidden space-y-12 stagger-in" style="animation-delay: 0.3s">
       <!-- Escolas serão injetadas aqui -->
     </div>
 
-    <div id="empty-state" class="hidden text-center py-20 glass rounded-3xl">
-      <div class="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
-        <i data-lucide="school" class="w-8 h-8 text-gray-500"></i>
+    <div id="empty-state" class="hidden text-center py-24 glass-card p-12 max-w-2xl mx-auto stagger-in">
+      <div class="w-20 h-20 bg-cyan-500/10 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-cyan-500/20">
+        <i data-lucide="school" class="w-10 h-10 text-cyan-500"></i>
       </div>
-      <h3 class="text-xl font-bold">Nenhuma escola encontrada</h3>
-      <p class="text-gray-400 mt-2 mb-6">Você ainda não está vinculado a nenhuma instituição.</p>
-      <a href="/onboarding.html" class="px-6 py-3 bg-[#00F0FF] text-[#0A0F1C] font-bold rounded-xl btn-action inline-block">
-        Configurar Escola
+      <h3 class="text-2xl font-bold mb-3">Nenhuma escola vinculada</h3>
+      <p class="text-gray-400 mb-8 text-lg">Para começar a gerenciar suas turmas, você precisa vincular sua conta a uma instituição de ensino.</p>
+      <a href="/onboarding.html" class="btn-glow px-10 py-4 rounded-2xl font-bold inline-flex items-center gap-2">
+        Vincular Minha Primeira Escola <i data-lucide="arrow-right" class="w-5 h-5"></i>
       </a>
     </div>
   </main>
 
   <!-- Modal Nova Turma -->
-  <div id="modal-turma" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm hidden">
-    <div class="max-w-md w-full glass rounded-t-[2.5rem] sm:rounded-3xl p-8 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300">
-      <h2 class="text-2xl font-bold mb-2">Nova Turma</h2>
-      <p class="text-gray-400 mb-6" id="modal-escola-nome">Escola...</p>
+  <div id="modal-turma" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm hidden modal-overlay">
+    <div class="max-w-md w-full glass-card p-10 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300">
+      <div class="flex items-center gap-4 mb-8">
+        <div class="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20">
+          <i data-lucide="plus" class="w-6 h-6 text-cyan-400"></i>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold">Nova Turma</h2>
+          <p class="text-gray-500 text-xs font-bold uppercase tracking-widest mt-1" id="modal-escola-nome">Escola...</p>
+        </div>
+      </div>
       
-      <div class="space-y-4">
-          <div class="space-y-4">
-            <div>
-              <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1">Nome da Turma</label>
-              <input type="text" id="nova-turma-nome" class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 focus:border-[#00F0FF] outline-none transition-all placeholder:text-gray-600" placeholder="Ex: 1º Ano A">
-            </div>
-            <div>
-              <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1">Série / Ano</label>
-              <select id="nova-turma-serie" class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 focus:border-[#00F0FF] outline-none transition-all appearance-none text-white">
-                <option value="1">1º Ano</option>
-                <option value="2">2º Ano</option>
-                <option value="3">3º Ano</option>
-              </select>
-            </div>
+      <div class="space-y-6">
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 ml-1">Nome da Turma</label>
+          <input type="text" id="nova-turma-nome" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:border-cyan-500 outline-none transition-all placeholder:text-gray-600" placeholder="Ex: 1º Ano A">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 ml-1">Série / Ano</label>
+          <div class="relative">
+            <select id="nova-turma-serie" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:border-cyan-500 outline-none transition-all appearance-none text-white">
+              <option value="1">1º Ano</option>
+              <option value="2">2º Ano</option>
+              <option value="3">3º Ano</option>
+            </select>
+            <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none"></i>
           </div>
-        <div class="flex gap-3">
-          <button onclick="fecharModal()" class="flex-1 py-3 bg-white/5 hover:bg-white/10 rounded-xl font-medium transition-all">Cancelar</button>
-          <button id="btn-save-turma" class="flex-1 py-3 bg-[#00F0FF] text-[#0A0F1C] font-bold rounded-xl btn-action">Criar Turma</button>
+        </div>
+        <div class="flex gap-4 pt-4">
+          <button onclick="fecharModal()" class="flex-1 py-4 bg-white/5 hover:bg-white/10 rounded-2xl font-bold transition-all border border-white/5">Cancelar</button>
+          <button id="btn-save-turma" class="btn-glow flex-1 py-4 rounded-2xl font-bold">Criar Turma</button>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Modal Compartilhar -->
-  <div id="modal-share" class="fixed inset-0 z-[110] hidden flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm" onclick="window.fecharModalShare()">
-    <div class="glass max-w-sm w-full p-8 rounded-t-[2.5rem] sm:rounded-[2.5rem] text-center space-y-6 animate-in slide-in-from-bottom sm:zoom-in duration-300" onclick="event.stopPropagation()">
-      <div class="w-16 h-16 bg-[#00F0FF]/10 rounded-2xl flex items-center justify-center mx-auto">
-        <i data-lucide="qr-code" class="w-8 h-8 text-[#00F0FF]"></i>
+  <div id="modal-share" class="fixed inset-0 z-[110] hidden flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm modal-overlay" onclick="window.fecharModalShare()">
+    <div class="glass-card max-w-sm w-full p-10 text-center animate-in slide-in-from-bottom sm:zoom-in duration-300" onclick="event.stopPropagation()">
+      <div class="w-20 h-20 bg-cyan-500/10 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-cyan-500/20">
+        <i data-lucide="qr-code" class="w-10 h-10 text-cyan-400"></i>
       </div>
-      <div>
-        <h2 class="text-xl font-bold">Ranking Público</h2>
-        <p class="text-gray-400 text-xs px-4">Compartilhe este link para que qualquer pessoa acompanhe o ranking sem login.</p>
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold mb-2">Ranking Público</h2>
+        <p class="text-gray-400 text-sm px-4 leading-relaxed">Compartilhe este link para que qualquer pessoa acompanhe o ranking das casas sem precisar de login.</p>
       </div>
       
-      <div class="bg-white p-3 rounded-2xl inline-block mx-auto shadow-2xl shadow-[#00F0FF]/20">
+      <div class="bg-white p-5 rounded-3xl inline-block mx-auto shadow-2xl shadow-cyan-500/20 mb-8">
         <img id="qrcode-img" src="" alt="QR Code" class="w-48 h-48">
       </div>
 
-      <div class="space-y-3">
-        <button id="btn-copy-link" class="w-full py-3 bg-[#00F0FF] text-[#0A0F1C] font-bold rounded-xl flex items-center justify-center gap-2 hover:scale-[1.02] transition-all">
-          <i data-lucide="copy" class="w-4 h-4"></i> Copiar Link
+      <div class="space-y-4">
+        <button id="btn-copy-link" class="btn-glow w-full py-4 rounded-2xl flex items-center justify-center gap-3 font-bold">
+          <i data-lucide="copy" class="w-5 h-5"></i> Copiar Link Direto
         </button>
-        <button onclick="window.fecharModalShare()" class="w-full py-3 bg-white/5 rounded-xl font-medium text-gray-400 hover:text-white transition-all text-sm">
+        <button onclick="window.fecharModalShare()" class="w-full py-4 bg-white/5 rounded-2xl font-bold text-gray-400 hover:text-white transition-all text-sm border border-white/5">
           Fechar
         </button>
       </div>
@@ -113,20 +123,25 @@
   </div>
 
   <!-- Modal Gestão de Equipe -->
-  <div id="modal-equipe" class="fixed inset-0 z-[120] hidden flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm" onclick="window.fecharModalEquipe()">
-    <div class="glass max-w-2xl w-full p-6 md:p-10 rounded-t-[2.5rem] sm:rounded-[2.5rem] shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300" onclick="event.stopPropagation()">
-      <div class="flex items-center justify-between mb-8">
-        <div>
-          <h2 class="text-2xl font-bold">Equipe da Escola</h2>
-          <p id="equipe-escola-nome" class="text-xs text-[#00F0FF] font-bold uppercase tracking-widest mt-1">NOME DA ESCOLA</p>
+  <div id="modal-equipe" class="fixed inset-0 z-[120] hidden flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm modal-overlay" onclick="window.fecharModalEquipe()">
+    <div class="glass-card max-w-3xl w-full p-10 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between mb-10">
+        <div class="flex items-center gap-5">
+          <div class="w-14 h-14 rounded-2xl bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20">
+            <i data-lucide="users" class="w-7 h-7 text-cyan-400"></i>
+          </div>
+          <div>
+            <h2 class="text-3xl font-black">Equipe Docente</h2>
+            <p id="equipe-escola-nome" class="text-xs text-cyan-500 font-bold uppercase tracking-widest mt-1">NOME DA ESCOLA</p>
+          </div>
         </div>
-        <button onclick="window.fecharModalEquipe()" class="p-2 hover:bg-white/5 rounded-full transition-all">
+        <button onclick="window.fecharModalEquipe()" class="p-3 hover:bg-white/5 rounded-2xl transition-all border border-transparent hover:border-white/10">
           <i data-lucide="x" class="w-6 h-6 text-gray-500"></i>
         </button>
       </div>
       
-      <div id="lista-equipe" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
-        <!-- Professores serão injetados aqui -->
+      <div id="lista-equipe" class="space-y-4 max-h-[60vh] overflow-y-auto pr-3 custom-scrollbar">
+        <!-- Professores serão injetadas aqui -->
       </div>
     </div>
   </div>
@@ -196,21 +211,25 @@
       const empty = document.getElementById('empty-state');
 
       try {
-        // 1. Buscar escolas onde é dono
-        const qEscolasOwner = query(collection(db, "escolas"), where("professor_uid", "==", user.uid));
-        const snapEscolas = await getDocs(qEscolasOwner);
+        // 1. Coletar todos os IDs de escola (Donos + Vínculos)
+        const setEscolas = new Set();
         
-        let escolasIds = snapEscolas.docs.map(d => d.id);
+        // Escolas onde é dono
+        const qOwner = query(collection(db, "escolas"), where("professor_uid", "==", user.uid));
+        const snapOwner = await getDocs(qOwner);
+        snapOwner.docs.forEach(d => setEscolas.add(d.id));
         
-        // 2. Incluir escolas dos vinculos (vinculadas em onboarding ou assumidas)
-        const vinculos = profile?.vinculos || [];
-        if (profile?.escola_id && !vinculos.includes(profile.escola_id)) {
-          vinculos.push(profile.escola_id);
+        // Escolas dos vínculos
+        if (profile?.vinculos) {
+          profile.vinculos.forEach(id => setEscolas.add(id));
+        }
+        
+        // Escola primária
+        if (profile?.escola_id) {
+          setEscolas.add(profile.escola_id);
         }
 
-        vinculos.forEach(id => {
-          if (!escolasIds.includes(id)) escolasIds.push(id);
-        });
+        const escolasIds = Array.from(setEscolas);
 
         if (escolasIds.length === 0) {
           loading.classList.add('hidden');
@@ -219,101 +238,155 @@
         }
 
         dashboard.innerHTML = '';
+        
+        // 2. Carregar e Renderizar cada escola
         for (const escolaId of escolasIds) {
-          const escolaDoc = await getDoc(doc(db, "escolas", escolaId));
-          if (!escolaDoc.exists()) continue;
+          try {
+            const escolaDoc = await getDoc(doc(db, "escolas", escolaId));
+            if (!escolaDoc.exists()) continue;
 
-          const escola = { id: escolaDoc.id, ...escolaDoc.data() };
-          const qTurmas = query(collection(db, "escolas", escola.id, "turmas"));
-          const snapTurmas = await getDocs(qTurmas);
-          
-          const turmasComContagem = await Promise.all(snapTurmas.docs.map(async d => {
-            const t = { id: d.id, ...d.data() };
-            // Contagem dinâmica de matrículas nesta turma
-            const qCount = query(collection(db, "matriculas"), where("turma_id", "==", t.id), where("escola_id", "==", escola.id));
-            const countSnap = await getCountFromServer(qCount);
-            t.alunoCount = countSnap.data().count;
-            return t;
-          }));
+            const escola = { id: escolaDoc.id, ...escolaDoc.data() };
+            const qTurmas = query(collection(db, "escolas", escola.id, "turmas"));
+            const snapTurmas = await getDocs(qTurmas);
+            
+            const turmasComContagem = await Promise.all(snapTurmas.docs.map(async d => {
+              const t = { id: d.id, ...d.data() };
+              const qCount = query(collection(db, "matriculas"), where("turma_id", "==", t.id), where("escola_id", "==", escola.id));
+              const countSnap = await getCountFromServer(qCount);
+              t.alunoCount = countSnap.data().count;
+              return t;
+            }));
 
-          // Ordenar por série (1, 2, 3)
-          turmasComContagem.sort((a, b) => (a.serie || 0) - (b.serie || 0));
-
-          dashboard.appendChild(renderizarEscola(escola, turmasComContagem, user));
+            turmasComContagem.sort((a, b) => (a.serie || 0) - (b.serie || 0));
+            dashboard.appendChild(renderizarEscola(escola, turmasComContagem, user, dashboard.children.length === 0));
+          } catch (err) {
+            console.warn(`Erro ao carregar escola ${escolaId}:`, err);
+          }
         }
 
         loading.classList.add('hidden');
         dashboard.classList.remove('hidden');
-        lucide.createIcons();
+        if (window.lucide) lucide.createIcons();
       } catch (e) {
-        console.error(e);
+        console.error("Erro geral no dashboard:", e);
+        loading.innerHTML = `<p class="text-red-400">Erro ao carregar painel. Tente recarregar a página.</p>`;
       }
     }
 
-    function renderizarEscola(escola, turmas, user) {
+    function renderizarEscola(escola, turmas, user, isExpanded) {
       const div = document.createElement('div');
-      div.className = 'glass rounded-3xl p-4 md:p-8';
+      div.className = `glass-card p-0 overflow-hidden transition-all duration-500 mb-8`;
+      
+      const contentId = `content-${escola.id}`;
+      const chevronId = `chevron-${escola.id}`;
+      
       div.innerHTML = `
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-          <div>
-            <h2 class="text-xl md:text-2xl font-bold">${escola.nome}</h2>
-            <p class="text-gray-500 text-xs md:text-sm">ID: ${escola.id}</p>
-          </div>
-          <div class="flex flex-col md:flex-row items-stretch md:items-center gap-2 w-full md:w-auto">
-            ${escola.codigo_acesso ? `
-              <div class="flex items-center gap-2 px-4 py-3 bg-yellow-500/10 border border-yellow-500/20 rounded-xl">
-                <span class="text-[10px] font-bold text-yellow-500 uppercase tracking-widest">Código:</span>
-                <span class="font-mono font-bold text-yellow-200 tracking-wider">${escola.codigo_acesso}</span>
+        <!-- Cabeçalho da Escola (Sempre Visível) -->
+        <div onclick="window.toggleEscola('${escola.id}')" class="cursor-pointer flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-6 md:p-8 hover:bg-white/5 transition-colors">
+          <div class="flex items-center gap-4 md:gap-5">
+            <div class="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20 shadow-lg shadow-cyan-500/5">
+              <i data-lucide="school" class="w-6 h-6 md:w-8 md:h-8 text-cyan-400"></i>
+            </div>
+            <div>
+              <h2 class="text-xl md:text-2xl font-black text-white">${escola.nome}</h2>
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
+                <span class="text-[9px] md:text-[10px] font-black text-cyan-500/60 uppercase tracking-widest bg-cyan-500/5 px-2 py-0.5 rounded border border-cyan-500/10">${turmas.length} Turmas</span>
+                ${escola.codigo_acesso ? `
+                  <span class="flex items-center gap-1.5 px-2 py-0.5 bg-amber-500/10 border border-amber-500/20 rounded text-amber-500">
+                    <span class="text-[8px] font-black uppercase tracking-tighter opacity-70">Acesso:</span>
+                    <span class="font-mono font-bold text-[10px] tracking-widest">${escola.codigo_acesso}</span>
+                  </span>
+                ` : ''}
+                <span class="text-gray-600 hidden md:inline">•</span>
+                <p class="text-gray-500 font-mono text-[9px] md:text-xs uppercase tracking-widest truncate max-w-[150px] md:max-w-none">ID: ${escola.id}</p>
               </div>
-            ` : ''}
-            <div class="flex gap-2">
-              <button onclick="window.abrirModalEquipe('${escola.id}', '${escola.nome}', '${escola.professor_uid}')" class="flex-1 md:flex-none p-3 bg-white/5 text-gray-400 border border-white/10 rounded-xl hover:bg-white/10 transition-all text-sm font-bold" title="Ver Equipe Docente">
-                <i data-lucide="users" class="w-5 h-5 md:w-4 md:h-4"></i>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 w-full md:w-auto mt-2 md:mt-0">
+            <div class="flex gap-2 flex-1 md:flex-none">
+              <button onclick="event.stopPropagation(); window.abrirModalEquipe('${escola.id}', '${escola.nome}', '${escola.professor_uid}')" class="flex-1 md:flex-none p-3 bg-white/5 text-gray-400 border border-white/10 rounded-xl hover:bg-white/10 hover:text-white transition-all" title="Equipe Docente">
+                <i data-lucide="users" class="w-4 h-4 md:w-5 md:h-5"></i>
               </button>
-              <button onclick="window.abrirModalShare('${escola.id}')" class="flex-1 md:flex-none p-3 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-xl hover:bg-blue-500/20 transition-all text-sm font-bold" title="Compartilhar Ranking Público">
-                <i data-lucide="share-2" class="w-5 h-5 md:w-4 md:h-4"></i>
+              <button onclick="event.stopPropagation(); window.abrirModalShare('${escola.id}')" class="flex-1 md:flex-none p-3 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-xl hover:bg-cyan-500/20 transition-all" title="Link Público">
+                <i data-lucide="share-2" class="w-4 h-4 md:w-5 md:h-5"></i>
               </button>
             </div>
-            <button onclick="window.abrirModal('${escola.id}', '${escola.nome}')" class="flex-[3] md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-[#00F0FF]/10 text-[#00F0FF] border border-[#00F0FF]/20 rounded-xl hover:bg-[#00F0FF]/20 transition-all text-sm font-bold">
+            
+            <button onclick="event.stopPropagation(); window.abrirModal('${escola.id}', '${escola.nome}')" class="btn-glow px-4 py-3 rounded-xl text-[10px] md:text-xs font-black uppercase tracking-widest flex items-center gap-2 flex-1 md:flex-none justify-center">
               <i data-lucide="plus" class="w-4 h-4"></i>
               Nova Turma
             </button>
+
+            <div id="${chevronId}" class="ml-2 text-gray-600 transition-transform duration-500 ${isExpanded ? 'rotate-180' : ''}">
+              <i data-lucide="chevron-down" class="w-5 h-5"></i>
+            </div>
           </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-          ${turmas.map(t => {
-            const souRegente = t.professores?.includes(user.uid);
-            
-            return `
-              <div class="p-5 ${souRegente ? 'bg-[#00F0FF]/5 border-[#00F0FF]/20 shadow-[0_0_20px_rgba(0,240,255,0.05)]' : 'bg-white/5 border-white/5 opacity-80'} border rounded-2xl flex items-center justify-between group hover:bg-white/10 transition-all">
-                <div class="min-w-0">
-                  <div class="flex items-center gap-2 mb-0.5">
-                    <div class="font-bold text-lg md:text-base truncate">${t.nome}</div>
+
+        <!-- Gaveta de Turmas (Colapsável) -->
+        <div id="${contentId}" class="transition-all duration-500 ease-in-out ${isExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'} overflow-hidden">
+          <div class="p-6 md:p-10 pt-0 border-t border-white/5">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mt-8">
+              ${turmas.map(t => {
+                const souRegente = t.professores?.includes(user.uid);
+                return `
+                  <div class="edu-card group ${souRegente ? '' : 'opacity-60 grayscale hover:grayscale-0 transition-all'}">
+                    <div class="flex justify-between items-start mb-4 md:mb-6">
+                      <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-cyan-500/50 transition-colors">
+                        <i data-lucide="users" class="w-5 h-5 md:w-6 md:h-6 text-gray-400 group-hover:text-cyan-400"></i>
+                      </div>
+                      <span class="chip text-[9px] md:text-xs ${souRegente ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' : 'bg-gray-500/10 text-gray-400 border border-gray-500/20'}">
+                        ${souRegente ? 'Sua Turma' : 'Outro Professor'}
+                      </span>
+                    </div>
+
+                    <h3 class="text-lg md:text-xl font-bold mb-1 text-white">${t.nome}</h3>
+                    <p class="text-[10px] md:text-sm text-gray-500 font-medium mb-4 md:mb-6 uppercase tracking-wider">${t.alunoCount || 0} Estudantes ativos</p>
+                    
+                    <div class="flex items-center gap-2 pt-3 md:pt-4 border-t border-white/5">
+                      ${souRegente ? `
+                        <button onclick="window.abrirModalPontos('${t.id}', '${escola.id}', '${t.nome}')" class="flex-1 py-2.5 md:py-3 bg-amber-500/10 text-amber-500 rounded-xl hover:bg-amber-500/20 transition-all border border-amber-500/20 flex items-center justify-center gap-2 font-black text-[10px]" title="Atribuir Pontos">
+                          <i data-lucide="trophy" class="w-3.5 h-3.5"></i> PONTUAR
+                        </button>
+                        <a href="/gerenciar-turma.html?escola=${escola.id}&turma=${t.id}" class="p-2.5 md:p-3 bg-white/5 border border-white/10 hover:bg-white/20 rounded-xl text-gray-400 hover:text-white transition-all" title="Gerenciar">
+                          <i data-lucide="settings" class="w-4 h-4 md:w-5 md:h-5"></i>
+                        </a>
+                      ` : `
+                        <button onclick="window.assumirTurmaRapido('${escola.id}', '${t.id}', '${t.nome}')" class="w-full py-2.5 md:py-3 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-xl hover:bg-cyan-500/20 transition-all text-[10px] font-black uppercase tracking-widest">
+                          ASSUMIR REGÊNCIA
+                        </button>
+                      `}
+                    </div>
                   </div>
-                  <div class="text-xs text-gray-500 uppercase tracking-wider font-semibold">${t.alunoCount || 0} Alunos</div>
+                `;
+              }).join('') || `
+                <div class="col-span-full py-12 flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-3xl bg-white/[0.02]">
+                  <i data-lucide="info" class="w-8 h-8 text-gray-600 mb-2"></i>
+                  <p class="text-gray-500 italic font-medium">Nenhuma turma cadastrada nesta escola.</p>
                 </div>
-                
-                <div class="flex items-center gap-2">
-                  ${souRegente ? `
-                    <button onclick="window.abrirModalPontos('${t.id}', '${escola.id}', '${t.nome}')" class="p-3 bg-yellow-500/10 text-yellow-500 rounded-xl hover:bg-yellow-500/20 transition-all border border-yellow-500/20" title="Atribuir Pontos">
-                      <i data-lucide="trophy" class="w-5 h-5 md:w-4 md:h-4"></i>
-                    </button>
-                    <a href="/gerenciar-turma.html?escola=${escola.id}&turma=${t.id}" class="p-3 bg-white/5 border border-white/5 hover:bg-white/10 rounded-xl text-gray-400 md:hover:text-white transition-all" title="Configurar Turma">
-                      <i data-lucide="settings" class="w-5 h-5 md:w-4 md:h-4"></i>
-                    </a>
-                  ` : `
-                    <button onclick="window.assumirTurmaRapido('${escola.id}', '${t.id}', '${t.nome}')" class="px-4 py-3 bg-[#00F0FF]/10 text-[#00F0FF] border border-[#00F0FF]/20 rounded-xl hover:bg-[#00F0FF]/20 transition-all text-xs font-black uppercase tracking-tighter">
-                      VINCULAR
-                    </button>
-                  `}
-                </div>
-              </div>
-            `;
-          }).join('') || '<p class="text-gray-500 italic col-span-full py-4 text-center">Nenhuma turma cadastrada nesta escola.</p>'}
+              `}
+            </div>
+          </div>
         </div>
       `;
       return div;
     }
+
+    window.toggleEscola = (id) => {
+      const content = document.getElementById(`content-${id}`);
+      const chevron = document.getElementById(`chevron-${id}`);
+      
+      if (content.classList.contains('max-h-0')) {
+        content.classList.remove('max-h-0', 'opacity-0');
+        content.classList.add('max-h-[2000px]', 'opacity-100');
+        chevron.classList.add('rotate-180');
+      } else {
+        content.classList.add('max-h-0', 'opacity-0');
+        content.classList.remove('max-h-[2000px]', 'opacity-100');
+        chevron.classList.remove('rotate-180');
+      }
+    };
 
     window.abrirModalPontos = abrirModalPontos;
 
@@ -356,23 +429,28 @@
           const souAdmin = auth.currentUser.uid === adminUid;
 
           return `
-            <div class="p-5 rounded-3xl bg-white/5 border border-white/10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-              <div class="min-w-0">
-                <div class="flex items-center gap-2 mb-1">
-                  <span class="font-bold text-gray-100">${p.nome || "Professor"}</span>
-                  ${isAdmin ? '<span class="text-[9px] bg-[#00F0FF]/20 text-[#00F0FF] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border border-[#00F0FF]/30">Administrador</span>' : ''}
+            <div class="p-6 rounded-3xl bg-white/5 border border-white/10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 group hover:bg-white/10 transition-all">
+              <div class="flex items-center gap-5 min-w-0">
+                <div class="w-14 h-14 rounded-2xl bg-gray-800 flex items-center justify-center border border-white/5 group-hover:border-cyan-500/30 transition-all">
+                  <i data-lucide="user" class="w-6 h-6 text-gray-500 group-hover:text-cyan-400"></i>
                 </div>
-                <div class="text-xs text-gray-500 truncate mb-3">${p.email}</div>
-                
-                <div class="flex flex-wrap gap-1.5">
-                  ${turmasRegente.map(t => `
-                    <span class="text-[10px] bg-white/5 text-gray-400 px-2.5 py-1 rounded-lg border border-white/5">${t.nome}</span>
-                  `).join('') || '<span class="text-[10px] text-gray-600 italic">Nenhuma turma vinculada</span>'}
+                <div class="min-w-0">
+                  <div class="flex items-center gap-3 mb-1">
+                    <span class="font-bold text-lg text-white">${p.nome || "Professor"}</span>
+                    ${isAdmin ? '<span class="chip bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 text-[10px]">Administrador</span>' : ''}
+                  </div>
+                  <div class="text-sm text-gray-500 truncate mb-3 font-medium">${p.email}</div>
+                  
+                  <div class="flex flex-wrap gap-2">
+                    ${turmasRegente.map(t => `
+                      <span class="chip bg-white/5 text-gray-400 border border-white/10 text-[10px]">${t.nome}</span>
+                    `).join('') || '<span class="text-xs text-gray-600 italic">Nenhuma turma vinculada</span>'}
+                  </div>
                 </div>
               </div>
 
               ${(souAdmin && !isAdmin) ? `
-                <button onclick="window.removerProfessorDaEscola('${p.id}', '${escolaId}')" class="w-full md:w-auto px-4 py-2 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl hover:bg-red-500/20 transition-all text-xs font-bold">
+                <button onclick="window.removerProfessorDaEscola('${p.id}', '${escolaId}')" class="w-full md:w-auto px-6 py-3 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl hover:bg-red-500/20 transition-all text-xs font-black uppercase tracking-widest">
                   Desvincular
                 </button>
               ` : ''}

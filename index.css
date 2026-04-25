@@ -8,12 +8,41 @@
     animation: float 10s infinite alternate ease-in-out;
     pointer-events: none;
 }
-.blob-1 { width: 400px; height: 400px; background: rgba(112, 0, 255, 0.2); top: -10%; left: -10%; }
-.blob-2 { width: 500px; height: 500px; background: rgba(0, 240, 255, 0.15); bottom: -20%; right: -10%; animation-delay: -5s; }
-.blob-3 { width: 300px; height: 300px; background: rgba(16, 185, 129, 0.12); top: 40%; left: 40%; animation-duration: 15s; }
+
+.blob-1 {
+    width: 400px;
+    height: 400px;
+    background: rgba(112, 0, 255, 0.2);
+    top: -10%;
+    left: -10%;
+}
+
+.blob-2 {
+    width: 500px;
+    height: 500px;
+    background: rgba(0, 240, 255, 0.15);
+    bottom: -20%;
+    right: -10%;
+    animation-delay: -5s;
+}
+
+.blob-3 {
+    width: 300px;
+    height: 300px;
+    background: rgba(16, 185, 129, 0.12);
+    top: 40%;
+    left: 40%;
+    animation-duration: 15s;
+}
+
 @keyframes float {
-    0%   { transform: translate(0, 0) scale(1); }
-    100% { transform: translate(40px, 40px) scale(1.1); }
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    100% {
+        transform: translate(40px, 40px) scale(1.1);
+    }
 }
 
 /* Layout principal */
@@ -23,7 +52,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 1rem; /* Padding reduzido para mobile */
+    padding: 1rem;
+    /* Padding reduzido para mobile */
 }
 
 @media (min-width: 768px) {
@@ -48,7 +78,8 @@
 /* Grid de cards - Mobile First (Grid Compacto) */
 .container {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2 colunas no mobile */
+    grid-template-columns: repeat(2, 1fr);
+    /* 2 colunas no mobile */
     gap: 0.75rem;
     width: 100%;
     max-width: 1200px;
@@ -86,8 +117,10 @@
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 20px;
-    padding: 1.25rem 1rem; /* Padding reduzido para mobile */
-    min-height: 160px; /* Altura mínima para alinhar botões */
+    padding: 1.25rem 1rem;
+    /* Padding reduzido para mobile */
+    min-height: 160px;
+    /* Altura mínima para alinhar botões */
     text-decoration: none;
     color: #ffffff;
     transition: all 0.35s ease;
@@ -106,9 +139,10 @@
 }
 
 .quest-card .icon {
-    font-size: 2.5rem; /* Ícone menor no mobile */
+    font-size: 2.5rem;
+    /* Ícone menor no mobile */
     margin-bottom: 0.75rem;
-    filter: drop-shadow(0 0 12px rgba(255,255,255,0.2));
+    filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.2));
 }
 
 @media (min-width: 768px) {
@@ -119,7 +153,8 @@
 }
 
 .quest-card h2 {
-    font-size: 1rem; /* Título menor no mobile */
+    font-size: 1rem;
+    /* Título menor no mobile */
     font-weight: 700;
     margin-bottom: 0.5rem;
     color: #f1f5f9;
@@ -133,7 +168,8 @@
 }
 
 .quest-card p {
-    display: none; /* Ocultar descrição no mobile compacto */
+    display: none;
+    /* Ocultar descrição no mobile compacto */
     font-size: 0.9rem;
     line-height: 1.6;
     color: #64748b;
@@ -148,7 +184,8 @@
 }
 
 .btn-enter {
-    margin-top: auto; /* Empurra o botão para a base do card */
+    margin-top: auto;
+    /* Empurra o botão para a base do card */
     padding: 8px 12px;
     background: rgba(0, 240, 255, 0.08);
     border: 1px solid rgba(0, 240, 255, 0.2);
@@ -169,9 +206,16 @@
 }
 
 @media (max-width: 640px) {
-    .blob { opacity: 0.3; }
+    .blob {
+        opacity: 0.3;
+    }
 }
 
 /* Role-based visibility */
-body:not([data-role="professor"]) .professor-only { display: none !important; }
-body:not([data-role="aluno"]) .aluno-only { display: none !important; }
+body:not([data-role="professor"]) .professor-only {
+    display: none !important;
+}
+
+body:not([data-role="aluno"]) .aluno-only {
+    display: none !important;
+}

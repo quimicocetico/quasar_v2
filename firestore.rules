@@ -10,6 +10,10 @@ service cloud.firestore {
       return isAutenticado() && 
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.papel == 'professor';
     }
+    function isAluno() {
+      return isAutenticado() && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.papel == 'aluno';
+    }
 
     // ─── USUÁRIOS ────────────────────────────────────────────────
     match /users/{uid} {
@@ -64,6 +68,63 @@ service cloud.firestore {
         allow read: if true;
         allow create: if isProfessor();
         allow update, delete: if false;
+      }
+    }
+
+    // =====================================================================
+    // FERRAMENTA: INICIAÇÃO CIENTÍFICA (Gestão de Projetos)
+    // =====================================================================
+    
+    match /projetos/{projetoId} {
+      // 1. LEITURA DO PROJETO
+      // 'get' permite ler se souber o ID exato (Link Mágico). 'list' é bloqueado para visitantes.
+      allow get: if true; 
+      allow list: if isAutenticado() && (
+        request.auth.uid == resource.data.dados_gerais.professorId || 
+        request.auth.token.email in resource.data.membros_emails
+      );
+
+      // 2. CRIAÇÃO E ATUALIZAÇÃO DO PROJETO
+      allow create: if isProfessor() && request.resource.data.dados_gerais.professorId == request.auth.uid;
+      allow update: if isAutenticado() && (
+        request.auth.uid == resource.data.dados_gerais.professorId || // Professor dono pode atualizar tudo
+        // Aluno convidado só pode atualizar para aceitar o convite
+        request.auth.token.email in resource.data.membros_emails 
+      );
+
+      // -------------------------------------------------------------------
+      // SUBCOLEÇÃO: ETAPAS
+      // -------------------------------------------------------------------
+      match /etapas/{etapaId} {
+        // Leitura segue a mesma lógica do projeto principal
+        allow read: if true; // Protegido pelo ID do projeto e da etapa
+        allow write: if isAutenticado() && (
+          get(/databases/$(database)/documents/projetos/$(projetoId)).data.dados_gerais.professorId == request.auth.uid ||
+          request.auth.token.email in get(/databases/$(database)/documents/projetos/$(projetoId)).data.membros_emails
+        );
+
+        // -----------------------------------------------------------------
+        // SUBCOLEÇÃO: SUBMISSÕES (Diário de Bordo - Imutável)
+        // -----------------------------------------------------------------
+        match /submissoes/{submissaoId} {
+          allow read: if true;
+          // Alunos submetem, mas não podem alterar nem apagar submissões antigas (Histórico)
+          allow create: if isAutenticado() && 
+            request.auth.token.email in get(/databases/$(database)/documents/projetos/$(projetoId)).data.membros_emails;
+          allow update, delete: if false; // NUNCA sobrescrever. Falha rápida (Fail Fast)
+
+          // ---------------------------------------------------------------
+          // SUBCOLEÇÃO: FEEDBACKS
+          // ---------------------------------------------------------------
+          match /feedbacks/{feedbackId} {
+            allow read: if true;
+            // Visitante (Coorientador) PODE criar feedback SE o token enviado bater com o token do projeto
+            allow create: if 
+              (isProfessor() && get(/databases/$(database)/documents/projetos/$(projetoId)).data.dados_gerais.professorId == request.auth.uid) ||
+              request.resource.data.token == get(/databases/$(database)/documents/projetos/$(projetoId)).data.dados_gerais.token_coorientador;
+            allow update, delete: if false;
+          }
+        }
       }
     }
 

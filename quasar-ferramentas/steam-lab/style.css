@@ -1,0 +1,263 @@
+@import "../../_shared/tokens.css";
+@import "../../global.css";
+
+.hidden { display: none !important; }
+
+/* 🧪 STEAM Lab Theme Overrides */
+:root {
+    --ic-accent: var(--accent-cyan, #00D4FF);
+    --ic-border: rgba(0, 212, 255, 0.1);
+    --ic-surface: rgba(17, 24, 39, 0.6);
+}
+
+body {
+    background-attachment: fixed;
+    background-image: 
+        radial-gradient(circle at 10% 10%, rgba(0, 212, 255, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 90% 90%, rgba(112, 0, 255, 0.05) 0%, transparent 40%);
+}
+
+#app-container {
+    max-width: 1200px;
+    padding: 1.5rem;
+    margin: 30px auto 0 auto;
+}
+
+/* Glassmorphism Utilities */
+.glass {
+    background: rgba(17, 24, 39, 0.7) !important;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Navegação */
+.btn-icon-sm {
+    background: transparent !important;
+    border: none !important;
+    padding: 2px !important;
+    cursor: pointer;
+    color: rgba(255,255,255,0.3);
+    font-size: 10px;
+    transition: all 0.2s;
+    box-shadow: none !important;
+    min-height: auto !important;
+    width: auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+.btn-icon-sm:hover { transform: scale(1.1); color: var(--ic-accent); }
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--ic-accent);
+    text-decoration: none;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+/* MCAT Stage Cards */
+.stage-card {
+    background: rgba(17, 24, 39, 0.4);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 24px;
+    padding: 1.5rem;
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.stage-card.collapsed .workspace-grid {
+    display: none;
+}
+
+.stage-card.collapsed .btn-feedback-float {
+    display: none;
+}
+
+.stage-card.expanded {
+    cursor: default;
+    border-color: rgba(0, 212, 255, 0.3);
+    box-shadow: 0 0 40px rgba(0, 212, 255, 0.1);
+}
+
+.stage-card.locked {
+    opacity: 0.3;
+    filter: grayscale(0.8);
+    pointer-events: none;
+}
+
+.stage-card.approved {
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+.stage-number {
+    position: absolute;
+    top: -15px;
+    left: 20px;
+    background: var(--ic-accent);
+    color: black;
+    font-size: 10px;
+    font-weight: 900;
+    padding: 4px 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+}
+
+/* Custom Checkbox */
+.custom-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+    padding: 8px;
+    border-radius: 10px;
+    transition: background 0.2s;
+}
+
+.custom-checkbox:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.custom-checkbox input {
+    display: none;
+}
+
+.checkmark {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.custom-checkbox input:checked + .checkmark {
+    background: var(--ic-accent);
+    border-color: var(--ic-accent);
+}
+
+.custom-checkbox input:checked + .checkmark::after {
+    content: '✓';
+    color: black;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Status Labels for Collapsed State */
+.status-label {
+    font-size: 9px;
+    font-weight: 900;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+}
+.status-label.aprovado { background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.2); }
+.status-label.aguardando { background: rgba(245, 158, 11, 0.15); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.2); }
+.status-label.correcao { background: rgba(239, 68, 68, 0.15); color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+.status-label.vazio { background: rgba(255, 255, 255, 0.05); color: rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.05); }
+
+/* Workspace Layout */
+.workspace-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+    .workspace-grid {
+        grid-template-columns: 2fr 1fr;
+    }
+}
+
+/* Floating Feedback Button */
+.btn-feedback-float {
+    position: absolute;
+    bottom: -20px;
+    right: 30px;
+    background: #7000FF;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 20px rgba(112, 0, 255, 0.4);
+    cursor: pointer;
+    transition: all 0.3s;
+    z-index: 10;
+}
+
+.btn-feedback-float:hover {
+    transform: translateY(-5px) scale(1.1);
+    box-shadow: 0 12px 30px rgba(112, 0, 255, 0.6);
+}
+
+/* Editor Styles */
+.editor-area textarea {
+    width: 100%;
+    min-height: 250px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 1.5rem;
+    color: var(--text-primary);
+    font-size: 13px;
+    line-height: 1.6;
+    resize: vertical;
+}
+
+.editor-area textarea:focus {
+    border-color: var(--ic-accent);
+    background: rgba(0, 212, 255, 0.03);
+}
+
+/* Feedback Drawer Animation */
+#feedback-drawer {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(100%);
+}
+
+#feedback-drawer.active {
+    transform: translateY(0);
+}
+
+.feedback-bubble {
+    padding: 12px;
+    border-radius: 16px;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar { width: 5px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+
+/* Dashboard Cards (Refined) */
+.project-card {
+    background: var(--ic-surface);
+    border: 1px solid var(--ic-border);
+    border-radius: 20px;
+    padding: 1.5rem;
+    transition: all 0.3s;
+}
+
+.project-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--ic-accent);
+}

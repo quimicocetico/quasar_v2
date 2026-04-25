@@ -1,0 +1,62 @@
+🎨 DESIGN SYSTEM QUASAR v1.0
+PALETA DE CORES
+TIPOGRAFIA
+COMPONENTES
+🔘 Botões
+
+Primary (btn-glow)
+
+Background: var(--accent-warm) (#FF6B35)
+Hover: scale(1.05) + shadow(0 0 30px rgba(255,107,53,0.4))
+Radius: 12-24px
+Padding: 12-16px verticalmente, 24-32px horizontalmente
+Secondary (btn-secondary)
+
+Background: rgba(0,212,255,0.1)
+Border: 1px solid rgba(0,212,255,0.3)
+Hover: Background opaco aumenta para rgba(0,212,255,0.2)
+Radius: 12px
+🎴 Cards (edu-card)
+
+🔷 Icon Containers
+
+📥 Inputs & Formulários
+
+ANIMAÇÕES & EFEITOS
+ESPAÇAMENTO (Spacing Scale)
+SOMBRAS & DEPTH
+PADRÕES DE DESIGN
+🎮 Gamification Elements
+
+XP Toast: Top-right fixed, slide-in animation, auto-dismiss 3s
+Achievement Modal: Backdrop blur, centered, achievement-slide animation
+Confetti: 30 partículas aleatórias, fall animation 2-3s
+Progress Rings: SVG circles com stroke-dasharray animation
+📱 Responsividade
+
+Mobile: Stack vertical, nav mobile menu toggle
+Tablet: 2 colunas em grids, nav normal
+Desktop: Full layout, 4 colunas em grids, sticky nav
+🌙 Dark Mode (Sistema Base)
+
+Todo o sistema é dark-first. Cores são calculadas com opacidades para criar hierarquia:
+
+Primary text: 100% opacity
+Secondary text: 60% opacity
+Tertiary: 40% opacity
+Disabled: 20% opacity
+COMPONENTES GAMIFICADOS
+🎯 Quiz System
+
+🧠 Memory Game
+
+🧪 Drag & Drop
+
+TOKENS CSS CUSTOMIZÁVEIS (Edit Panel)
+GUIA DE USO RÁPIDO
+Para botões primários: Use .btn-glow com warm accent
+Para cards: Use .edu-card com hover effects
+Para animações: Use as classes stagger-in, xp-badge, achievement-unlock
+Para gamificação: Toast + Confetti + Achievement Modal
+Para responsividade: Grid cols 1 (mobile) → 2 (tablet) → 4 (desktop)
+Pronto! 🚀 Você tem agora o Design System Quasar completo documentado e implementado. Todos os componentes, cores, animações e padrões estão na estrutura e no arquivo!

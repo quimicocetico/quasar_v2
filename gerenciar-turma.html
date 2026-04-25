@@ -6,100 +6,101 @@
   <title>Gerenciar Turma — Quasar</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    .glass { background: rgba(17,24,39,0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
-    .card-hover:hover { border-color: rgba(0,240,255,0.3); box-shadow: 0 0 20px rgba(0,240,255,0.1); }
-    
-    /* Correção do contraste nas opções do select */
-    select option { background-color: #1a1b3a; color: white; }
-    select option:hover { background-color: #00F0FF; color: #0A0F1C; }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <script type="module" src="/app.js"></script>
 </head>
-<body class="bg-[#0A0F1C] text-white font-['Outfit'] min-h-screen">
+<body class="bg-[#0A0F1C] text-white font-['Outfit'] min-h-screen hero-bg">
+  <div class="geo-grid"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-3"></div>
 
-  <main class="max-w-6xl mx-auto px-4 py-8 md:py-12">
+  <main class="relative z-10 max-w-7xl mx-auto px-4 py-8 md:py-16">
     <!-- Header -->
-    <div class="flex flex-col md:flex-row justify-between items-center md:items-center gap-6 mb-12">
+    <div class="flex flex-col md:flex-row justify-between items-center gap-8 mb-16 stagger-in">
       <div class="w-full text-center md:text-left">
-        <a href="/dashboard-professor.html" class="text-sm text-gray-500 hover:text-[#00F0FF] inline-flex items-center gap-2 mb-4 transition-colors">
+        <a href="/dashboard-professor.html" class="inline-flex items-center gap-2 text-sm font-bold text-cyan-500/60 hover:text-cyan-400 transition-colors mb-6 uppercase tracking-widest">
           <i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar ao Painel
         </a>
-        <div class="flex flex-col md:flex-row items-center gap-4">
-          <div id="turma-avatar-display" class="w-20 h-20 md:w-16 md:h-16 rounded-3xl bg-gradient-to-br from-[#00F0FF] to-[#7000FF] flex items-center justify-center text-4xl md:text-3xl shadow-lg shadow-[#00F0FF]/20">
-            <i data-lucide="users" class="w-10 h-10 md:w-8 md:h-8 text-white"></i>
+        <div class="flex flex-col md:flex-row items-center gap-6">
+          <div id="turma-avatar-display" class="w-24 h-24 md:w-20 md:h-20 rounded-[2rem] bg-gradient-to-br from-cyan-500 to-emerald-500 flex items-center justify-center text-5xl md:text-4xl shadow-2xl shadow-cyan-500/20 border-4 border-white/10">
+            <i data-lucide="users" class="w-12 h-12 md:w-10 md:h-10 text-white"></i>
           </div>
-          <div class="mt-2 md:mt-0">
-            <h1 id="turma-nome-display" class="text-3xl md:text-4xl font-black tracking-tight leading-tight">Carregando...</h1>
-            <p id="escola-nome-display" class="text-gray-400 font-medium text-sm md:text-base"></p>
+          <div class="mt-4 md:mt-0">
+            <h1 id="turma-nome-display" class="text-4xl md:text-6xl font-black tracking-tighter leading-none mb-2">Carregando...</h1>
+            <p id="escola-nome-display" class="text-gray-400 font-medium text-lg md:text-xl opacity-60"></p>
           </div>
         </div>
       </div>
       
       <div class="w-full md:w-auto">
-        <button onclick="abrirModalConfig()" class="w-full md:w-auto px-6 py-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all flex items-center justify-center gap-2 font-bold">
-          <i data-lucide="settings" class="w-5 h-5 text-gray-400"></i> Editar Dados
+        <button onclick="abrirModalConfig()" class="w-full md:w-auto px-8 py-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all flex items-center justify-center gap-3 font-bold shadow-xl">
+          <i data-lucide="settings" class="w-5 h-5 text-gray-500"></i> Editar Turma
         </button>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 stagger-in" style="animation-delay: 0.2s">
       
       <!-- Coluna Alunos -->
-      <div class="lg:col-span-2 space-y-6">
-        <div class="glass rounded-3xl p-4 md:p-8">
-          <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
-            <h2 class="text-xl md:text-2xl font-bold flex items-center gap-3">
-              <i data-lucide="graduation-cap" class="text-[#00F0FF]"></i> Estudantes
+      <div class="lg:col-span-8 space-y-8">
+        <div class="glass-card p-6 md:p-10">
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-10">
+            <h2 class="text-2xl md:text-3xl font-black flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20">
+                <i data-lucide="graduation-cap" class="text-cyan-400"></i>
+              </div>
+              Estudantes
             </h2>
-            <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
-              <button onclick="abrirModalMassa()" class="w-full sm:w-auto px-4 py-3 md:py-2 bg-white/5 border border-white/10 rounded-xl font-bold hover:bg-white/10 transition-all text-sm text-gray-400">
-                Matrícula em Massa
+            <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+              <button onclick="abrirModalMassa()" class="btn btn-secondary px-6 py-3 text-xs font-black uppercase tracking-widest">
+                Importação em Massa
               </button>
-              <button onclick="abrirModalAluno()" class="w-full sm:w-auto px-4 py-3 md:py-2 bg-[#00F0FF] text-[#0A0F1C] rounded-xl font-bold hover:scale-105 transition-all text-sm">
+              <button onclick="abrirModalAluno()" class="btn-glow px-6 py-3 text-xs font-black uppercase tracking-widest">
                 + Matricular Aluno
               </button>
             </div>
           </div>
           
-          <div id="lista-alunos" class="space-y-3">
-            <div class="text-center py-10 opacity-30 italic">Nenhum aluno matriculado.</div>
+          <div id="lista-alunos" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="col-span-full text-center py-20 opacity-30 italic font-medium">Sincronizando lista de chamada...</div>
           </div>
         </div>
       </div>
 
       <!-- Coluna Taça e Info -->
-      <div class="space-y-6">
-        <div class="glass rounded-3xl p-5 md:p-8 border-t-4 border-t-[#00F0FF]/50">
-          <h2 class="text-xl md:text-2xl font-bold mb-6 flex items-center gap-3">
-            <i data-lucide="graduation-cap" class="text-[#00F0FF]"></i> Regentes
+      <div class="lg:col-span-4 space-y-8">
+        <div class="glass-card p-8 border-t-4 border-t-cyan-500/50 shadow-2xl shadow-cyan-500/5">
+          <h2 class="text-xl font-bold mb-8 flex items-center gap-3 text-white uppercase tracking-tighter">
+            <i data-lucide="shield" class="text-cyan-400 w-5 h-5"></i> Corpo Docente
           </h2>
-          <div id="lista-regentes" class="space-y-4 mb-6">
+          <div id="lista-regentes" class="space-y-4 mb-8">
             <!-- Professores da turma -->
           </div>
-          <div class="flex flex-col gap-2">
-            <button id="btn-assumir-turma" class="hidden w-full py-3 bg-[#00F0FF]/10 text-[#00F0FF] border border-[#00F0FF]/20 rounded-xl font-bold hover:bg-[#00F0FF]/20 transition-all text-sm">
-              Assumir esta Turma
+          <div class="flex flex-col gap-3">
+            <button id="btn-assumir-turma" class="hidden w-full py-4 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-2xl font-black hover:bg-cyan-500/20 transition-all text-xs uppercase tracking-widest">
+              Assumir Regência
             </button>
-            <button id="btn-deixar-turma" class="hidden w-full py-3 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl font-bold hover:bg-red-500/20 transition-all text-sm">
+            <button id="btn-deixar-turma" class="hidden w-full py-4 bg-red-500/10 text-red-400 border border-red-500/20 rounded-2xl font-black hover:bg-red-500/20 transition-all text-xs uppercase tracking-widest">
               Deixar esta Turma
             </button>
           </div>
         </div>
 
-        <div class="glass rounded-3xl p-6 md:p-8 border-t-4 border-t-[#FFD700]/50">
-          <h2 class="text-xl md:text-2xl font-bold mb-6 flex items-center gap-3">
-            <i data-lucide="trophy" class="text-[#FFD700]"></i> Pontuação de Casa
+        <div class="glass-card p-8 border-t-4 border-t-amber-500/50 shadow-2xl shadow-amber-500/5">
+          <h2 class="text-xl font-bold mb-8 flex items-center gap-3 text-white uppercase tracking-tighter">
+            <i data-lucide="trophy" class="text-amber-500 w-5 h-5"></i> Pontuação da Casa
           </h2>
-          <div class="space-y-6">
-            <div class="flex items-center justify-between bg-white/5 p-4 rounded-2xl border border-white/5">
-              <div>
-                <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-1">Saldo Atual</label>
-                <div id="casa-nome-display" class="text-xs font-bold text-yellow-500/80 uppercase">Carregando...</div>
+          <div class="space-y-8">
+            <div class="flex items-center justify-between bg-white/5 p-6 rounded-3xl border border-white/5 relative overflow-hidden group">
+              <div class="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div class="relative z-10">
+                <label class="text-[10px] font-black text-amber-500/60 uppercase tracking-[0.2em] block mb-2">Saldo Atual</label>
+                <div id="casa-nome-display" class="text-xs font-black text-white uppercase tracking-wider">Carregando...</div>
               </div>
-              <div id="casa-pontos-display" class="text-4xl font-black text-white">0</div>
+              <div id="casa-pontos-display" class="relative z-10 text-5xl font-black text-white stat-value">0</div>
             </div>
-            <button id="btn-atribuir-pontos" class="w-full py-5 md:py-4 bg-gradient-to-r from-[#00F0FF]/20 to-[#7000FF]/20 border border-[#00F0FF]/30 text-[#00F0FF] rounded-2xl font-black hover:bg-[#00F0FF]/30 transition-all uppercase tracking-tighter">
+            <button id="btn-atribuir-pontos" class="btn-glow w-full py-6 rounded-3xl font-black text-sm uppercase tracking-[0.15em] shadow-2xl shadow-amber-500/20">
               ATRIBUIR PONTOS
             </button>
           </div>
@@ -109,64 +110,67 @@
   </main>
 
   <!-- Modal Config Turma -->
-  <div id="modal-config" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm hidden">
-    <div class="max-w-md w-full glass rounded-t-[2rem] sm:rounded-3xl p-6 md:p-8 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300">
-      <h2 class="text-2xl font-bold mb-6">Configurações</h2>
+  <div id="modal-config" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm hidden modal-overlay">
+    <div class="max-w-md w-full glass-card p-10 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300">
+      <h2 class="text-3xl font-black mb-8 tracking-tighter">Configurações</h2>
       <div class="space-y-6">
         <div>
-          <label class="block text-sm font-medium text-gray-300 mb-1">Nome da Turma</label>
-          <input type="text" id="edit-turma-nome" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 md:py-3 focus:border-[#00F0FF] outline-none transition-all">
+          <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Nome da Turma</label>
+          <input type="text" id="edit-turma-nome" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:border-cyan-500 outline-none transition-all">
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-300 mb-1">Avatar (Emoji)</label>
-          <input type="text" id="edit-turma-avatar" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 md:py-3 focus:border-[#00F0FF] outline-none transition-all" placeholder="Ex: 🧪">
+          <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Avatar (Emoji)</label>
+          <input type="text" id="edit-turma-avatar" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:border-cyan-500 outline-none transition-all" placeholder="Ex: 🧪">
         </div>
-        <div class="flex gap-3">
-          <button onclick="fecharModais()" class="flex-1 py-4 md:py-3 bg-white/5 rounded-xl font-bold">Cancelar</button>
-          <button id="btn-save-config" class="flex-1 py-4 md:py-3 bg-[#00F0FF] text-[#0A0F1C] font-bold rounded-xl">Salvar</button>
+        <div class="flex gap-4 pt-4">
+          <button onclick="fecharModais()" class="flex-1 py-4 bg-white/5 hover:bg-white/10 rounded-2xl font-bold border border-white/5 transition-all">Cancelar</button>
+          <button id="btn-save-config" class="btn-glow flex-1 py-4 rounded-2xl font-bold">Salvar Alterações</button>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Modal Matricular Aluno -->
-  <div id="modal-aluno" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm hidden">
-    <div class="max-w-md w-full glass rounded-t-[2rem] sm:rounded-3xl p-6 md:p-8 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300">
-      <h2 class="text-2xl font-bold mb-2">Matricular</h2>
-      <p class="text-gray-400 mb-6 text-sm">Insira os dados do aluno para adicioná-lo à turma.</p>
-      <div class="space-y-5">
+  <div id="modal-aluno" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm hidden modal-overlay">
+    <div class="max-w-md w-full glass-card p-10 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300">
+      <h2 class="text-3xl font-black mb-2 tracking-tighter">Matricular</h2>
+      <p class="text-gray-400 mb-8 text-sm font-medium leading-relaxed">Insira os dados do estudante para adicioná-lo à turma.</p>
+      <div class="space-y-6">
         <div>
-          <label class="block text-sm font-medium text-gray-300 mb-1">Nome Completo</label>
-          <input type="text" id="novo-aluno-nome" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 md:py-3 focus:border-[#00F0FF] outline-none transition-all" placeholder="Ex: João Silva">
+          <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Nome Completo</label>
+          <input type="text" id="novo-aluno-nome" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:border-cyan-500 outline-none transition-all" placeholder="Ex: João Silva">
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-300 mb-1">E-mail Institucional</label>
-          <input type="email" id="novo-aluno-email" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 md:py-3 focus:border-[#00F0FF] outline-none transition-all" placeholder="exemplo@estudante.rn.gov.br">
+          <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">E-mail Institucional</label>
+          <input type="email" id="novo-aluno-email" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:border-cyan-500 outline-none transition-all" placeholder="exemplo@estudante.rn.gov.br">
         </div>
-        <div class="flex gap-3">
-          <button onclick="fecharModais()" class="flex-1 py-4 md:py-3 bg-white/5 rounded-xl font-bold text-gray-400">Cancelar</button>
-          <button id="btn-save-aluno" class="flex-1 py-4 md:py-3 bg-[#00F0FF] text-[#0A0F1C] font-bold rounded-xl">Matricular</button>
+        <div class="flex gap-4 pt-4">
+          <button onclick="fecharModais()" class="flex-1 py-4 bg-white/5 hover:bg-white/10 rounded-2xl font-bold border border-white/5 transition-all text-gray-400">Cancelar</button>
+          <button id="btn-save-aluno" class="btn-glow flex-1 py-4 rounded-2xl font-bold">Confirmar Matrícula</button>
         </div>
       </div>
     </div>
   </div>
 
-
-
   <!-- Modal Matrícula em Massa -->
-  <div id="modal-massa" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm hidden">
-    <div class="max-w-2xl w-full glass rounded-t-[2rem] sm:rounded-3xl p-6 md:p-8 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300">
-      <h2 class="text-2xl font-bold mb-2">Matrícula em Lote</h2>
-      <p class="text-gray-400 mb-6 text-sm">Cole aqui a lista. Formatos aceitos: <b class="text-white">"Nome;Email"</b> ou apenas e-mails.</p>
+  <div id="modal-massa" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm hidden modal-overlay">
+    <div class="max-w-3xl w-full glass-card p-10 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300">
+      <h2 class="text-3xl font-black mb-2 tracking-tighter">Importação em Lote</h2>
+      <p class="text-gray-400 mb-8 text-sm font-medium">Cole a lista de estudantes. Use o formato <b class="text-white">"Nome;Email"</b> por linha.</p>
       
-      <div class="space-y-6">
-        <textarea id="input-massa-emails" class="w-full h-64 md:h-48 bg-white/5 border border-white/10 rounded-2xl p-4 focus:border-[#00F0FF] outline-none transition-all font-mono text-xs md:text-sm" placeholder="João Silva;joao@estudante.rn.gov.br&#10;Maria Souza;maria@estudante.rn.gov.br"></textarea>
+      <div class="space-y-8">
+        <textarea id="input-massa-emails" class="w-full h-64 bg-white/5 border border-white/10 rounded-3xl p-6 focus:border-cyan-500 outline-none transition-all font-mono text-sm leading-relaxed" placeholder="João Silva;joao@estudante.rn.gov.br&#10;Maria Souza;maria@estudante.rn.gov.br"></textarea>
         
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-          <span id="contagem-emails" class="text-[#00F0FF] font-bold text-sm">0 e-mails detectados</span>
-          <div class="flex gap-3 w-full md:w-auto">
-            <button onclick="fecharModais()" class="flex-1 md:flex-none px-6 py-4 md:py-3 bg-white/5 rounded-xl font-bold text-gray-400">Cancelar</button>
-            <button id="btn-processar-massa" class="flex-1 md:flex-none px-8 py-4 md:py-3 bg-[#00F0FF] text-[#0A0F1C] font-bold rounded-xl shadow-lg shadow-[#00F0FF]/20">Importar</button>
+        <div class="flex flex-col md:flex-row justify-between items-center gap-6 pt-4 border-t border-white/5">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20">
+              <i data-lucide="check-circle-2" class="w-5 h-5 text-cyan-400"></i>
+            </div>
+            <span id="contagem-emails" class="text-cyan-400 font-black text-sm uppercase tracking-widest">0 e-mails detectados</span>
+          </div>
+          <div class="flex gap-4 w-full md:w-auto">
+            <button onclick="fecharModais()" class="flex-1 md:flex-none px-8 py-4 bg-white/5 rounded-2xl font-bold text-gray-400 border border-white/5 transition-all">Cancelar</button>
+            <button id="btn-processar-massa" class="btn-glow flex-1 md:flex-none px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-sm">Iniciar Importação</button>
           </div>
         </div>
       </div>
@@ -174,23 +178,23 @@
   </div>
 
   <!-- Modal Editar Aluno -->
-  <div id="modal-editar-aluno" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm hidden">
-    <div class="max-w-md w-full glass rounded-t-[2rem] sm:rounded-3xl p-6 md:p-8 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300">
-      <h2 class="text-2xl font-bold mb-2 tracking-tight">Editar Estudante</h2>
-      <p class="text-gray-400 mb-6 text-sm">Corrija os dados do aluno abaixo.</p>
+  <div id="modal-editar-aluno" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm hidden modal-overlay">
+    <div class="max-w-md w-full glass-card p-10 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300">
+      <h2 class="text-3xl font-black mb-2 tracking-tighter">Dados do Estudante</h2>
+      <p class="text-gray-400 mb-8 text-sm font-medium">Atualize as informações cadastrais abaixo.</p>
       <input type="hidden" id="edit-aluno-id">
-      <div class="space-y-5">
+      <div class="space-y-6">
         <div>
-          <label class="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-widest">Nome Completo</label>
-          <input type="text" id="edit-aluno-nome" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 md:py-2.5 focus:border-[#00F0FF] outline-none transition-all text-sm">
+          <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Nome Completo</label>
+          <input type="text" id="edit-aluno-nome" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:border-cyan-500 outline-none transition-all">
         </div>
         <div>
-          <label class="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-widest">E-mail Institucional</label>
-          <input type="email" id="edit-aluno-email" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 md:py-2.5 focus:border-[#00F0FF] outline-none transition-all text-sm">
+          <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">E-mail Institucional</label>
+          <input type="email" id="edit-aluno-email" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:border-cyan-500 outline-none transition-all">
         </div>
-        <div class="flex gap-3 pt-2">
-          <button onclick="fecharModais()" class="flex-1 py-4 md:py-3 bg-white/5 rounded-xl font-bold text-gray-400">Cancelar</button>
-          <button id="btn-update-aluno" class="flex-1 py-4 md:py-3 bg-[#00F0FF] text-[#0A0F1C] font-bold rounded-xl">Salvar</button>
+        <div class="flex gap-4 pt-6">
+          <button onclick="fecharModais()" class="flex-1 py-4 bg-white/5 rounded-2xl font-bold border border-white/5 text-gray-400 transition-all">Cancelar</button>
+          <button id="btn-update-aluno" class="btn-glow flex-1 py-4 rounded-2xl font-bold">Salvar Dados</button>
         </div>
       </div>
     </div>
@@ -268,21 +272,21 @@
       console.log(`Renderizando ${alunos.length} alunos ordenados.`);
       lista.innerHTML = alunos.map(aluno => {
         return `
-          <div class="p-2.5 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl flex items-center justify-between hover:bg-white/10 transition-colors">
-            <div class="flex items-center gap-3 min-w-0">
-              <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-800 flex items-center justify-center shrink-0">
-                <i data-lucide="user" class="w-4 h-4 md:w-5 md:h-5 text-gray-500"></i>
+          <div class="p-5 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-between hover:bg-white/10 hover:border-cyan-500/30 transition-all group">
+            <div class="flex items-center gap-4 min-w-0">
+              <div class="w-12 h-12 rounded-xl bg-gray-800 flex items-center justify-center shrink-0 border border-white/5 group-hover:border-cyan-500/20 transition-all">
+                <i data-lucide="user" class="w-6 h-6 text-gray-500 group-hover:text-cyan-400"></i>
               </div>
               <div class="min-w-0">
-                <div class="font-bold text-gray-200 text-sm md:text-base truncate leading-tight">${aluno.nome || 'Estudante'}</div>
-                <div class="text-[10px] md:text-xs text-gray-500 truncate tracking-tighter">${aluno.email}</div>
+                <div class="font-bold text-white text-base truncate leading-tight group-hover:text-cyan-50 transition-all">${aluno.nome || 'Estudante'}</div>
+                <div class="text-xs text-gray-500 truncate tracking-tight mt-0.5 font-medium">${aluno.email}</div>
               </div>
             </div>
-            <div class="flex gap-1 md:gap-2 shrink-0 ml-1">
-              <button onclick="abrirModalEditarAluno('${aluno.id}', '${aluno.nome || ''}', '${aluno.email}')" class="p-1.5 text-blue-400/40 hover:text-blue-400 hover:bg-blue-400/10 rounded-lg transition-all" title="Editar">
+            <div class="flex gap-2 shrink-0 ml-4">
+              <button onclick="abrirModalEditarAluno('${aluno.id}', '${aluno.nome || ''}', '${aluno.email}')" class="p-3 text-cyan-400/40 hover:text-cyan-400 hover:bg-cyan-400/10 rounded-xl transition-all border border-transparent hover:border-cyan-500/20" title="Editar">
                 <i data-lucide="pencil" class="w-4 h-4"></i>
               </button>
-              <button onclick="removerAluno('${aluno.id}')" class="p-1.5 text-red-400/30 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all" title="Excluir">
+              <button onclick="removerAluno('${aluno.id}')" class="p-3 text-red-400/30 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all border border-transparent hover:border-red-500/20" title="Excluir">
                 <i data-lucide="trash-2" class="w-4 h-4"></i>
               </button>
             </div>

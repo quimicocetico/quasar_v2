@@ -6,7 +6,10 @@ import { db, doc, getDoc } from "./db.js";
 export function requireAuth(callback) {
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
-      if (!window.location.pathname.includes('login')) {
+      const isPublic = window.location.pathname.includes('publico');
+      const isLogin = window.location.pathname.includes('login');
+      
+      if (!isLogin && !isPublic) {
         window.location.href = "/login.html";
       }
       return;
