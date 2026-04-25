@@ -19,8 +19,14 @@ body {
 
 #app-container {
     max-width: 1200px;
-    padding: 1.5rem;
+    padding: 1rem; /* Reduced from 1.5rem for better mobile space */
     margin: 30px auto 0 auto;
+}
+
+@media (min-width: 640px) {
+    #app-container {
+        padding: 1.5rem;
+    }
 }
 
 /* Glassmorphism Utilities */

@@ -109,8 +109,10 @@ service cloud.firestore {
         match /submissoes/{submissaoId} {
           allow read: if true;
           // Alunos submetem, mas não podem alterar nem apagar submissões antigas (Histórico)
-          allow create: if isAutenticado() && 
-            request.auth.token.email in get(/databases/$(database)/documents/projetos/$(projetoId)).data.membros_emails;
+          allow create: if isAutenticado() && (
+            request.auth.token.email in get(/databases/$(database)/documents/projetos/$(projetoId)).data.membros_emails ||
+            get(/databases/$(database)/documents/projetos/$(projetoId)).data.dados_gerais.professorId == request.auth.uid
+          );
           allow update, delete: if false; // NUNCA sobrescrever. Falha rápida (Fail Fast)
 
           // ---------------------------------------------------------------

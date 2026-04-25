@@ -31,9 +31,9 @@
 
             <!-- Seção de Projetos -->
             <div id="projects-section" class="hidden">
-                <div class="flex justify-between items-end mb-4 border-b border-white/5 pb-2">
-                    <h2 class="text-xs font-bold text-gray-500 uppercase tracking-[0.2em]">Meus Projetos (Orientação)</h2>
-                    <button id="btn-show-form" class="btn btn-secondary text-[10px] py-2 px-4">+ Novo Projeto</button>
+                <div class="grid grid-cols-1 sm:flex sm:justify-between sm:items-center mb-6 border-b border-white/5 pb-4 gap-4 px-2 sm:px-0">
+                    <h2 class="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">Meus Projetos (Orientação)</h2>
+                    <button id="btn-show-form" class="btn btn-secondary text-[10px] py-2.5 px-6 w-full sm:w-auto whitespace-nowrap shadow-lg shadow-cyan-500/5 hover:shadow-cyan-500/10 transition-all">+ Novo Projeto</button>
                 </div>
                 <div id="projects-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
             </div>
@@ -41,7 +41,7 @@
             <!-- Botão Novo Projeto (Professor - Vazio) -->
             <div id="teacher-actions-empty" class="hidden text-center py-12 edu-card border-dashed">
                 <p class="text-gray-500 mb-4">Você ainda não orienta nenhum projeto de IC.</p>
-                <button id="btn-show-form-empty" class="btn btn-primary">+ Iniciar Primeiro Projeto</button>
+                <button id="btn-show-form-empty" class="btn btn-primary w-full sm:w-auto px-10">+ Iniciar Primeiro Projeto</button>
             </div>
         </div>
 
@@ -63,43 +63,46 @@
         </div>
 
         <!-- MODAL 1: Cadastro de Novo Projeto -->
-        <div id="creation-modal" class="fixed inset-0 z-[100] hidden flex items-end sm:items-center justify-center p-0 sm:p-4 modal-overlay" onclick="fecharModalCriacao()">
-            <div class="relative w-full max-w-lg glass-card p-8 md:p-12 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300" onclick="event.stopPropagation()">
-                <div class="flex items-center justify-between mb-10">
-                    <div class="flex items-center gap-5">
-                        <div class="w-14 h-14 bg-gradient-to-br from-cyan-500/20 to-indigo-600/20 rounded-2xl flex items-center justify-center border border-cyan-500/30 shadow-lg shadow-cyan-500/10">
-                            <i data-lucide="flask-conical" class="w-7 h-7 text-cyan-400"></i>
+        <div id="creation-modal" class="fixed inset-0 z-[100] hidden bg-black/80 backdrop-blur-sm sm:flex sm:items-center sm:justify-center p-0 sm:p-4 modal-overlay" onclick="fecharModalCriacao()">
+            <div class="relative w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-lg bg-[#0a0a0a] sm:bg-transparent glass-card flex flex-col shadow-2xl animate-in fade-in slide-in-from-bottom sm:zoom-in duration-300" onclick="event.stopPropagation()">
+                <!-- Header Fixo -->
+                <div class="flex items-center justify-between p-6 sm:p-8 border-b border-white/5 bg-white/[0.03]">
+                    <div class="flex items-center gap-3 sm:gap-5">
+                        <div class="w-10 h-10 sm:w-14 sm:h-14 bg-gradient-to-br from-cyan-500/20 to-indigo-600/20 rounded-xl sm:rounded-2xl flex items-center justify-center border border-cyan-500/30 shadow-lg shadow-cyan-500/10">
+                            <i data-lucide="flask-conical" class="w-5 h-5 sm:w-7 sm:h-7 text-cyan-400"></i>
                         </div>
                         <div>
-                            <h2 class="text-3xl font-black tracking-tight leading-tight">Novo Projeto</h2>
-                            <p class="text-[10px] text-cyan-500 font-black uppercase tracking-[0.2em] mt-1">Iniciação Científica</p>
+                            <h2 class="text-xl sm:text-2xl font-black tracking-tight leading-tight">Novo Projeto</h2>
+                            <p class="text-[8px] sm:text-[9px] text-cyan-400 font-black uppercase tracking-[0.2em] mt-0.5">Protocolo de IC</p>
                         </div>
                     </div>
-                    <button onclick="fecharModalCriacao()" class="w-12 h-12 flex items-center justify-center hover:bg-white/5 rounded-2xl transition-all border border-transparent hover:border-white/10 group">
-                        <i data-lucide="x" class="w-6 h-6 text-gray-500 group-hover:text-white transition-colors"></i>
+                    <button onclick="fecharModalCriacao()" class="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center hover:bg-white/5 rounded-xl transition-all border border-transparent hover:border-white/10 group">
+                        <i data-lucide="x" class="w-5 h-5 sm:w-6 sm:h-6 text-gray-500 group-hover:text-white transition-colors"></i>
                     </button>
                 </div>
 
-                <form id="form-projeto" class="space-y-8">
+                <!-- Corpo Scrollable -->
+                <div class="flex-1 overflow-y-auto p-6 sm:p-8 custom-scrollbar">
+                    <form id="form-projeto" class="space-y-6 sm:space-y-8">
                     <div>
-                        <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3 ml-1">Título Provisório</label>
+                        <label class="block text-[9px] sm:text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 sm:mb-3 ml-1">Título Provisório</label>
                         <input type="text" id="titulo" 
-                            class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-cyan-500 focus:bg-cyan-500/5 outline-none transition-all font-bold placeholder:text-gray-600"
+                            class="w-full bg-white/5 border border-white/10 rounded-xl sm:rounded-2xl px-4 sm:px-6 py-3 sm:py-4 focus:border-cyan-500 focus:bg-cyan-500/5 outline-none transition-all font-bold placeholder:text-gray-600"
                             placeholder="Ex: Impacto dos Microplásticos no Solo" required>
                     </div>
 
                     <div>
-                        <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3 ml-1">Pergunta Norteadora</label>
+                        <label class="block text-[9px] sm:text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 sm:mb-3 ml-1">Pergunta Norteadora</label>
                         <textarea id="problema" 
-                            class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-cyan-500 focus:bg-cyan-500/5 outline-none transition-all font-bold placeholder:text-gray-600 h-32 resize-none"
+                            class="w-full bg-white/5 border border-white/10 rounded-xl sm:rounded-2xl px-4 sm:px-6 py-3 sm:py-4 focus:border-cyan-500 focus:bg-cyan-500/5 outline-none transition-all font-bold placeholder:text-gray-600 h-24 sm:h-32 resize-none"
                             placeholder="Qual o problema científico a ser investigado?" required></textarea>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                         <div>
-                            <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3 ml-1">Área do Projeto</label>
+                            <label class="block text-[9px] sm:text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 sm:mb-3 ml-1">Área do Projeto</label>
                             <div class="relative">
-                                <select id="area" class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-cyan-500 focus:bg-cyan-500/5 outline-none transition-all font-bold text-white appearance-none cursor-pointer" required>
+                                <select id="area" class="w-full bg-white/5 border border-white/10 rounded-xl sm:rounded-2xl px-4 sm:px-6 py-3 sm:py-4 focus:border-cyan-500 focus:bg-cyan-500/5 outline-none transition-all font-bold text-white appearance-none cursor-pointer" required>
                                     <option value="">Selecione a área...</option>
                                     <option value="Ciências Exatas e da Terra">Ciências Exatas e da Terra</option>
                                     <option value="Ciências Biológicas">Ciências Biológicas</option>
@@ -115,10 +118,10 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3 ml-1">Pasta no Google Drive</label>
+                            <label class="block text-[9px] sm:text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 sm:mb-3 ml-1">Pasta no Google Drive</label>
                             <input type="url" id="link_drive" 
-                                class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-cyan-500 focus:bg-cyan-500/5 outline-none transition-all font-bold placeholder:text-gray-600"
-                                placeholder="Link da pasta compartilhada" required>
+                                class="w-full bg-white/5 border border-white/10 rounded-xl sm:rounded-2xl px-4 sm:px-6 py-3 sm:py-4 focus:border-cyan-500 focus:bg-cyan-500/5 outline-none transition-all font-bold placeholder:text-gray-600"
+                                placeholder="Link da pasta" required>
                         </div>
                     </div>
 
@@ -131,14 +134,14 @@
                             <p class="text-[9px] text-gray-600 font-bold uppercase italic p-4 border border-dashed border-white/5 w-full text-center rounded-xl">Nenhum aluno selecionado</p>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-3">
-                            <div class="relative">
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <div class="relative w-full md:flex-1">
                                 <select id="create-escola" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-[10px] font-bold text-white outline-none focus:border-cyan-500 appearance-none">
                                     <option value="">Escola...</option>
                                 </select>
                                 <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-500 pointer-events-none"></i>
                             </div>
-                            <div class="relative">
+                            <div class="relative w-full md:flex-1">
                                 <select id="create-turma" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-[10px] font-bold text-white outline-none focus:border-cyan-500 appearance-none" disabled>
                                     <option value="">Turma...</option>
                                 </select>
@@ -151,10 +154,11 @@
                         </div>
                     </div>
 
-                    <button type="submit" id="btn-submit" class="btn-glow w-full py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-sm shadow-xl shadow-cyan-500/20 mt-4">
-                        Protocolar Projeto
-                    </button>
-                </form>
+                        <button type="submit" id="btn-submit" class="btn-glow w-full py-4 sm:py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-sm shadow-xl shadow-cyan-500/20 mt-4">
+                            Protocolar Projeto
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
 
