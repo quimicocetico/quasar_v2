@@ -106,14 +106,14 @@ async function renderizarProjetos(snap, souProfessor, alunoEmail = null) {
                     <h3 class="text-sm font-black text-white leading-tight">${p.dados_gerais.titulo}</h3>
                 </div>
                 <div class="text-right">
-                    <span class="text-[14px] font-black text-cyan-400">${pct}%</span>
+                    <span class="text-[14px] font-black" style="color: hsl(${Math.min(120, pct * 1.2)}, 80%, 50%)">${pct}%</span>
                     <p class="text-[7px] font-black uppercase text-gray-500 tracking-tighter">Progresso</p>
                 </div>
             </div>
 
             <!-- Barra de Progresso -->
-            <div class="w-full h-1 bg-white/5 rounded-full mb-8 overflow-hidden">
-                <div class="h-full bg-gradient-to-r from-cyan-500 to-indigo-500 transition-all duration-1000 shadow-[0_0_10px_rgba(6,182,212,0.5)]" style="width: ${pct}%"></div>
+            <div class="w-full h-1 bg-white/5 rounded-full mb-8 overflow-hidden border border-white/5">
+                <div class="h-full transition-all duration-1000 shadow-lg" style="width: ${pct}%; background: hsl(${Math.min(120, pct * 1.2)}, 80%, 50%); box-shadow: 0 0 10px hsla(${Math.min(120, pct * 1.2)}, 80%, 50%, 0.3)"></div>
             </div>
             
             <div class="flex-grow space-y-6">

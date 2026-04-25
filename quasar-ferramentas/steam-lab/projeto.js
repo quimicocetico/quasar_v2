@@ -76,13 +76,82 @@ function carregarEtapasRealtime() {
     unsubEtapas = onSnapshot(collection(db, `projetos/${projetoAtual.id}/etapas`), (snap) => {
         const statusEtapas = {};
         snap.forEach(d => statusEtapas[d.id] = d.data());
+        
+        // Calcular Progresso
+        const aprovadas = Object.values(statusEtapas).filter(e => e.status_etapa === 'aprovado').length;
+        const pct = Math.round((aprovadas / 15) * 100);
+        renderizarProgressoHeader(pct);
+        
         renderizarFeedMCAT(statusEtapas);
     });
+}
+
+function renderizarProgressoHeader(pct) {
+    const container = document.getElementById('view-project-progress');
+    if (!container) return;
+
+    // Cor dinâmica: 0 = vermelho (0), 120 = verde (100)
+    const hue = Math.min(120, pct * 1.2);
+    const color = `hsl(${hue}, 80%, 50%)`;
+
+    container.innerHTML = `
+        <div class="flex flex-col items-center gap-2">
+            <div class="flex items-center gap-3">
+                <div class="w-48 h-1.5 bg-white/5 rounded-full overflow-hidden border border-white/5 shadow-inner">
+                    <div class="h-full transition-all duration-1000 ease-out" 
+                         style="width: ${pct}%; background: ${color}; box-shadow: 0 0 10px ${color}44"></div>
+                </div>
+                <span class="text-[11px] font-black tracking-tighter" style="color: ${color}">${pct}%</span>
+            </div>
+            <p class="text-[7px] font-black uppercase tracking-[0.2em] text-gray-500">Conclusão do Ciclo MCAT</p>
+        </div>
+    `;
 }
 
 function renderizarFeedMCAT(statusEtapas) {
     const feed = document.getElementById('mcat-feed');
     feed.innerHTML = '';
+
+    // Verificar Conclusão Total (Etapa 15 Aprovada)
+    const isTotalmenteConcluido = statusEtapas["15"]?.status_etapa === 'aprovado';
+    if (isTotalmenteConcluido) {
+        const celebration = document.createElement('div');
+        celebration.className = 'col-span-full mb-12 animate-in fade-in zoom-in duration-1000';
+        celebration.innerHTML = `
+            <div class="relative p-1 bg-gradient-to-r from-amber-500 via-emerald-500 to-cyan-500 rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgba(16,185,129,0.2)]">
+                <div class="bg-[#0A0F1C] rounded-[2.4rem] p-8 sm:p-12 text-center relative overflow-hidden">
+                    <!-- Background Decor -->
+                    <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+                        <div class="absolute -top-24 -left-24 w-64 h-64 bg-amber-500 rounded-full blur-[100px]"></div>
+                        <div class="absolute -bottom-24 -right-24 w-64 h-64 bg-emerald-500 rounded-full blur-[100px]"></div>
+                    </div>
+
+                    <div class="relative z-10">
+                        <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-b from-amber-400 to-amber-600 rounded-full mb-6 shadow-xl shadow-amber-500/20 border-4 border-amber-500/30">
+                            <i data-lucide="award" class="w-10 h-10 text-white"></i>
+                        </div>
+                        
+                        <h3 class="text-3xl sm:text-4xl font-black tracking-tighter text-white mb-4 uppercase">Pesquisa Concluída com <span class="text-amber-400">Excelência</span></h3>
+                        <p class="text-gray-400 text-sm sm:text-base font-medium max-w-2xl mx-auto leading-relaxed mb-8">
+                            Parabéns à equipe! Vocês completaram com sucesso todas as 15 etapas do Ciclo de Investigação Científica. O rigor metodológico e a dedicação demonstrados são a marca de verdadeiros cientistas.
+                        </p>
+
+                        <div class="flex flex-wrap justify-center gap-4">
+                            <div class="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-3">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_#10B981]"></span>
+                                <span class="text-[10px] font-black uppercase tracking-widest text-gray-300">Selo de Qualidade STEAM</span>
+                            </div>
+                            <div class="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-3">
+                                <span class="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_10px_#F59E0B]"></span>
+                                <span class="text-[10px] font-black uppercase tracking-widest text-gray-300">Pronto para Publicação</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        feed.appendChild(celebration);
+    }
 
     let ultimaAprovada = true;
     let proximaAtividadeIdentificada = false;
