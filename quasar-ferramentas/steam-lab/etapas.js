@@ -5,15 +5,15 @@
 export const ETAPAS_MCAT = [
     { 
         id: "01", 
-        titulo: "Observação e Identificação do Problema", 
-        instrucao: "Reconheça um fato e transforme-o em uma pergunta científica.", 
-        checklist: ["A situação-problema é clara e precisa?", "Evitou julgamentos de valor?", "Dimensão viável para execução?", "Resposta de possível execução?"] 
+        titulo: "Formação da Equipe de Pesquisa", 
+        instrucao: "A equipe é formada por até 3 pesquisadores que aceitaram o convite.", 
+        checklist: ["Todos os membros aceitaram o convite?", "Vínculos institucionais validados?", "Papéis de pesquisadores atribuídos?"] 
     },
     { 
         id: "02", 
-        titulo: "Formação da Equipe e Papéis", 
-        instrucao: "Defina o grupo de trabalho (máx 3 alunos) e orientadores.", 
-        checklist: ["Alunos e orientador cadastrados?", "Papéis definidos?", "Coorientador já cadastrado?"] 
+        titulo: "Observação da Realidade e Situação Problema", 
+        instrucao: "Defina o problema inicial capturado no protocolo do projeto.", 
+        checklist: ["A situação-problema é clara e precisa?", "Evitou julgamentos de valor?", "Dimensão viável para execução?", "Resposta de possível execução?"] 
     },
     { 
         id: "03", 

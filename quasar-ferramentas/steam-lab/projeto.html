@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratório de Pesquisa — STEAM Lab</title>
+
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="hero-bg text-white font-['Outfit'] min-h-screen">
+    <div class="geo-grid"></div>
+
+    <!-- Scripts da Plataforma -->
+    <script type="module" src="../../app.js"></script>
+
+    <!-- Conteúdo Central -->
+    <main class="max-w-4xl mx-auto px-6 pt-12 pb-20 relative z-10">
+        
+        <!-- Info do Projeto (Sub-header) -->
+        <div class="glass-card p-6 mb-12 flex flex-col md:flex-row justify-between items-center gap-6 stagger-in">
+            <div class="flex items-center gap-6">
+                <a href="index.html" class="w-12 h-12 flex items-center justify-center bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-all">
+                    <i data-lucide="arrow-left" class="w-6 h-6 text-gray-400"></i>
+                </a>
+                <div>
+                    <h1 id="view-project-title" class="text-2xl font-black tracking-tight leading-none mb-2">Carregando...</h1>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                        <span id="view-project-area" class="text-[9px] font-black uppercase tracking-widest text-cyan-400">Carregando Área...</span>
+                    </div>
+                </div>
+            </div>
+            
+            <a id="view-project-drive" href="#" target="_blank" class="flex items-center gap-3 px-6 py-3 bg-cyan-500/10 border border-cyan-500/20 rounded-2xl hover:bg-cyan-500/20 transition-all group">
+                <i data-lucide="external-link" class="w-4 h-4 text-cyan-400 group-hover:scale-110 transition-transform"></i>
+                <span class="text-[10px] font-black uppercase tracking-widest text-cyan-400">Abrir Pasta no Drive</span>
+            </a>
+        </div>
+
+        <!-- Cabeçalho Pedagógico -->
+        <header class="text-center mb-16 stagger-in" style="animation-delay: 0.1s">
+            <h2 class="text-5xl font-black tracking-tighter mb-4 uppercase">CICLO <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400">MCAT</span></h2>
+            <p class="text-gray-500 text-sm font-medium max-w-lg mx-auto leading-relaxed">Siga a jornada científica passo a passo. Cada etapa concluída e aprovada desbloqueia o próximo nível da sua investigação.</p>
+        </header>
+
+        <!-- Feed Linear de Etapas -->
+        <div id="mcat-feed" class="space-y-6 stagger-in" style="animation-delay: 0.3s">
+            <!-- Injetado via JS -->
+            <div class="flex flex-col items-center justify-center py-20 opacity-20">
+                <div class="w-12 h-12 border-4 border-cyan-500/30 border-t-cyan-500 rounded-full animate-spin mb-4"></div>
+                <p class="text-[10px] font-black uppercase tracking-widest">Sincronizando Laboratório...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- GAVETA DE FEEDBACK (Bottom Drawer) -->
+    <div id="feedback-drawer" class="fixed inset-0 z-[200] hidden overflow-hidden">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300" onclick="fecharFeedbackDrawer()"></div>
+        <div class="absolute bottom-0 left-0 w-full h-[85vh] bg-[#0A0F1C] border-t border-white/10 rounded-t-[3rem] shadow-[0_-20px_50px_rgba(0,0,0,0.5)] transform translate-y-full transition-transform duration-500 ease-out drawer-content flex flex-col">
+            
+            <!-- Header do Drawer -->
+            <div class="p-8 flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-5">
+                    <div class="w-14 h-14 bg-indigo-500/10 rounded-2xl flex items-center justify-center border border-indigo-500/20">
+                        <i data-lucide="message-square" class="w-7 h-7 text-indigo-400"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-black tracking-tight">Mentoria Científica</h3>
+                        <p class="text-[10px] text-indigo-400 font-black uppercase tracking-[0.2em] mt-1">Orientações e Feedback</p>
+                    </div>
+                </div>
+                <button onclick="fecharFeedbackDrawer()" class="w-12 h-12 flex items-center justify-center hover:bg-white/5 rounded-2xl transition-all border border-transparent hover:border-white/10">
+                    <i data-lucide="chevron-down" class="w-6 h-6 text-gray-500"></i>
+                </button>
+            </div>
+
+            <!-- Histórico de Mensagens -->
+            <div id="drawer-history" class="flex-grow overflow-y-auto px-8 py-4 space-y-6 custom-scrollbar">
+                <!-- Feedbacks injetados aqui -->
+            </div>
+
+            <!-- Input de Comentário -->
+            <div class="p-8 bg-white/[0.02] border-t border-white/5 shrink-0">
+                <div class="relative">
+                    <textarea id="drawer-text" 
+                        class="w-full bg-[#0D1221] border border-white/10 rounded-3xl px-6 py-5 focus:border-indigo-500 outline-none transition-all font-bold text-sm placeholder:text-gray-600 h-32 resize-none pr-20 custom-scrollbar"
+                        placeholder="Escreva uma orientação ou dúvida..."></textarea>
+                    <button id="btn-send-drawer-feedback" class="absolute right-4 bottom-4 w-12 h-12 bg-indigo-500 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all">
+                        <i data-lucide="send" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="projeto.js"></script>
+</body>
+</html>

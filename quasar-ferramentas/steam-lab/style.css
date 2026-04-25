@@ -62,54 +62,77 @@ body {
     opacity: 0.5;
 }
 
-/* MCAT Stage Cards */
+/* --- ESTILO FICHÁRIO (STEAM LAB) --- */
 .stage-card {
-    background: rgba(17, 24, 39, 0.4);
-    backdrop-filter: blur(20px);
+    background: #0F172A; /* Sólido estilo fichário */
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 24px;
     padding: 1.5rem;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
     position: relative;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: pointer;
     overflow: hidden;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Tab Superior */
+.stage-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    transition: background 0.3s;
+}
+
+/* Cores de Orientação */
+.stage-card.approved { 
+    border-left: 4px solid #10B981; 
+    background: linear-gradient(to right, rgba(16, 185, 129, 0.02), transparent);
+}
+.stage-card.approved::before { background: #10B981; }
+
+.stage-card.focus { 
+    border: 1px solid rgba(6, 182, 212, 0.4);
+    box-shadow: 0 0 30px rgba(6, 182, 212, 0.1);
+    transform: scale(1.02);
+}
+.stage-card.focus::before { background: #06B6D4; }
+
+.stage-card.correction { 
+    border-left: 4px solid #F59E0B; 
+    background: linear-gradient(to right, rgba(245, 158, 11, 0.02), transparent);
+}
+.stage-card.correction::before { background: #F59E0B; }
+
+.stage-card.locked {
+    opacity: 0.4;
+    filter: grayscale(0.8);
+    pointer-events: none;
 }
 
 .stage-card.collapsed .workspace-grid {
     display: none;
 }
 
-.stage-card.collapsed .btn-feedback-float {
-    display: none;
-}
-
 .stage-card.expanded {
-    cursor: default;
-    border-color: rgba(0, 212, 255, 0.3);
-    box-shadow: 0 0 40px rgba(0, 212, 255, 0.1);
-}
-
-.stage-card.locked {
-    opacity: 0.3;
-    filter: grayscale(0.8);
-    pointer-events: none;
-}
-
-.stage-card.approved {
-    border-color: rgba(16, 185, 129, 0.3);
+    background: #111A2E;
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
 .stage-number {
     position: absolute;
-    top: -15px;
-    left: 20px;
-    background: var(--ic-accent);
-    color: black;
-    font-size: 10px;
-    font-weight: 900;
-    padding: 4px 10px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+    top: 1.5rem;
+    right: 1.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 4rem;
+    font-weight: 800;
+    color: white;
+    opacity: 0.03;
+    line-height: 0.8;
+    pointer-events: none;
 }
 
 /* Custom Checkbox */
@@ -254,10 +277,15 @@ body {
     border: 1px solid var(--ic-border);
     border-radius: 20px;
     padding: 1.5rem;
-    transition: all 0.3s;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .project-card:hover {
-    transform: translateY(-5px);
-    border-color: var(--ic-accent);
+    transform: translateY(-4px);
+    border-color: rgba(6, 182, 212, 0.3);
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.4), 0 0 20px rgba(6, 182, 212, 0.05);
+}
+
+.progress-bar-glow {
+    box-shadow: 0 0 12px rgba(6, 182, 212, 0.4);
 }
