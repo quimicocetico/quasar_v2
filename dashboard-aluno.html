@@ -122,22 +122,31 @@
   </main>
 
   <!-- Modal Minha Turma -->
-  <div id="modal-turma" class="fixed inset-0 z-[100] hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="absolute inset-0 bg-[#0A0F1C]/80 backdrop-blur-sm" onclick="fecharModais()"></div>
-    <div
-      class="relative w-full max-w-lg bg-[#111827] border-t sm:border border-white/10 rounded-t-[2rem] sm:rounded-[2rem] p-6 shadow-2xl animate-in slide-in-from-bottom duration-300">
-      <div class="flex items-center justify-between mb-6">
-        <div>
-          <h2 class="text-xl font-bold">Minha Turma</h2>
-          <p id="modal-contagem" class="text-xs text-gray-500 font-medium">0 Alunos encontrados</p>
+  <div id="modal-turma" class="fixed inset-0 z-[100] hidden flex items-end sm:items-center justify-center p-0 sm:p-4 modal-overlay" onclick="fecharModais()">
+    <div class="relative w-full max-w-lg glass-card p-8 md:p-10 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between mb-10">
+        <div class="flex items-center gap-5">
+          <div class="w-14 h-14 bg-gradient-to-br from-cyan-500/20 to-emerald-600/20 rounded-2xl flex items-center justify-center border border-cyan-500/30 shadow-lg shadow-cyan-500/10">
+            <i data-lucide="users" class="w-7 h-7 text-cyan-400"></i>
+          </div>
+          <div>
+            <h2 class="text-3xl font-black tracking-tight leading-tight">Minha Turma</h2>
+            <p id="modal-contagem" class="text-[10px] text-cyan-500 font-black uppercase tracking-[0.2em] mt-1">Sincronizando Colegas...</p>
+          </div>
         </div>
-        <button onclick="fecharModais()" class="p-2 hover:bg-white/5 rounded-full transition-all">
-          <i data-lucide="x" class="w-6 h-6 text-gray-500"></i>
+        <button onclick="fecharModais()" class="w-12 h-12 flex items-center justify-center hover:bg-white/5 rounded-2xl transition-all border border-transparent hover:border-white/10 group">
+          <i data-lucide="x" class="w-6 h-6 text-gray-500 group-hover:text-white transition-colors"></i>
         </button>
       </div>
 
-      <div id="modal-lista-colegas" class="space-y-2 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+      <div id="modal-lista-colegas" class="space-y-3 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar">
         <!-- Lista injetada via JS -->
+      </div>
+
+      <div class="mt-8 pt-8 border-t border-white/5 flex justify-end">
+        <button onclick="fecharModais()" class="px-8 py-4 bg-white/5 hover:bg-white/10 rounded-2xl font-black uppercase text-[10px] tracking-widest text-gray-500 hover:text-white border border-white/5 transition-all">
+          Fechar Janela
+        </button>
       </div>
     </div>
   </div>

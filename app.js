@@ -83,10 +83,10 @@ function renderizarFooter() {
               <div class="w-6 h-6 bg-white/10 rounded flex items-center justify-center">
                 <i data-lucide="layout-grid" class="w-3.5 h-3.5 text-white"></i>
               </div>
-              <span class="text-xs font-black tracking-widest uppercase">Quasar Platform</span>
+              <span class="text-xs font-black tracking-widest uppercase">Plataforma Quasar</span>
             </div>
             <p class="text-[10px] text-gray-600 font-bold uppercase tracking-[0.2em] text-center md:text-left">
-              &copy; 2024 PRESSAGIO DESIGN. TODOS OS DIREITOS RESERVADOS.
+              &copy; 2026 PRESSAGIO DESIGN. TODOS OS DIREITOS RESERVADOS.
             </p>
           </div>
           
@@ -111,7 +111,7 @@ function renderizarFooter() {
 
 function setupEvents() {
   const trigger = document.getElementById('profile-trigger');
-  const card    = document.getElementById('profile-card');
+  const card = document.getElementById('profile-card');
   const authBtn = document.getElementById('auth-action-btn');
 
   if (trigger) trigger.onclick = (e) => { e.stopPropagation(); card.classList.toggle('hidden-scale'); };
@@ -131,27 +131,27 @@ function setupEvents() {
 }
 
 function atualizarHeaderUsuario(user, profile) {
-  const headerName  = document.getElementById('header-name');
+  const headerName = document.getElementById('header-name');
   const headerAvatar = document.getElementById('header-avatar');
-  const cardName    = document.getElementById('card-name');
-  const cardEmail   = document.getElementById('card-email');
-  const cardAvatar  = document.getElementById('card-avatar');
-  const authBtn     = document.getElementById('auth-action-btn');
+  const cardName = document.getElementById('card-name');
+  const cardEmail = document.getElementById('card-email');
+  const cardAvatar = document.getElementById('card-avatar');
+  const authBtn = document.getElementById('auth-action-btn');
 
   if (!headerName) return;
 
   if (user) {
     const firstName = user.displayName ? user.displayName.split(' ')[0] : 'Aluno';
     headerName.textContent = firstName;
-    cardName.textContent   = user.displayName || 'Aluno Quasar';
-    cardEmail.textContent  = user.email;
+    cardName.textContent = user.displayName || 'Aluno Quasar';
+    cardEmail.textContent = user.email;
 
     const papel = profile?.papel || (user.email.endsWith('@educar.rn.gov.br') ? 'professor' : 'aluno');
     document.body.dataset.role = papel;
 
     if (user.photoURL) {
       headerAvatar.innerHTML = `<img src="${user.photoURL}" class="w-full h-full object-cover rounded-full">`;
-      cardAvatar.innerHTML   = `<img src="${user.photoURL}" class="w-full h-full object-cover rounded-full">`;
+      cardAvatar.innerHTML = `<img src="${user.photoURL}" class="w-full h-full object-cover rounded-full">`;
     }
 
     authBtn.innerHTML = `
@@ -201,9 +201,9 @@ requireAuth(async (user) => {
   // Renderiza para todos os outros casos autenticados
   renderizarHeader();
   renderizarFooter();
-  
+
   if (isLoginPage) return;
-  
+
   const userRef = doc(db, "users", user.uid);
   const snap = await getDoc(userRef);
 
@@ -236,7 +236,7 @@ requireAuth(async (user) => {
     };
     await setDoc(userRef, profile);
     atualizarHeaderUsuario(user, profile);
-    
+
     if (!profile.escola_id && !isOnboardingPage) {
       window.location.href = "/onboarding.html";
       return;

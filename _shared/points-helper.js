@@ -158,52 +158,57 @@ export async function abrirModalPontos(turmaId, escolaId, turmaNome) {
 
 function injectModalHTML() {
   const html = `
-    <div id="modal-points-global" class="fixed inset-0 z-[110] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm hidden modal-overlay">
-      <div class="max-w-md w-full glass-card p-10 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300">
-        <div class="flex items-center gap-4 mb-8">
-          <div class="w-14 h-14 bg-amber-500/10 rounded-2xl flex items-center justify-center border border-amber-500/20">
-            <i data-lucide="trophy" class="text-amber-500 w-7 h-7"></i>
+    <div id="modal-points-global" class="fixed inset-0 z-[110] flex items-end sm:items-center justify-center p-0 sm:p-4 hidden modal-overlay">
+      <div class="max-w-md w-full glass-card p-8 md:p-10 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300">
+        <div class="flex items-center gap-5 mb-10">
+          <div class="w-16 h-16 bg-gradient-to-br from-amber-400/20 to-orange-600/20 rounded-[1.25rem] flex items-center justify-center border border-amber-500/30 shadow-xl shadow-amber-500/10">
+            <i data-lucide="trophy" class="text-amber-500 w-8 h-8"></i>
           </div>
           <div>
-            <h2 id="points-modal-title" class="text-2xl font-black tracking-tighter">Atribuir Pontos</h2>
-            <p class="text-[10px] font-black text-amber-500/60 uppercase tracking-[0.2em] mt-1">Taça das Casas — 2024.1</p>
+            <h2 id="points-modal-title" class="text-2xl font-black tracking-tight leading-tight">Atribuir Pontos</h2>
+            <p class="text-[10px] font-black text-amber-500/60 uppercase tracking-[0.2em] mt-1.5 flex items-center gap-1.5">
+              <i data-lucide="sparkles" class="w-3 h-3"></i> Taça das Casas — 2024.1
+            </p>
           </div>
         </div>
 
-        <div class="space-y-6">
+        <div class="space-y-8">
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Pontos</label>
-              <input type="number" id="points-value" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:border-amber-500 outline-none transition-all font-black text-2xl text-amber-400" value="10">
+              <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3 ml-1">Volume de Pontos</label>
+              <input type="number" id="points-value" class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-amber-500 focus:bg-amber-500/5 outline-none transition-all font-black text-3xl text-amber-400" value="10">
             </div>
             <div class="flex items-end gap-2 pb-1">
-              <button onclick="const v = document.getElementById('points-value'); v.value = parseInt(v.value) - 10" class="p-4 bg-white/5 text-gray-400 rounded-2xl hover:bg-red-500/10 hover:text-red-400 transition-all border border-white/10 hover:border-red-500/20">
-                <i data-lucide="minus" class="w-5 h-5"></i>
+              <button onclick="const v = document.getElementById('points-value'); v.value = Math.max(0, parseInt(v.value) - 10)" class="p-4 bg-white/5 text-gray-500 rounded-2xl hover:bg-red-500/10 hover:text-red-400 transition-all border border-white/10 hover:border-red-500/20 group">
+                <i data-lucide="minus" class="w-6 h-6 group-active:scale-90 transition-transform"></i>
               </button>
-              <button onclick="const v = document.getElementById('points-value'); v.value = parseInt(v.value) + 10" class="p-4 bg-white/5 text-gray-400 rounded-2xl hover:bg-emerald-500/10 hover:text-emerald-400 transition-all border border-white/10 hover:border-emerald-500/20">
-                <i data-lucide="plus" class="w-5 h-5"></i>
+              <button onclick="const v = document.getElementById('points-value'); v.value = parseInt(v.value) + 10" class="p-4 bg-white/5 text-gray-500 rounded-2xl hover:bg-emerald-500/10 hover:text-emerald-400 transition-all border border-white/10 hover:border-emerald-500/20 group">
+                <i data-lucide="plus" class="w-6 h-6 group-active:scale-90 transition-transform"></i>
               </button>
             </div>
           </div>
 
           <div>
-            <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Motivo da Pontuação</label>
-            <textarea id="points-reason" rows="2" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:border-amber-500 outline-none transition-all text-sm placeholder:text-gray-600" placeholder="Ex: Participação exemplar na aula..."></textarea>
+            <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3 ml-1">Justificativa da Ação</label>
+            <textarea id="points-reason" rows="2" class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-5 focus:border-amber-500 focus:bg-amber-500/5 outline-none transition-all text-sm placeholder:text-gray-600 font-medium leading-relaxed" placeholder="Ex: Demonstrou proatividade em..."></textarea>
           </div>
 
           <div>
-            <div class="flex items-center justify-between mb-3 ml-1">
-              <label class="block text-xs font-black text-gray-500 uppercase tracking-widest">Estudantes (Opcional)</label>
-              <input type="text" id="points-search" class="bg-transparent text-[10px] font-bold text-cyan-400 border-b border-white/10 outline-none w-24 focus:w-32 transition-all placeholder:text-gray-600" placeholder="Buscar...">
+            <div class="flex items-center justify-between mb-4 ml-1">
+              <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest">Estudantes Específicos</label>
+              <div class="relative">
+                <input type="text" id="points-search" class="bg-transparent text-[10px] font-bold text-cyan-400 border-b border-white/10 outline-none w-24 focus:w-32 transition-all placeholder:text-gray-600" placeholder="Filtrar...">
+                <i data-lucide="search" class="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-600"></i>
+              </div>
             </div>
-            <div id="points-student-list" class="max-h-44 overflow-y-auto space-y-2 pr-3 custom-scrollbar">
+            <div id="points-student-list" class="max-h-48 overflow-y-auto space-y-2.5 pr-2 custom-scrollbar">
               <!-- JS Injects -->
             </div>
           </div>
 
-          <div class="flex gap-4 pt-4">
-            <button onclick="window.fecharModalPontos()" class="flex-1 py-4 bg-white/5 hover:bg-white/10 rounded-2xl font-bold border border-white/5 transition-all text-gray-400">Cancelar</button>
-            <button id="btn-points-save" class="btn-glow flex-1 py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-amber-500/20">Confirmar</button>
+          <div class="flex gap-4 pt-6">
+            <button onclick="window.fecharModalPontos()" class="flex-1 py-4 bg-white/5 hover:bg-white/10 rounded-2xl font-black uppercase text-[10px] tracking-widest border border-white/5 transition-all text-gray-500">Cancelar</button>
+            <button id="btn-points-save" class="btn-glow flex-1 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-amber-500/20">Confirmar</button>
           </div>
         </div>
       </div>

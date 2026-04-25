@@ -60,62 +60,62 @@
   </main>
 
   <!-- Modal Nova Turma -->
-  <div id="modal-turma" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm hidden modal-overlay">
-    <div class="max-w-md w-full glass-card p-10 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300">
+  <div id="modal-turma" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 hidden modal-overlay">
+    <div class="max-w-md w-full glass-card p-8 md:p-10 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300">
       <div class="flex items-center gap-4 mb-8">
-        <div class="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20">
-          <i data-lucide="plus" class="w-6 h-6 text-cyan-400"></i>
+        <div class="w-14 h-14 rounded-2xl bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20 shadow-lg shadow-cyan-500/10">
+          <i data-lucide="plus-square" class="w-7 h-7 text-cyan-400"></i>
         </div>
         <div>
-          <h2 class="text-2xl font-bold">Nova Turma</h2>
-          <p class="text-gray-500 text-xs font-bold uppercase tracking-widest mt-1" id="modal-escola-nome">Escola...</p>
+          <h2 class="text-2xl font-black tracking-tight">Nova Turma</h2>
+          <p class="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em] mt-1" id="modal-escola-nome">Carregando instituição...</p>
         </div>
       </div>
       
       <div class="space-y-6">
         <div>
-          <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 ml-1">Nome da Turma</label>
-          <input type="text" id="nova-turma-nome" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:border-cyan-500 outline-none transition-all placeholder:text-gray-600" placeholder="Ex: 1º Ano A">
+          <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3 ml-1">Identificação da Turma</label>
+          <input type="text" id="nova-turma-nome" class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-cyan-500 focus:bg-cyan-500/5 outline-none transition-all placeholder:text-gray-600 font-bold" placeholder="Ex: 1º Ano A — Matutino">
         </div>
         <div>
-          <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 ml-1">Série / Ano</label>
+          <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3 ml-1">Série / Ciclo</label>
           <div class="relative">
-            <select id="nova-turma-serie" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:border-cyan-500 outline-none transition-all appearance-none text-white">
-              <option value="1">1º Ano</option>
-              <option value="2">2º Ano</option>
-              <option value="3">3º Ano</option>
+            <select id="nova-turma-serie" class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-cyan-500 focus:bg-cyan-500/5 outline-none transition-all appearance-none text-white font-bold cursor-pointer">
+              <option value="1">1º Ano — Ensino Médio</option>
+              <option value="2">2º Ano — Ensino Médio</option>
+              <option value="3">3º Ano — Ensino Médio</option>
             </select>
-            <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none"></i>
+            <i data-lucide="chevron-down" class="absolute right-6 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none"></i>
           </div>
         </div>
         <div class="flex gap-4 pt-4">
-          <button onclick="fecharModal()" class="flex-1 py-4 bg-white/5 hover:bg-white/10 rounded-2xl font-bold transition-all border border-white/5">Cancelar</button>
-          <button id="btn-save-turma" class="btn-glow flex-1 py-4 rounded-2xl font-bold">Criar Turma</button>
+          <button onclick="fecharModal()" class="flex-1 py-4 bg-white/5 hover:bg-white/10 rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all border border-white/5 text-gray-400">Cancelar</button>
+          <button id="btn-save-turma" class="btn-glow flex-1 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest">Criar Turma</button>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Modal Compartilhar -->
-  <div id="modal-share" class="fixed inset-0 z-[110] hidden flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm modal-overlay" onclick="window.fecharModalShare()">
-    <div class="glass-card max-w-sm w-full p-10 text-center animate-in slide-in-from-bottom sm:zoom-in duration-300" onclick="event.stopPropagation()">
-      <div class="w-20 h-20 bg-cyan-500/10 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-cyan-500/20">
+  <div id="modal-share" class="fixed inset-0 z-[110] hidden flex items-end sm:items-center justify-center p-0 sm:p-4 modal-overlay" onclick="window.fecharModalShare()">
+    <div class="glass-card max-w-sm w-full p-8 md:p-10 text-center animate-in slide-in-from-bottom sm:zoom-in duration-300" onclick="event.stopPropagation()">
+      <div class="w-20 h-20 bg-gradient-to-br from-cyan-500/10 to-emerald-500/10 rounded-[2rem] flex items-center justify-center mx-auto mb-8 border border-cyan-500/20 shadow-2xl shadow-cyan-500/10">
         <i data-lucide="qr-code" class="w-10 h-10 text-cyan-400"></i>
       </div>
-      <div class="mb-8">
-        <h2 class="text-2xl font-bold mb-2">Ranking Público</h2>
-        <p class="text-gray-400 text-sm px-4 leading-relaxed">Compartilhe este link para que qualquer pessoa acompanhe o ranking das casas sem precisar de login.</p>
+      <div class="mb-8 px-2">
+        <h2 class="text-2xl font-black tracking-tight mb-2">Ranking Público</h2>
+        <p class="text-gray-500 text-[11px] font-bold uppercase tracking-widest leading-relaxed opacity-70">Acompanhamento em tempo real sem necessidade de autenticação.</p>
       </div>
       
-      <div class="bg-white p-5 rounded-3xl inline-block mx-auto shadow-2xl shadow-cyan-500/20 mb-8">
-        <img id="qrcode-img" src="" alt="QR Code" class="w-48 h-48">
+      <div class="bg-white p-6 rounded-[2.5rem] inline-block mx-auto shadow-2xl shadow-cyan-500/20 mb-8 border-4 border-cyan-500/10">
+        <img id="qrcode-img" src="" alt="QR Code" class="w-40 h-40">
       </div>
 
-      <div class="space-y-4">
-        <button id="btn-copy-link" class="btn-glow w-full py-4 rounded-2xl flex items-center justify-center gap-3 font-bold">
-          <i data-lucide="copy" class="w-5 h-5"></i> Copiar Link Direto
+      <div class="space-y-3">
+        <button id="btn-copy-link" class="btn-glow w-full py-4 rounded-2xl flex items-center justify-center gap-3 font-black uppercase text-[10px] tracking-widest">
+          <i data-lucide="copy" class="w-4 h-4"></i> Copiar Link Direto
         </button>
-        <button onclick="window.fecharModalShare()" class="w-full py-4 bg-white/5 rounded-2xl font-bold text-gray-400 hover:text-white transition-all text-sm border border-white/5">
+        <button onclick="window.fecharModalShare()" class="w-full py-4 bg-white/5 rounded-2xl font-black uppercase text-[10px] tracking-widest text-gray-500 hover:text-white transition-all border border-white/5">
           Fechar
         </button>
       </div>
@@ -123,25 +123,31 @@
   </div>
 
   <!-- Modal Gestão de Equipe -->
-  <div id="modal-equipe" class="fixed inset-0 z-[120] hidden flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm modal-overlay" onclick="window.fecharModalEquipe()">
-    <div class="glass-card max-w-3xl w-full p-10 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300" onclick="event.stopPropagation()">
+  <div id="modal-equipe" class="fixed inset-0 z-[120] hidden flex items-end sm:items-center justify-center p-0 sm:p-4 modal-overlay" onclick="window.fecharModalEquipe()">
+    <div class="glass-card max-w-2xl w-full p-8 md:p-10 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300" onclick="event.stopPropagation()">
       <div class="flex items-center justify-between mb-10">
         <div class="flex items-center gap-5">
-          <div class="w-14 h-14 rounded-2xl bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20">
-            <i data-lucide="users" class="w-7 h-7 text-cyan-400"></i>
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-indigo-500/20 flex items-center justify-center border border-cyan-500/30 shadow-lg shadow-cyan-500/10">
+            <i data-lucide="shield-check" class="w-7 h-7 text-cyan-400"></i>
           </div>
           <div>
-            <h2 class="text-3xl font-black">Equipe Docente</h2>
-            <p id="equipe-escola-nome" class="text-xs text-cyan-500 font-bold uppercase tracking-widest mt-1">NOME DA ESCOLA</p>
+            <h2 class="text-3xl font-black tracking-tight">Equipe Docente</h2>
+            <p id="equipe-escola-nome" class="text-[10px] text-cyan-500 font-black uppercase tracking-[0.2em] mt-1">Instituição de Ensino</p>
           </div>
         </div>
-        <button onclick="window.fecharModalEquipe()" class="p-3 hover:bg-white/5 rounded-2xl transition-all border border-transparent hover:border-white/10">
-          <i data-lucide="x" class="w-6 h-6 text-gray-500"></i>
+        <button onclick="window.fecharModalEquipe()" class="w-12 h-12 flex items-center justify-center hover:bg-white/5 rounded-2xl transition-all border border-transparent hover:border-white/10 group">
+          <i data-lucide="x" class="w-6 h-6 text-gray-500 group-hover:text-white transition-colors"></i>
         </button>
       </div>
       
-      <div id="lista-equipe" class="space-y-4 max-h-[60vh] overflow-y-auto pr-3 custom-scrollbar">
+      <div id="lista-equipe" class="space-y-4 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar">
         <!-- Professores serão injetadas aqui -->
+      </div>
+
+      <div class="mt-8 pt-8 border-t border-white/5 flex justify-end">
+        <button onclick="window.fecharModalEquipe()" class="px-8 py-4 bg-white/5 hover:bg-white/10 rounded-2xl font-black uppercase text-[10px] tracking-widest text-gray-400 hover:text-white transition-all border border-white/5">
+          Fechar Painel
+        </button>
       </div>
     </div>
   </div>

@@ -110,67 +110,98 @@
   </main>
 
   <!-- Modal Config Turma -->
-  <div id="modal-config" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm hidden modal-overlay">
-    <div class="max-w-md w-full glass-card p-10 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300">
-      <h2 class="text-3xl font-black mb-8 tracking-tighter">Configurações</h2>
+  <div id="modal-config" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 hidden modal-overlay">
+    <div class="max-w-md w-full glass-card p-8 md:p-10 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300">
+      <div class="flex items-center gap-5 mb-10">
+        <div class="w-14 h-14 bg-gradient-to-br from-indigo-500/20 to-purple-600/20 rounded-2xl flex items-center justify-center border border-indigo-500/30 shadow-lg shadow-indigo-500/10">
+          <i data-lucide="settings" class="w-7 h-7 text-indigo-400"></i>
+        </div>
+        <div>
+          <h2 class="text-3xl font-black tracking-tight leading-tight">Ajustes</h2>
+          <p class="text-[10px] text-indigo-500 font-black uppercase tracking-[0.2em] mt-1">Configurações da Turma</p>
+        </div>
+      </div>
+      
       <div class="space-y-6">
         <div>
-          <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Nome da Turma</label>
-          <input type="text" id="edit-turma-nome" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:border-cyan-500 outline-none transition-all">
+          <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3 ml-1">Identificação</label>
+          <input type="text" id="edit-turma-nome" class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-indigo-500 focus:bg-indigo-500/5 outline-none transition-all font-bold">
         </div>
         <div>
-          <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Avatar (Emoji)</label>
-          <input type="text" id="edit-turma-avatar" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:border-cyan-500 outline-none transition-all" placeholder="Ex: 🧪">
+          <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3 ml-1">Ícone Representativo (Emoji)</label>
+          <input type="text" id="edit-turma-avatar" class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-indigo-500 focus:bg-indigo-500/5 outline-none transition-all text-2xl text-center" placeholder="Ex: 🧪">
         </div>
-        <div class="flex gap-4 pt-4">
-          <button onclick="fecharModais()" class="flex-1 py-4 bg-white/5 hover:bg-white/10 rounded-2xl font-bold border border-white/5 transition-all">Cancelar</button>
-          <button id="btn-save-config" class="btn-glow flex-1 py-4 rounded-2xl font-bold">Salvar Alterações</button>
+        <div class="flex gap-4 pt-6">
+          <button onclick="fecharModais()" class="flex-1 py-4 bg-white/5 hover:bg-white/10 rounded-2xl font-black uppercase text-[10px] tracking-widest border border-white/5 transition-all text-gray-500">Cancelar</button>
+          <button id="btn-save-config" class="btn-glow flex-1 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-indigo-500/20">Salvar Dados</button>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Modal Matricular Aluno -->
-  <div id="modal-aluno" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm hidden modal-overlay">
-    <div class="max-w-md w-full glass-card p-10 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300">
-      <h2 class="text-3xl font-black mb-2 tracking-tighter">Matricular</h2>
-      <p class="text-gray-400 mb-8 text-sm font-medium leading-relaxed">Insira os dados do estudante para adicioná-lo à turma.</p>
+  <div id="modal-aluno" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 hidden modal-overlay">
+    <div class="max-w-md w-full glass-card p-8 md:p-10 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300">
+      <div class="flex items-center gap-5 mb-10">
+        <div class="w-14 h-14 bg-gradient-to-br from-emerald-500/20 to-teal-600/20 rounded-2xl flex items-center justify-center border border-emerald-500/30 shadow-lg shadow-emerald-500/10">
+          <i data-lucide="user-plus" class="w-7 h-7 text-emerald-400"></i>
+        </div>
+        <div>
+          <h2 class="text-3xl font-black tracking-tight leading-tight">Matricular</h2>
+          <p class="text-[10px] text-emerald-500 font-black uppercase tracking-[0.2em] mt-1">Inscrição de Estudante</p>
+        </div>
+      </div>
+      
       <div class="space-y-6">
         <div>
-          <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Nome Completo</label>
-          <input type="text" id="novo-aluno-nome" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:border-cyan-500 outline-none transition-all" placeholder="Ex: João Silva">
+          <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3 ml-1">Nome Completo</label>
+          <input type="text" id="novo-aluno-nome" class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-emerald-500 focus:bg-emerald-500/5 outline-none transition-all font-bold" placeholder="Ex: João Silva">
         </div>
         <div>
-          <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">E-mail Institucional</label>
-          <input type="email" id="novo-aluno-email" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:border-cyan-500 outline-none transition-all" placeholder="exemplo@estudante.rn.gov.br">
+          <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3 ml-1">E-mail Institucional</label>
+          <input type="email" id="novo-aluno-email" class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-emerald-500 focus:bg-emerald-500/5 outline-none transition-all font-bold" placeholder="exemplo@estudante.rn.gov.br">
         </div>
-        <div class="flex gap-4 pt-4">
-          <button onclick="fecharModais()" class="flex-1 py-4 bg-white/5 hover:bg-white/10 rounded-2xl font-bold border border-white/5 transition-all text-gray-400">Cancelar</button>
-          <button id="btn-save-aluno" class="btn-glow flex-1 py-4 rounded-2xl font-bold">Confirmar Matrícula</button>
+        <div class="flex gap-4 pt-6">
+          <button onclick="fecharModais()" class="flex-1 py-4 bg-white/5 hover:bg-white/10 rounded-2xl font-black uppercase text-[10px] tracking-widest border border-white/5 transition-all text-gray-500">Cancelar</button>
+          <button id="btn-save-aluno" class="btn-glow flex-1 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-emerald-500/20">Efetivar</button>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Modal Matrícula em Massa -->
-  <div id="modal-massa" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm hidden modal-overlay">
-    <div class="max-w-3xl w-full glass-card p-10 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300">
-      <h2 class="text-3xl font-black mb-2 tracking-tighter">Importação em Lote</h2>
-      <p class="text-gray-400 mb-8 text-sm font-medium">Cole a lista de estudantes. Use o formato <b class="text-white">"Nome;Email"</b> por linha.</p>
+  <div id="modal-massa" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 hidden modal-overlay">
+    <div class="max-w-3xl w-full glass-card p-8 md:p-10 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300">
+      <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center gap-5">
+          <div class="w-14 h-14 bg-gradient-to-br from-cyan-500/20 to-blue-600/20 rounded-2xl flex items-center justify-center border border-cyan-500/30 shadow-lg shadow-cyan-500/10">
+            <i data-lucide="file-up" class="w-7 h-7 text-cyan-400"></i>
+          </div>
+          <div>
+            <h2 class="text-3xl font-black tracking-tight leading-tight">Importação em Lote</h2>
+            <p class="text-[10px] text-cyan-500 font-black uppercase tracking-[0.2em] mt-1">Matrícula em Massa via CSV/Texto</p>
+          </div>
+        </div>
+        <button onclick="fecharModais()" class="w-12 h-12 flex items-center justify-center hover:bg-white/5 rounded-2xl transition-all border border-transparent hover:border-white/10 group">
+          <i data-lucide="x" class="w-6 h-6 text-gray-500 group-hover:text-white transition-colors"></i>
+        </button>
+      </div>
+
+      <p class="text-gray-500 mb-6 text-[11px] font-bold uppercase tracking-widest bg-white/5 px-4 py-2 rounded-lg inline-block">Use o formato: <b class="text-white">Nome;Email</b> (um por linha)</p>
       
       <div class="space-y-8">
-        <textarea id="input-massa-emails" class="w-full h-64 bg-white/5 border border-white/10 rounded-3xl p-6 focus:border-cyan-500 outline-none transition-all font-mono text-sm leading-relaxed" placeholder="João Silva;joao@estudante.rn.gov.br&#10;Maria Souza;maria@estudante.rn.gov.br"></textarea>
+        <textarea id="input-massa-emails" class="w-full h-64 bg-white/5 border border-white/10 rounded-3xl p-6 focus:border-cyan-500 focus:bg-cyan-500/5 outline-none transition-all font-mono text-sm leading-relaxed text-white custom-scrollbar" placeholder="João Silva;joao@estudante.rn.gov.br&#10;Maria Souza;maria@estudante.rn.gov.br"></textarea>
         
         <div class="flex flex-col md:flex-row justify-between items-center gap-6 pt-4 border-t border-white/5">
-          <div class="flex items-center gap-3">
+          <div class="flex items-center gap-4 bg-white/5 px-6 py-4 rounded-2xl border border-white/5">
             <div class="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20">
-              <i data-lucide="check-circle-2" class="w-5 h-5 text-cyan-400"></i>
+              <i data-lucide="users" class="w-5 h-5 text-cyan-400"></i>
             </div>
-            <span id="contagem-emails" class="text-cyan-400 font-black text-sm uppercase tracking-widest">0 e-mails detectados</span>
+            <span id="contagem-emails" class="text-cyan-400 font-black text-[10px] uppercase tracking-[0.2em]">0 e-mails detectados</span>
           </div>
           <div class="flex gap-4 w-full md:w-auto">
-            <button onclick="fecharModais()" class="flex-1 md:flex-none px-8 py-4 bg-white/5 rounded-2xl font-bold text-gray-400 border border-white/5 transition-all">Cancelar</button>
-            <button id="btn-processar-massa" class="btn-glow flex-1 md:flex-none px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-sm">Iniciar Importação</button>
+            <button onclick="fecharModais()" class="flex-1 md:flex-none px-8 py-4 bg-white/5 rounded-2xl font-black uppercase text-[10px] tracking-widest text-gray-500 hover:text-white border border-white/5 transition-all">Cancelar</button>
+            <button id="btn-processar-massa" class="btn-glow flex-1 md:flex-none px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px]">Iniciar Processo</button>
           </div>
         </div>
       </div>
@@ -178,23 +209,31 @@
   </div>
 
   <!-- Modal Editar Aluno -->
-  <div id="modal-editar-aluno" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm hidden modal-overlay">
-    <div class="max-w-md w-full glass-card p-10 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300">
-      <h2 class="text-3xl font-black mb-2 tracking-tighter">Dados do Estudante</h2>
-      <p class="text-gray-400 mb-8 text-sm font-medium">Atualize as informações cadastrais abaixo.</p>
+  <div id="modal-editar-aluno" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 hidden modal-overlay">
+    <div class="max-w-md w-full glass-card p-8 md:p-10 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in duration-300">
+      <div class="flex items-center gap-5 mb-10">
+        <div class="w-14 h-14 bg-gradient-to-br from-indigo-500/20 to-blue-600/20 rounded-2xl flex items-center justify-center border border-indigo-500/30 shadow-lg shadow-indigo-500/10">
+          <i data-lucide="user-cog" class="w-7 h-7 text-indigo-400"></i>
+        </div>
+        <div>
+          <h2 class="text-3xl font-black tracking-tight leading-tight">Estudante</h2>
+          <p class="text-[10px] text-indigo-500 font-black uppercase tracking-[0.2em] mt-1">Atualizar Registro</p>
+        </div>
+      </div>
+      
       <input type="hidden" id="edit-aluno-id">
       <div class="space-y-6">
         <div>
-          <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Nome Completo</label>
-          <input type="text" id="edit-aluno-nome" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:border-cyan-500 outline-none transition-all">
+          <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3 ml-1">Nome do Aluno</label>
+          <input type="text" id="edit-aluno-nome" class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-indigo-500 focus:bg-indigo-500/5 outline-none transition-all font-bold">
         </div>
         <div>
-          <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">E-mail Institucional</label>
-          <input type="email" id="edit-aluno-email" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:border-cyan-500 outline-none transition-all">
+          <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3 ml-1">E-mail de Acesso</label>
+          <input type="email" id="edit-aluno-email" class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-indigo-500 focus:bg-indigo-500/5 outline-none transition-all font-bold">
         </div>
         <div class="flex gap-4 pt-6">
-          <button onclick="fecharModais()" class="flex-1 py-4 bg-white/5 rounded-2xl font-bold border border-white/5 text-gray-400 transition-all">Cancelar</button>
-          <button id="btn-update-aluno" class="btn-glow flex-1 py-4 rounded-2xl font-bold">Salvar Dados</button>
+          <button onclick="fecharModais()" class="flex-1 py-4 bg-white/5 rounded-2xl font-black uppercase text-[10px] tracking-widest border border-white/5 text-gray-500 transition-all">Cancelar</button>
+          <button id="btn-update-aluno" class="btn-glow flex-1 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-indigo-500/20">Gravar</button>
         </div>
       </div>
     </div>
