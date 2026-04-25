@@ -13,12 +13,13 @@
   <script type="module" src="/app.js"></script>
 </head>
 
-<body class="hero-bg text-white font-['Outfit'] min-h-screen flex items-center justify-center p-4">
+<body class="hero-bg text-white font-['Outfit'] min-h-screen flex flex-col p-4">
   <div class="geo-grid"></div>
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
 
-  <div class="w-full max-w-lg glass-card p-8 md:p-12 shadow-2xl animate-in fade-in zoom-in duration-500">
+  <div class="flex-1 flex items-center justify-center w-full">
+    <div class="w-full max-w-lg glass-card p-8 md:p-12 shadow-2xl animate-in fade-in zoom-in duration-500">
     <!-- Orb de Brilho Interno (Exclusivo Onboarding) -->
     <div class="absolute -top-24 -right-24 w-48 h-48 bg-cyan-500/10 rounded-full blur-[80px] pointer-events-none"></div>
 
@@ -51,10 +52,11 @@
           <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3 ml-1">Vincular Instituição</label>
           <div class="relative">
             <select id="escola-id"
-              class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-cyan-500 focus:bg-cyan-500/5 outline-none transition-all appearance-none font-bold text-white cursor-pointer">
-              <option value="" class="bg-[#0f172a]">Escolha uma escola...</option>
+              class="w-full bg-[#0f172a] border border-white/10 rounded-2xl px-6 py-4 focus:border-cyan-500 focus:bg-cyan-500/5 outline-none transition-all appearance-none font-bold text-white cursor-pointer shadow-xl">
+              <option value="" class="bg-[#0f172a] text-gray-400">Escolha uma escola...</option>
               <option value="NEW" class="bg-[#0f172a] font-black text-cyan-400">+ Cadastrar Nova Escola</option>
             </select>
+
             <i data-lucide="chevron-down" class="absolute right-6 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none"></i>
           </div>
         </div>
@@ -62,16 +64,18 @@
         <div id="escola-nova-container" class="hidden animate-in fade-in slide-in-from-top-4 duration-500">
           <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3 ml-1">Nome da Nova Escola</label>
           <input type="text" id="escola-nome-novo"
-            class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-cyan-500 focus:bg-cyan-500/5 outline-none transition-all font-bold placeholder:text-gray-600"
+            class="w-full bg-[#0f172a] border border-white/10 rounded-2xl px-6 py-4 focus:border-cyan-500 focus:bg-cyan-500/5 outline-none transition-all font-bold placeholder:text-gray-600 shadow-lg"
             placeholder="Ex: Escola Estadual Quasar">
+
         </div>
 
         <div id="codigo-acesso-container" class="hidden animate-in fade-in slide-in-from-top-4 duration-500">
           <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3 ml-1">Chave de Segurança</label>
           <div class="relative">
             <input type="text" id="escola-codigo-acesso"
-              class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-cyan-500 focus:bg-cyan-500/5 outline-none transition-all uppercase tracking-[0.3em] font-mono font-bold text-center"
+              class="w-full bg-[#0f172a] border border-white/10 rounded-2xl px-6 py-4 focus:border-cyan-500 focus:bg-cyan-500/5 outline-none transition-all uppercase tracking-[0.3em] font-mono font-bold text-center shadow-lg"
               placeholder="••••••">
+
             <div class="absolute left-6 top-1/2 -translate-y-1/2 text-cyan-500/30">
               <i data-lucide="shield-check" class="w-5 h-5"></i>
             </div>
@@ -89,8 +93,9 @@
           <div id="turma-nova-container" class="hidden animate-in fade-in slide-in-from-top-4 duration-500">
             <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3 ml-1">Nome da Nova Turma</label>
             <input type="text" id="turma-nome-novo"
-              class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-cyan-500 focus:bg-cyan-500/5 outline-none transition-all font-bold placeholder:text-gray-600"
+              class="w-full bg-[#0f172a] border border-white/10 rounded-2xl px-6 py-4 focus:border-cyan-500 focus:bg-cyan-500/5 outline-none transition-all font-bold placeholder:text-gray-600 shadow-lg"
               placeholder="Ex: 9º Ano A — Matutino">
+
           </div>
 
           <button type="button" id="btn-toggle-nova-turma"

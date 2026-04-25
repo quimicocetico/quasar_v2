@@ -46,17 +46,23 @@
       border-color: rgba(0,240,255,0.2) !important;
     }
 
-    /* Animação de Ondas SVG */
+    /* Animação de Ondas SVG Dinâmica (Corrigida) */
     .wave {
       position: absolute;
-      top: -15px;
+      top: -18px;
       left: 0;
       width: 200%;
       height: 25px;
-      background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1000 100" xmlns="http://www.w3.org/2000/svg"><path d="M0,50 C150,0 350,100 500,50 C650,0 850,100 1000,50 L1000,100 L0,100 Z" fill="white" opacity="0.4"/></svg>');
-      background-size: 50% 100%;
-      animation: wave-move 3s linear infinite;
+      background: white; /* Cor base da onda */
+      opacity: 0.5;
+      -webkit-mask-image: url('data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTAwMCAxMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTAsNTAgQzE1MCwwIDM1MCwxMDAgNTAwLDUwIEM2NTAsMCA4NTAsMTAwIDEwMDAsNTAgTDEwMDAsMTAwIEwwLDEwMCBaIiBmaWxsPSJibGFjayIvPjwvc3ZnPg==');
+      mask-image: url('data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTAwMCAxMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTAsNTAgQzE1MCwwIDM1MCwxMDAgNTAwLDUwIEM2NTAsMCA4NTAsMTAwIDEwMDAsNTAgTDEwMDAsMTAwIEwwLDEwMCBaIiBmaWxsPSJibGFjayIvPjwvc3ZnPg==');
+      -webkit-mask-size: 50% 100%;
+      mask-size: 50% 100%;
+      animation: wave-move 4s linear infinite;
     }
+
+
     @keyframes wave-move {
       from { transform: translateX(0); }
       to { transform: translateX(-50%); }
@@ -204,10 +210,11 @@
                         <div class="text-[10px] md:text-xs font-black text-white/40 mb-1">${casa.pontos_total} pts</div>
                       </div>
                       <div class="liquid-container">
-                        <div class="liquid-fill" style="height: ${height}%; background: ${color}; transition: height 1.5s ease-out, background-color 0.5s ease;">
-                          <div class="wave"></div>
+                        <div class="liquid-fill" style="height: ${height}%; background: ${color}; box-shadow: 0 0 40px ${color.includes('linear') ? color.split(',').pop().replace(')', '') : color}44; transition: height 1.5s ease-out, background-color 0.5s ease;">
+                          <div class="wave" style="background: ${color.includes('linear') ? color.split(',').pop().replace(')', '') : 'white'}; opacity: 0.5;"></div>
                         </div>
                       </div>
+
                       <div class="text-center">
                         <div class="text-xs md:text-lg font-black uppercase tracking-tighter text-white group-hover:text-[#00F0FF] transition-colors leading-tight">${casa.nome}</div>
                       </div>

@@ -232,6 +232,14 @@ select:focus {
   box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
 }
 
+/* Melhoria de visibilidade para Selects em modo escuro */
+select option {
+  background-color: #0F172A;
+  color: white;
+  padding: 12px;
+}
+
+
 /* ========== BACKGROUNDS & EFEITOS ========== */
 .hero-bg {
   position: relative;

@@ -46,17 +46,23 @@
       border-color: rgba(0,240,255,0.2) !important;
     }
 
-    /* Animação de Ondas SVG */
+    /* Animação de Ondas SVG Dinâmica (Corrigida) */
     .wave {
       position: absolute;
-      top: -15px;
+      top: -18px;
       left: 0;
       width: 200%;
       height: 25px;
-      background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1000 100" xmlns="http://www.w3.org/2000/svg"><path d="M0,50 C150,0 350,100 500,50 C650,0 850,100 1000,50 L1000,100 L0,100 Z" fill="white" opacity="0.4"/></svg>');
-      background-size: 50% 100%;
-      animation: wave-move 3s linear infinite;
+      background: white; /* Cor base da onda */
+      opacity: 0.5;
+      -webkit-mask-image: url('data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTAwMCAxMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTAsNTAgQzE1MCwwIDM1MCwxMDAgNTAwLDUwIEM2NTAsMCA4NTAsMTAwIDEwMDAsNTAgTDEwMDAsMTAwIEwwLDEwMCBaIiBmaWxsPSJibGFjayIvPjwvc3ZnPg==');
+      mask-image: url('data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTAwMCAxMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTAsNTAgQzE1MCwwIDM1MCwxMDAgNTAwLDUwIEM2NTAsMCA4NTAsMTAwIDEwMDAsNTAgTDEwMDAsMTAwIEwwLDEwMCBaIiBmaWxsPSJibGFjayIvPjwvc3ZnPg==');
+      -webkit-mask-size: 50% 100%;
+      mask-size: 50% 100%;
+      animation: wave-move 4s linear infinite;
     }
+
+
     @keyframes wave-move {
       from { transform: translateX(0); }
       to { transform: translateX(-50%); }
@@ -154,25 +160,25 @@
   </main>
 
   <!-- Modal Compartilhar -->
-  <div id="modal-share" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl" onclick="window.fecharModalShare()">
-    <div class="glass-card max-w-sm w-full p-8 md:p-10 text-center space-y-8 animate-in zoom-in duration-300" onclick="event.stopPropagation()">
-      <div class="w-16 h-16 bg-cyan-500/10 rounded-2xl flex items-center justify-center mx-auto border border-cyan-500/20">
-        <i data-lucide="qr-code" class="w-8 h-8 text-cyan-400"></i>
+  <div id="modal-share" class="fixed inset-0 z-[110] hidden flex items-end sm:items-center justify-center p-0 sm:p-4 modal-overlay" onclick="window.fecharModalShare()">
+    <div class="glass-card max-w-sm w-full p-8 md:p-10 text-center animate-in slide-in-from-bottom sm:zoom-in duration-300" onclick="event.stopPropagation()">
+      <div class="w-20 h-20 bg-gradient-to-br from-cyan-500/10 to-emerald-500/10 rounded-[2rem] flex items-center justify-center mx-auto mb-8 border border-cyan-500/20 shadow-2xl shadow-cyan-500/10">
+        <i data-lucide="qr-code" class="w-10 h-10 text-cyan-400"></i>
       </div>
-      <div>
-        <h2 class="text-2xl font-black uppercase tracking-tighter italic">Ranking Público</h2>
-        <p class="text-gray-500 text-[11px] font-medium leading-relaxed mt-2 uppercase tracking-widest px-4">Qualquer pessoa pode acompanhar em tempo real sem login.</p>
+      <div class="mb-8 px-2">
+        <h2 class="text-2xl font-black tracking-tight mb-2">Ranking Público</h2>
+        <p class="text-gray-500 text-[11px] font-bold uppercase tracking-widest leading-relaxed opacity-70">Acompanhamento em tempo real sem necessidade de autenticação.</p>
       </div>
       
-      <div class="bg-white p-4 rounded-3xl inline-block mx-auto shadow-2xl shadow-cyan-500/20">
-        <img id="qrcode-img" src="" alt="QR Code" class="w-48 h-48">
+      <div class="bg-white p-6 rounded-[2.5rem] inline-block mx-auto shadow-2xl shadow-cyan-500/20 mb-8 border-4 border-cyan-500/10">
+        <img id="qrcode-img" src="" alt="QR Code" class="w-40 h-40">
       </div>
 
       <div class="space-y-3">
-        <button id="btn-copy-link" class="btn-glow w-full py-4 rounded-2xl text-sm font-black uppercase tracking-widest flex items-center justify-center gap-2">
-          <i data-lucide="copy" class="w-4 h-4"></i> Copiar Link
+        <button id="btn-copy-link" class="btn-glow w-full py-4 rounded-2xl flex items-center justify-center gap-3 font-black uppercase text-[10px] tracking-widest">
+          <i data-lucide="copy" class="w-4 h-4"></i> Copiar Link Direto
         </button>
-        <button onclick="window.fecharModalShare()" class="w-full py-3 text-gray-500 font-bold uppercase tracking-widest text-[10px] hover:text-white transition-colors">
+        <button onclick="window.fecharModalShare()" class="w-full py-4 bg-white/5 rounded-2xl font-black uppercase text-[10px] tracking-widest text-gray-500 hover:text-white transition-all border border-white/5">
           Fechar
         </button>
       </div>
@@ -267,10 +273,11 @@
                       <div class="text-[10px] md:text-xs font-black text-white/40 mb-1">${casa.pontos_total} pts</div>
                     </div>
                     <div class="liquid-container">
-                      <div class="liquid-fill" style="height: ${height}%; background: ${color}; transition: height 1.5s ease-out, background-color 0.5s ease;">
-                        <div class="wave"></div>
+                      <div class="liquid-fill" style="height: ${height}%; background: ${color}; box-shadow: 0 0 40px ${color.includes('linear') ? color.split(',').pop().replace(')', '') : color}44; transition: height 1.5s ease-out, background-color 0.5s ease;">
+                        <div class="wave" style="background: ${color.includes('linear') ? color.split(',').pop().replace(')', '') : 'white'}; opacity: 0.5;"></div>
                       </div>
                     </div>
+
                     <div class="text-center">
                       <div class="text-xs md:text-lg font-black uppercase tracking-tighter text-white group-hover:text-[#00F0FF] transition-colors leading-tight">${casa.nome}</div>
                       ${isProfessor ? `

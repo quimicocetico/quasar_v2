@@ -23,18 +23,20 @@
 </head>
 <body class="text-white font-['Outfit'] min-h-screen">
   <!-- Overlay de Desativação Temporária -->
-  <div class="fixed inset-0 z-[200] bg-[#020617]/95 backdrop-blur-xl flex flex-col items-center justify-center text-center p-8">
-    <div class="w-24 h-24 bg-blue-500/10 rounded-3xl flex items-center justify-center mb-8 border border-blue-500/20 animate-pulse">
-      <i data-lucide="shield-alert" class="w-12 h-12 text-blue-400"></i>
+  <div class="fixed inset-0 z-[200] flex items-center justify-center p-4 modal-overlay">
+    <div class="glass-card max-w-md w-full p-10 md:p-12 text-center animate-in zoom-in duration-500">
+      <div class="w-24 h-24 bg-gradient-to-br from-indigo-500/20 to-purple-600/20 rounded-[2.5rem] flex items-center justify-center mx-auto mb-10 border border-indigo-500/30 shadow-2xl shadow-indigo-500/20 animate-pulse">
+        <i data-lucide="shield-alert" class="w-12 h-12 text-indigo-400"></i>
+      </div>
+      <h1 class="text-4xl font-black italic tracking-tighter mb-4 uppercase bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">Sistema em Calibragem</h1>
+      <p class="text-gray-400 font-bold uppercase tracking-[0.15em] text-[10px] mb-8 leading-relaxed opacity-70">
+        O Codex Arcano está sendo preparado para uma nova era de conhecimentos. <br>
+        As janelas e módulos estão temporariamente desativados.
+      </p>
+      <a href="/index.html" class="btn-glow inline-flex px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px]">
+        Voltar ao Hub
+      </a>
     </div>
-    <h1 class="text-4xl font-black italic tracking-tighter mb-4 uppercase">Sistema em Calibragem</h1>
-    <p class="text-gray-400 max-w-md mx-auto leading-relaxed">
-      O Codex Arcano está sendo preparado para uma nova era de conhecimentos. <br>
-      As janelas e módulos estão temporariamente desativados.
-    </p>
-    <a href="/index.html" class="mt-12 px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl font-bold transition-all uppercase tracking-widest text-sm">
-      Voltar ao Hub
-    </a>
   </div>
 
   <main class="max-w-7xl mx-auto px-4 py-12 opacity-10 pointer-events-none grayscale">
