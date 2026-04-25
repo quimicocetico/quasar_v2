@@ -4,6 +4,18 @@ import { db, doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs, 
 import { signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 import { auth } from "./firebase-config.js";
 
+// --- Segurança e Sanitização Global ---
+const escapeHTML = (str) => {
+    if (!str) return "";
+    return str.toString().replace(/[&<>"']/g, (m) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    })[m]);
+};
+
 const isLoginPage = window.location.pathname.includes('login');
 const isOnboardingPage = window.location.pathname.includes('onboarding');
 
@@ -142,9 +154,9 @@ function atualizarHeaderUsuario(user, profile) {
 
   if (user) {
     const firstName = user.displayName ? user.displayName.split(' ')[0] : 'Aluno';
-    headerName.textContent = firstName;
-    cardName.textContent = user.displayName || 'Aluno Quasar';
-    cardEmail.textContent = user.email;
+    headerName.textContent = escapeHTML(firstName);
+    cardName.textContent = escapeHTML(user.displayName || 'Aluno Quasar');
+    cardEmail.textContent = escapeHTML(user.email);
 
     const papel = profile?.papel || (user.email.endsWith('@educar.rn.gov.br') ? 'professor' : 'aluno');
     document.body.dataset.role = papel;

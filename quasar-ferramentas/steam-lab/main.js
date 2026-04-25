@@ -2,6 +2,18 @@ import { requireAuth } from "../../_shared/gatekeeper.js";
 import { db, collection, addDoc, serverTimestamp, query, where, getDocs, updateDoc, doc, arrayUnion, arrayRemove, getDoc, orderBy, limit, setDoc, onSnapshot } from "../../_shared/db.js";
 import { ETAPAS_MCAT } from "./etapas.js";
 
+// --- Segurança e Sanitização ---
+const escapeHTML = (str) => {
+    if (!str) return "";
+    return str.toString().replace(/[&<>"']/g, (m) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    })[m]);
+};
+
 // --- Globais ---
 const urlParams = new URLSearchParams(window.location.search);
 const MAGIC_TOKEN = urlParams.get('token');
@@ -103,7 +115,7 @@ async function renderizarProjetos(snap, souProfessor, alunoEmail = null) {
             <div class="flex justify-between items-start mb-6">
                 <div class="flex flex-col gap-1">
                     <span class="text-[8px] font-black uppercase tracking-widest text-cyan-400">Projeto MCAT</span>
-                    <h3 class="text-sm font-black text-white leading-tight">${p.dados_gerais.titulo}</h3>
+                    <h3 class="text-sm font-black text-white leading-tight">${escapeHTML(p.dados_gerais.titulo)}</h3>
                 </div>
                 <div class="text-right">
                     <span class="text-[14px] font-black" style="color: hsl(${Math.min(120, pct * 1.2)}, 80%, 50%)">${pct}%</span>
@@ -125,9 +137,9 @@ async function renderizarProjetos(snap, souProfessor, alunoEmail = null) {
                             <div class="flex justify-between items-center bg-white/5 p-2 rounded-lg border border-white/5">
                                 <div class="flex items-center gap-2 overflow-hidden">
                                     <div class="w-5 h-5 rounded-md bg-cyan-500/10 flex items-center justify-center text-[7px] font-black text-cyan-500 shrink-0">
-                                        ${(m.nome || m.email).charAt(0).toUpperCase()}
+                                        ${escapeHTML((m.nome || m.email).charAt(0).toUpperCase())}
                                     </div>
-                                    <span class="text-[9px] font-bold text-gray-300 truncate">${m.nome || m.email}</span>
+                                    <span class="text-[9px] font-bold text-gray-300 truncate">${escapeHTML(m.nome || m.email)}</span>
                                     ${m.status === 'pendente' ? '<span class="text-[6px] font-black uppercase px-1 bg-amber-500/10 text-amber-500 rounded">Pendente</span>' : ''}
                                 </div>
                                 ${souProfessor ? `
@@ -463,10 +475,10 @@ window.abrirMagicModal = async (id) => {
     const pSnap = await getDoc(doc(db, "projetos", id));
     const p = pSnap.data();
     const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf("/") + 1);
-    const url = `${baseUrl}projeto.html?projeto=${id}&token=${p.dados_gerais.token_coorientador}`;
+    const url = `${baseUrl}projeto.html?id=${id}&token=${p.dados_gerais.token_coorientador}`;
 
     document.getElementById('magic-link-text').textContent = url;
-    document.getElementById('magic-qr').src = `https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${encodeURIComponent(url)}`;
+    document.getElementById('magic-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`;
     document.getElementById('magic-link-modal').classList.remove('hidden');
 
     document.getElementById('btn-revogar-magic').onclick = async () => {

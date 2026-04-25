@@ -6,40 +6,52 @@ service cloud.firestore {
     function isAutenticado() {
       return request.auth != null;
     }
-    function isProfessor() {
-      return isAutenticado() && 
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.papel == 'professor';
+    
+    // Recupera o perfil do usuário logado
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
     }
-    function isAluno() {
-      return isAutenticado() && 
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.papel == 'aluno';
+
+    function isProfessor() {
+      return isAutenticado() && getUserData().papel == 'professor';
+    }
+
+    // Verifica se o professor pertence a uma escola específica
+    function professorPertenceEscola(escolaId) {
+      let data = getUserData();
+      return data.escola_id == escolaId || (escolaId in data.vinculos);
     }
 
     // ─── USUÁRIOS ────────────────────────────────────────────────
     match /users/{uid} {
       allow read: if isAutenticado();
-      allow write: if isAutenticado() && (request.auth.uid == uid || isProfessor());
-    }
-    match /users {
-      allow read, list: if isAutenticado();
+      allow create: if isAutenticado() && request.auth.uid == uid && (
+        // Força papel baseado no e-mail na criação
+        (request.resource.data.papel == 'professor' && request.auth.token.email.matches('.*@educar\\.rn\\.gov\\.br$')) ||
+        (request.resource.data.papel == 'aluno' && !request.auth.token.email.matches('.*@educar\\.rn\\.gov\\.br$'))
+      );
+      allow update: if isAutenticado() && request.auth.uid == uid && (
+        // Impede troca de papel e protege campos sensíveis
+        request.resource.data.papel == resource.data.papel &&
+        request.resource.data.email == resource.data.email
+      );
     }
 
     // ─── ESCOLAS E TURMAS ────────────────────────────────────────
     match /escolas/{escolaId} {
-      allow read: if true; 
+      allow read: if isAutenticado(); 
       allow create: if isProfessor();
       allow update, delete: if isProfessor() && (
         resource.data.professor_uid == request.auth.uid ||
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.id == resource.data.professor_uid
+        getUserData().id == resource.data.professor_uid
       );
       
       match /turmas/{turmaId} {
-        allow read: if true;
-        allow create: if isProfessor();
+        allow read: if isAutenticado();
+        allow create: if isProfessor() && professorPertenceEscola(escolaId);
         allow update, delete: if isProfessor() && (
           request.auth.uid in resource.data.professores || 
-          get(/databases/$(database)/documents/escolas/$(escolaId)).data.professor_uid == request.auth.uid ||
-          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['professores'])
+          get(/databases/$(database)/documents/escolas/$(escolaId)).data.professor_uid == request.auth.uid
         );
       }
     }
@@ -57,57 +69,56 @@ service cloud.firestore {
 
     // ─── TAÇA DAS CASAS ──────────────────────────────────────────
     match /taca_casas/{temporadaId} {
-      allow read: if true;
+      allow read: if isAutenticado();
       
       match /casas/{casaId} {
-        allow read: if true;
-        allow write: if isProfessor();
+        allow read: if isAutenticado();
+        // Professor SÓ pode alterar casas da própria escola
+        allow write: if isProfessor() && professorPertenceEscola(request.resource.data.escola_id);
       }
       
       match /eventos/{eventoId} {
-        allow read: if true;
-        allow create: if isProfessor();
+        allow read: if isAutenticado();
+        // Professor SÓ pode criar eventos para a própria escola
+        allow create: if isProfessor() && professorPertenceEscola(request.resource.data.escola_id);
         allow update, delete: if false;
       }
     }
 
-    // =====================================================================
-    // FERRAMENTA: INICIAÇÃO CIENTÍFICA (Gestão de Projetos)
-    // =====================================================================
-    
+    // ─── FERRAMENTA: STEAM LAB ───────────────────────────────────
     match /projetos/{projetoId} {
-      // 1. LEITURA DO PROJETO
-      // 'get' permite ler se souber o ID exato (Link Mágico). 'list' é bloqueado para visitantes.
-      allow get: if true; 
+      allow get: if isAutenticado() && (
+        request.auth.uid == resource.data.dados_gerais.professorId || 
+        request.auth.token.email in resource.data.membros_emails
+      );
       allow list: if isAutenticado() && (
         request.auth.uid == resource.data.dados_gerais.professorId || 
         request.auth.token.email in resource.data.membros_emails
       );
 
-      // 2. CRIAÇÃO E ATUALIZAÇÃO DO PROJETO
       allow create: if isProfessor() && request.resource.data.dados_gerais.professorId == request.auth.uid;
       allow update: if isAutenticado() && (
-        request.auth.uid == resource.data.dados_gerais.professorId || // Professor dono pode atualizar tudo
-        // Aluno convidado só pode atualizar para aceitar o convite
-        request.auth.token.email in resource.data.membros_emails 
+        request.auth.uid == resource.data.dados_gerais.professorId || 
+        (request.auth.token.email in resource.data.membros_emails && 
+         request.resource.data.dados_gerais.token_coorientador == resource.data.dados_gerais.token_coorientador)
       );
 
-      // -------------------------------------------------------------------
-      // SUBCOLEÇÃO: ETAPAS
-      // -------------------------------------------------------------------
       match /etapas/{etapaId} {
-        // Leitura segue a mesma lógica do projeto principal
-        allow read: if true; // Protegido pelo ID do projeto e da etapa
-        allow write: if isAutenticado() && (
+        allow read: if isAutenticado() && (
           get(/databases/$(database)/documents/projetos/$(projetoId)).data.dados_gerais.professorId == request.auth.uid ||
           request.auth.token.email in get(/databases/$(database)/documents/projetos/$(projetoId)).data.membros_emails
         );
 
-        // -----------------------------------------------------------------
-        // SUBCOLEÇÃO: SUBMISSÕES (Diário de Bordo - Imutável)
-        // -----------------------------------------------------------------
+        allow update: if isAutenticado() && (
+          get(/databases/$(database)/documents/projetos/$(projetoId)).data.dados_gerais.professorId == request.auth.uid ||
+          (request.auth.token.email in get(/databases/$(database)/documents/projetos/$(projetoId)).data.membros_emails &&
+           !request.resource.data.diff(resource.data).affectedKeys().hasAny(['status_etapa', 'checks', 'feedbacks']))
+        );
+        
+        allow create: if isProfessor();
+
         match /submissoes/{submissaoId} {
-          allow read: if true;
+          allow read: if isAutenticado();
           allow create: if isAutenticado() && (
             request.auth.token.email in get(/databases/$(database)/documents/projetos/$(projetoId)).data.membros_emails ||
             get(/databases/$(database)/documents/projetos/$(projetoId)).data.dados_gerais.professorId == request.auth.uid
@@ -115,29 +126,19 @@ service cloud.firestore {
           allow update, delete: if false; 
 
           match /feedbacks/{feedbackId} {
-            allow read: if true;
+            allow read: if isAutenticado();
             allow create: if isAutenticado() && (
               request.auth.token.email in get(/databases/$(database)/documents/projetos/$(projetoId)).data.membros_emails ||
               get(/databases/$(database)/documents/projetos/$(projetoId)).data.dados_gerais.professorId == request.auth.uid
             ) || (request.resource.data.token == get(/databases/$(database)/documents/projetos/$(projetoId)).data.dados_gerais.token_coorientador);
-            allow update, delete: if false;
           }
-        }
-
-        match /feedbacks/{feedbackId} {
-          allow read: if true;
-          allow create: if isAutenticado() && (
-            request.auth.token.email in get(/databases/$(database)/documents/projetos/$(projetoId)).data.membros_emails ||
-            get(/databases/$(database)/documents/projetos/$(projetoId)).data.dados_gerais.professorId == request.auth.uid
-          ) || (request.resource.data.token == get(/databases/$(database)/documents/projetos/$(projetoId)).data.dados_gerais.token_coorientador);
-          allow update, delete: if false;
         }
       }
     }
 
     // ─── COLLECTION GROUPS ───────────────────────────────────────
     match /{path=**}/eventos/{eventoId} {
-      allow read: if true;
+      allow read: if isAutenticado();
     }
   }
 }

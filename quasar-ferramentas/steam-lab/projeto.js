@@ -2,6 +2,18 @@ import { requireAuth } from "../../_shared/gatekeeper.js";
 import { db, collection, addDoc, serverTimestamp, query, where, getDocs, updateDoc, doc, arrayUnion, arrayRemove, getDoc, orderBy, limit, setDoc, onSnapshot } from "../../_shared/db.js";
 import { ETAPAS_MCAT } from "./etapas.js";
 
+// --- Segurança e Sanitização ---
+const escapeHTML = (str) => {
+    if (!str) return "";
+    return str.toString().replace(/[&<>"']/g, (m) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    })[m]);
+};
+
 // --- Globais ---
 const urlParams = new URLSearchParams(window.location.search);
 const PROJETO_ID = urlParams.get('id');
@@ -206,7 +218,7 @@ function renderizarFeedMCAT(statusEtapas) {
                     <h4 class="text-[9px] font-black uppercase tracking-widest text-cyan-400 mb-4">Status da Equipe</h4>
                     ${projetoAtual.membros_status.map(m => `
                         <div class="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/5">
-                            <span class="text-[10px] font-bold text-gray-300">${m.nome || m.email}</span>
+                            <span class="text-[10px] font-bold text-gray-300">${escapeHTML(m.nome || m.email)}</span>
                             <span class="text-[8px] font-black uppercase px-2 py-1 ${m.status === 'aceito' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500'} rounded">
                                 ${m.status === 'aceito' ? 'Confirmado' : 'Pendente'}
                             </span>
@@ -224,7 +236,7 @@ function renderizarFeedMCAT(statusEtapas) {
                     ${etapa.id === "02" ? `
                         <div class="p-5 bg-cyan-500/5 border border-cyan-500/10 rounded-2xl">
                             <h4 class="text-[9px] font-black uppercase tracking-widest text-cyan-400 mb-3">Problema Identificado</h4>
-                            <p class="text-sm font-medium text-gray-200 italic">"${projetoAtual.dados_gerais.problema_inicial}"</p>
+                            <p class="text-sm font-medium text-gray-200 italic">"${escapeHTML(projetoAtual.dados_gerais.problema_inicial)}"</p>
                         </div>
                     ` : `
                         <textarea id="markdown-${etapa.id}" 
@@ -458,12 +470,12 @@ window.abrirFeedbackDrawer = async (etapaId) => {
             div.innerHTML = `
                 <div class="flex justify-between items-center mb-1">
                     <div class="flex items-center gap-2">
-                        <span class="text-[8px] font-black uppercase text-gray-400">${f.autor}</span>
+                        <span class="text-[8px] font-black uppercase text-gray-400">${escapeHTML(f.autor)}</span>
                         ${f.legacy ? '<span class="text-[6px] font-black uppercase bg-white/5 px-1 rounded text-gray-600">Arquivo</span>' : ''}
                     </div>
                     <span class="text-[7px] text-gray-600">${f.data?.toDate().toLocaleDateString() || '...'}</span>
                 </div>
-                <p class="text-xs text-gray-200 leading-relaxed">${f.comentario}</p>
+                <p class="text-xs text-gray-200 leading-relaxed">${escapeHTML(f.comentario)}</p>
             `;
             history.appendChild(div);
         });
